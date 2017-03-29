@@ -1,0 +1,19 @@
+html, body {
+  height: 100%;
+}
+.navbar {
+  margin-bottom: 0;
+}
+.gutter {
+  background-color: #eee;
+}
+.gutter-horizontal {
+  cursor: col-resize;
+}
+.gutter-horizontal:hover {
+  background-color: #ccc;
+}
+.editor-container {
+  height: 100%;
+  display: flex;
+}
