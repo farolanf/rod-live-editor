@@ -1,9 +1,11 @@
 html, body, #app {
   height: 100%;
 }
+
 .navbar {
   margin-bottom: 0;
 }
+
 .gutter {
   background-color: #eee;
 }
@@ -13,32 +15,62 @@ html, body, #app {
 .gutter-horizontal:hover {
   background-color: #ccc;
 }
+
 .editor-container {
   height: 100%;
   display: flex;
 }
+
 .preview * {
   pointer-events: none;
 }
-.module-container {
+
+.instance-container {
   pointer-events: auto;
 }
-.gu-unselectable .module-container {
+.gu-unselectable .instance-container {
   box-shadow: 0 0 4px 0 blue;
 }
-.gu-mirror .module-container, .gu-transit .module-container {
+.gu-mirror .instance-container, .gu-transit .instance-container {
   box-shadow: unset !important;
 }
-.module {
+.instance {
   cursor: move;
   pointer-events: auto;
 }
-.module:hover {
+.instance:hover {
   box-shadow: 0 0 4px 0 violet;
 }
+.instance[contenteditable='true'] {
+  cursor: text;
+  box-shadow: 0 0 22px -2px #555;
+}
+
 #app > iframe {
   display: block;
   border: none;
   width: 100%;
   height: 100%;
+}
+
+.instance-controls {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+.instance-controls .fa {
+  width: 30px;
+  height: 30px;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 8px;
+  color: white;
+  cursor: pointer;
+  text-align: center;
+}
+.instance-controls .fa:hover {
+  background-color: rgba(0, 0, 0, 0.5);
 }

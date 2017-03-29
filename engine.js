@@ -201,5 +201,5 @@ function getPropertyValue(property, instance, module, customReplace) {
             console.error("Missing \"condition\" child on \"replace\" parameter of property ", property, " in module ", instance.name);
         }
     }
-    return moduleProperty.type == "container" ? `<div class="module-container" data-name="${property}">${render(value)}</div>` : value;
+    return moduleProperty.type == "container" ? `<div class="instance-container" data-name="${property}">${render(value)}</div>` : value;
 }
