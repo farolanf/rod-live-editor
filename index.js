@@ -3,7 +3,24 @@ const SCROLL_SPEED = 1000; // pixels per second
 $(init);
 
 function init() {
+  initRoutes();
   initEditor();
+}
+
+function initRoutes() {
+  const app = new senna.App();
+  app.addRoutes([
+    new senna.Route('', function() {
+      console.log('home');
+      $('#app > *').hide();
+      $('#editor').show();
+    }),
+    new senna.Route('/preview', function() {
+      console.log('preview');
+      $('#app > *').hide();
+      $('#app > iframe').attr('srcdoc', render(content)).show();
+    })
+  ]);
 }
 
 function initEditor() {
