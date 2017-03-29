@@ -11,12 +11,19 @@ function initEditor() {
     minSize: 0
   });
   $('.preview').html(render(content));
+  initDrag();
 }
 
-function newId() {
-  if (typeof newId.id === 'undefined') {
-    newId.id = 1;
-  }
-  return newId.id++;
+function initDrag() {
+  const containers = $('.module-container').toArray();
+  initContainerChildren(containers);
+  const drake = dragula(containers, {
+    accepts(el, target, source, sibling) {
+      return !$.contains(el, target);
+    }
+  });
 }
 
+function initContainerChildren(containers) {
+  $(containers).children().addClass('module');
+}

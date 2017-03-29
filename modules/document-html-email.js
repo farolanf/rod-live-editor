@@ -154,15 +154,15 @@ modules["document-html-email"] = {
 	<center style="width: 100%; text-align: left; %backgroundColorMain% ">
 		%hiddenPreheader%
 		<div style="max-width: 680px; Margin: auto;" class="email-container">
-		   <table role="presentation" %_backgroundColorHeader% aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px; %backgroundColorHeader%">
+		   <div role="presentation" %_backgroundColorHeader% aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="display: table; max-width: 680px; %backgroundColorHeader%">
 				%header%
-		   </table>
-		    <table role="presentation" %_backgroundColorBody% aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px; %backgroundColorBody%">
+		   </div>
+		    <div role="presentation" %_backgroundColorBody% aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="display: table; max-width: 680px; %backgroundColorBody%">
 				%body%
-		   </table>
-		    <table role="presentation" %_backgroundColorFooter% aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px; %backgroundColorFooter%">
+		   </div>
+		    <div role="presentation" %_backgroundColorFooter% aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="display: table; max-width: 680px; %backgroundColorFooter%">
 				%footer%
-		   </table>
+		   </div>
 		</div>
 	</center>
 </body>
@@ -173,15 +173,15 @@ modules["document-html-email"] = {
             "type": "text"
         },
 		"body": {
-            "default": "<tr><td>Place your body content here</td></tr>",
+            "default": "Place your body content here",
             "type": "container"
         },
         "header": {
-            "default": "<tr><td>Place your header content here</td></tr>",
+            "default": "Place your header content here",
             "type": "container"
         },
         "footer": {
-            "default": "<tr><td>Place your footer content here</td></tr>",
+            "default": "Place your footer content here",
             "type": "container"
         },
         "backgroundColorHeader": {

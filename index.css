@@ -17,3 +17,22 @@ html, body {
   height: 100%;
   display: flex;
 }
+.preview * {
+  pointer-events: none;
+}
+.module-container {
+  pointer-events: auto;
+}
+.gu-unselectable .module-container {
+  box-shadow: 0 0 4px 0 blue;
+}
+.gu-mirror .module-container, .gu-transit .module-container {
+  box-shadow: unset !important;
+}
+.module {
+  cursor: move;
+  pointer-events: auto;
+}
+.module:hover, .module.gu-mirror {
+  box-shadow: 0 0 4px 0 violet;
+}
