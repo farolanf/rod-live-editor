@@ -2,14 +2,14 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Farolan's Test Pen</title>
+    <title>Live Editor</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />  </head>
     <link href="index.css" rel="stylesheet">
   <body>
-  
+    
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -20,18 +20,17 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-        <div id="navbar" class="collapse navbar-collapse">
         </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/preview.html" class="preview-btn">Preview</a></li>
+          </ul>
+        </div>
+      </div>
     </nav>
 
     <div class="editor-container">
-      <div class="preview">
-        <div data-module-container>
-          <p>Hello</p>
-          <p>World</p>
-          <p>Girl</p>
-        </div>
-      </div>
+      <div class="preview"></div>
       <div class="property-view"></div>
     </div>
 
