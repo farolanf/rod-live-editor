@@ -85,7 +85,7 @@ function dragScroll(drake) {
 }
 
 function initContainerChildren(containers) {
-  $(containers).children().each(function(i, el) {
+  $(containers).children(':not(br)').each(function(i, el) {
     initInstanceElement(el);
   });
 }
