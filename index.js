@@ -11,6 +11,8 @@ drake.on('over', function(el, container) {
   $(container).addClass('dragover');
 }).on('out', function(el, container) {
   $(container).removeClass('dragover');
+}).on('dragend', function() {
+  showInstanceControls(selectedElement);
 });
 
 $(init);
@@ -19,7 +21,7 @@ function init() {
   prepareContent(content);
   initRoutes();
   initEditor();
-  initModuleControls();
+  initInstanceControls();
 }
 
 function prepareContent(content) {
@@ -66,7 +68,10 @@ function initEditor() {
   dragScroll(drake);
 }
 
-function initModuleControls() {
+function initInstanceControls() {
+  $('.instance-controls').on('click', function(e) {
+    e.stopPropagation();
+  });
   $('.instance-controls .edit-btn').on('click', function(e) {
     editInstanceContent(selectedElement);
   });
@@ -74,7 +79,7 @@ function initModuleControls() {
     cloneInstance(selectedElement);
   });
   $('.instance-controls .delete-btn').on('click', function(e) {
-    $(selectedElement).remove();
+    deleteInstance(selectedElement);
   });
 }
 
@@ -131,14 +136,12 @@ function initInstanceElements(startElement) {
 function initInstanceElement(el) {
   $(el).addClass('instance').on('click', function(e) {
     e.stopPropagation();
-    if (selectedElement != this) {
-      stopContentEditing();
+    if (this !== selectedElement) {
+      deselectInstance(selectedElement);
     }
-    selectedElement = this;
-    showInstanceControls(this);
+    selectInstance(this);
   }).on('blur', function(e) {
-    $(this).attr('contenteditable', false);
-    hideInstanceControls();
+    deselectInstance(this);
   }).on('dblclick', function(e) {
     e.stopPropagation();
     editInstanceContent(this);
@@ -150,11 +153,26 @@ function initInstanceElement(el) {
   });
 }
 
+function selectInstance(el) {
+  selectedElement = el;
+  $(el).addClass('active');
+  showInstanceControls(el);
+}
+
+function deselectInstance(el) {
+  $(el).removeClass('active').attr('contenteditable', false);
+}
+
 function editInstanceContent(el) {
   $(el).attr('contenteditable', true);
   setTimeout(function() {
     $(el).focus();
   });
+}
+
+function deleteInstance(el) {
+  $(el).remove();
+  hideInstanceControls();
 }
 
 function stopContentEditing() {
@@ -164,6 +182,7 @@ function stopContentEditing() {
 function cloneInstance(el) {
   const clone = $(el).clone().insertAfter(el);
   initElement(clone);
+  deselectInstance(clone);
 }
 
 function showInstanceControls(el) {
@@ -179,7 +198,7 @@ function hideInstanceControls() {
 }
 
 $(window).on('click', function() {
-  hideInstanceControls();
+  deselectInstance(selectedElement);
 });
 
 function newId() {
