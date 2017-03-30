@@ -11,6 +11,12 @@ drake.on('over', function(el, container) {
   $(container).addClass('dragover');
 }).on('out', function(el, container) {
   $(container).removeClass('dragover');
+}).on('drop', function(el, target, source, sibling) {
+  const id = $(el).data('id');
+  const parentId = $(target).data('parent-id');
+  const container = $(target).data('name');
+  const siblingId = sibling ? $(sibling).data('id') : null;
+  moveInstance(content, id, parentId, container, siblingId);
 }).on('dragend', function() {
   if (selectedElement) {
     showInstanceControls(selectedElement);
@@ -217,3 +223,4 @@ function newId() {
   }
   return newId.id++;
 }
+
