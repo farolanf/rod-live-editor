@@ -36,7 +36,7 @@ function initEditor() {
     minSize: 0
   });
   $('.preview').html(render(content));
-  initContainers('body');
+  initElement('.preview');
   dragScroll(drake);
 }
 
@@ -50,12 +50,6 @@ function initModuleControls() {
   $('.instance-controls .delete-btn').on('click', function(e) {
     $(selectedElement).remove();
   });
-}
-
-function initContainers(el) {
-  const containers = $('.instance-container', el).toArray();
-  drake.containers = drake.containers.concat(containers);
-  initContainerChildren(containers);
 }
 
 function dragScroll(drake) {
@@ -84,8 +78,22 @@ function dragScroll(drake) {
   }
 }
 
-function initContainerChildren(containers) {
-  $(containers).children(':not(br)').each(function(i, el) {
+function initElement(startElement) {
+  initContainers(startElement);
+  initInstanceElements(startElement);
+}
+
+function initContainers(startElement) {
+  const containers = $('.instance-container', startElement).toArray();
+  drake.containers = drake.containers.concat(containers);
+}
+
+function initInstanceElements(startElement) {
+  const childrenSelector = '.instance-container > *:not(br)';
+  if ($(startElement).is(childrenSelector)) {
+    initInstanceElement(startElement);
+  }
+  $(childrenSelector, startElement).each(function(i, el) {
     initInstanceElement(el);
   });
 }
@@ -104,6 +112,10 @@ function initInstanceElement(el) {
   }).on('dblclick', function(e) {
     e.stopPropagation();
     editInstanceContent(this);
+  }).on('mouseenter', function(e) {
+    $(this).addClass('hover');
+  }).on('mouseout', function(e) {
+    $(this).removeClass('hover');
   });
 }
 
@@ -120,8 +132,7 @@ function stopContentEditing() {
 
 function cloneInstance(el) {
   const clone = $(el).clone().insertAfter(el);
-  initInstanceElement(clone);
-  initContainers(clone);
+  initElement(clone);
 }
 
 function showInstanceControls(el) {

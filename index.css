@@ -38,7 +38,7 @@ html, body, #app {
   cursor: move;
   pointer-events: auto;
 }
-.instance:hover {
+.instance.hover {
   box-shadow: 0 0 4px 0 violet;
 }
 .instance[contenteditable='true'] {
