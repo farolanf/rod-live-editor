@@ -12,7 +12,9 @@ drake.on('over', function(el, container) {
 }).on('out', function(el, container) {
   $(container).removeClass('dragover');
 }).on('dragend', function() {
-  showInstanceControls(selectedElement);
+  if (selectedElement) {
+    showInstanceControls(selectedElement);
+  }
 });
 
 $(init);
@@ -206,6 +208,7 @@ function hideInstanceControls() {
 
 $(window).on('click', function() {
   deselectInstance(selectedElement);
+  selectedElement = null;
 });
 
 function newId() {
