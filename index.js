@@ -10,9 +10,29 @@ const drake = dragula(null, {
 $(init);
 
 function init() {
+  prepareContent(content);
   initRoutes();
   initEditor();
   initModuleControls();
+}
+
+function prepareContent(content) {
+  if (Array.isArray(content)) {
+    content.forEach(function(instance) {
+      instance.id = newId();
+      prepareInstanceContainers(instance);
+    });
+  }
+  function prepareInstanceContainers(instance) {
+    for (const key in instance) {
+      if (instance.hasOwnProperty(key)) {
+        const val = instance[key];
+        if (Array.isArray(val)) {
+          prepareContent(val);
+        }
+      }
+    }
+  }
 }
 
 function initRoutes() {
@@ -151,3 +171,10 @@ function hideInstanceControls() {
 $(window).on('click', function() {
   hideInstanceControls();
 });
+
+function newId() {
+  if (typeof newId.id === 'undefined') {
+    newId.id = 1;
+  }
+  return newId.id++;
+}
