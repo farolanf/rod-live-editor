@@ -7,5 +7,5 @@ function getContainerPlaceholder(name, parentId, children) {
 }
 
 function injectInstanceData(str, id) {
-  return str.replace(/(<.*?)>/, `$1 data-instance data-id="${id}">`);
+  return str.replace(/(<.*?)>/, `$1 data-id="${id}">`);
 }
