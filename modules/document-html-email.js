@@ -154,15 +154,21 @@ modules["document-html-email"] = {
 	<center style="width: 100%; text-align: left; %backgroundColorMain% ">
 		%hiddenPreheader%
 		<div style="max-width: 680px; Margin: auto;" class="email-container">
-		   <div role="presentation" %_backgroundColorHeader% aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="display: table; max-width: 680px; %backgroundColorHeader%">
-				%header%
-		   </div>
-		    <div role="presentation" %_backgroundColorBody% aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="display: table; max-width: 680px; %backgroundColorBody%">
-				%body%
-		   </div>
-		    <div role="presentation" %_backgroundColorFooter% aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="display: table; max-width: 680px; %backgroundColorFooter%">
-				%footer%
-		   </div>
+		   <table role="presentation" %_backgroundColorHeader% aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="display: table; max-width: 680px; %backgroundColorHeader%">
+				<tbody>
+                    %header%
+				</tbody>
+		   </table>
+		   <table role="presentation" %_backgroundColorBody% aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="display: table; max-width: 680px; %backgroundColorBody%">
+				<tbody>
+                    %body%
+				</tbody>
+		   </table>
+		    <table role="presentation" %_backgroundColorFooter% aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="display: table; max-width: 680px; %backgroundColorFooter%">
+				<tbody>
+    				%footer%
+				</tbody>
+		   </table>
 		</div>
 	</center>
 </body>
