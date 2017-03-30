@@ -7,6 +7,12 @@ const drake = dragula(null, {
   }
 });
 
+drake.on('over', function(el, container) {
+  $(container).addClass('dragover');
+}).on('out', function(el, container) {
+  $(container).removeClass('dragover');
+});
+
 $(init);
 
 function init() {
@@ -55,7 +61,7 @@ function initEditor() {
     sizes: [75, 25],
     minSize: 0
   });
-  // $('.preview').html(render(content));
+  $('.preview').html(render(content));
   initElement('.preview');
   dragScroll(drake);
 }

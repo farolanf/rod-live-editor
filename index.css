@@ -25,21 +25,22 @@ html, body, #app {
   pointer-events: none;
 }
 
-.instance-container {
+.gu-unselectable .instance-container {
+  outline: 1px dashed blue;
   pointer-events: auto;
 }
-.gu-unselectable .instance-container {
-  box-shadow: 0 0 4px 0 blue;
+.gu-unselectable .instance-container.dragover {
+  outline: 2px solid blue;
 }
 .gu-mirror .instance-container, .gu-transit .instance-container {
-  box-shadow: unset !important;
+  outline: none !important;
 }
-.instance {
+.instance, tr.instance > * {
   cursor: move;
   pointer-events: auto;
 }
 .instance.hover {
-  box-shadow: 0 0 4px 0 violet;
+  outline: 2px solid #ebe;
 }
 .instance[contenteditable='true'] {
   cursor: text;
