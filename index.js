@@ -112,7 +112,8 @@ function initInstanceElement(el) {
   }).on('dblclick', function(e) {
     e.stopPropagation();
     editInstanceContent(this);
-  }).on('mouseenter', function(e) {
+  }).on('mouseover', function(e) {
+    e.stopPropagation();
     $(this).addClass('hover');
   }).on('mouseout', function(e) {
     $(this).removeClass('hover');
