@@ -183,7 +183,7 @@ modules["document-html-email"] = {
             "type": "container"
         },
         "header": {
-            "default": "Place your header content here",
+            "default": "<tr><td>Place your header content here</td></tr>",
             "type": "container"
         },
         "footer": {

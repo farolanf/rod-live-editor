@@ -55,7 +55,7 @@ function initEditor() {
     sizes: [75, 25],
     minSize: 0
   });
-  $('.preview').html(render(content));
+  // $('.preview').html(render(content));
   initElement('.preview');
   dragScroll(drake);
 }
@@ -104,8 +104,12 @@ function initElement(startElement) {
 }
 
 function initContainers(startElement) {
-  const containers = $('.instance-container', startElement).toArray();
-  drake.containers = drake.containers.concat(containers);
+  const meta = $('*', startElement).contents().filter(function() {
+    return this.nodeType === 8 && this.nodeValue.includes('instance-container');
+  });
+  const containers = meta.parent();
+  containers.addClass('instance-container');
+  drake.containers = drake.containers.concat(containers.toArray());
 }
 
 function initInstanceElements(startElement) {
