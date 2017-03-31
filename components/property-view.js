@@ -14,10 +14,11 @@ function PropertyView(editor) {
     const props = instance.getProperties();
     let html = '';
     _.forOwn(props, function(prop, key) {
+      const color = prop.value.replace('#', '');
       html += `
         <div class="list-group-item">
           <span class="name">${key}</span>
-          <input class="form-control" value="${prop.value}" data-type="${prop.type}">
+          <input class="form-control" value="${color}" data-type="${prop.type}">
         </div>`;
     });
     $('#editor .property-view .list-group').html(html);

@@ -76,3 +76,7 @@ html, body, #app, #editor, .editor-container, .preview {
   transform: translateY(-50%);
   width: 40%;
 }
+
+.ui-dialog {
+  padding: 19px 20px 9px 20px;
+}
