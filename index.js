@@ -186,6 +186,8 @@ function editInstanceContent(el) {
 }
 
 function deleteInstance(el) {
+  const id = $(el).data('id');
+  removeInstance(content, id);
   $(el).remove();
   hideInstanceControls();
 }
