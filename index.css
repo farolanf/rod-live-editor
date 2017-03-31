@@ -57,6 +57,11 @@ html, body, #app {
   height: 100%;
 }
 
+#app > pre {
+  margin: 0;
+  height: 100%;
+}
+
 .instance-controls {
   position: absolute;
   top: 100px;

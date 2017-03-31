@@ -47,9 +47,22 @@ function initRoutes() {
       hideInstanceControls();
       $('#app > *').hide();
       $('#app > iframe').attr('srcdoc', render(content)).show();
+    }),
+    new senna.Route('/json', function() {
+      hideInstanceControls();
+      $('#app > *').hide();
+      const json = JSON.stringify(content, filterContent, 2);
+      $('#app > #content-json').html(json).show();
     })
   ]);
   app.navigate('/');
+}
+
+function filterContent(key, value) {
+  if (key === 'parent') {
+    return;
+  }
+  return value;
 }
 
 function initEditor() {
@@ -203,14 +216,17 @@ function hideInstanceControls() {
   $('.instance-controls').addClass('hidden');
 }
 
-function renderPreview() {
-  $('.preview').html(render(content));
-  initElement('.preview');
-}
-
 $(window).on('click', function() {
   deselectInstance(selectedElement);
   selectedElement = null;
   hideInstanceControls();
 });
 
+function renderPreview() {
+  $('.preview').html(render(content));
+  initElement('.preview');
+}
+
+function showJsonModal() {
+  $('#json-modal').modal();
+}
