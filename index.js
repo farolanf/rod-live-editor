@@ -2,6 +2,7 @@ const SCROLL_SPEED = 1000; // pixels per second
 let selectedElement;
 
 const editor = Editor(content);
+const propertyView = PropertyView(editor);
 
 const drake = dragula(null, {
   accepts(el, target, source, sibling) {
@@ -170,6 +171,8 @@ function selectInstance(el) {
   selectedElement = el;
   $(el).addClass('active');
   showInstanceControls(el);
+  const id = $(el).data('id');
+  propertyView.setInstance(id);
 }
 
 function deselectInstance(el) {

@@ -1,5 +1,22 @@
-html, body, #app {
+html, body, #app, #editor, .editor-container, .preview {
   height: 100%;
+}
+
+#app > iframe {
+  display: block;
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
+#app > pre {
+  margin: 0;
+  height: 100%;
+}
+
+#editor {
+  display: flex;
+  flex-flow: column nowrap;
 }
 
 .navbar {
@@ -7,7 +24,7 @@ html, body, #app {
 }
 
 .gutter {
-  background-color: #eee;
+  background-color: #ddd;
 }
 .gutter-horizontal {
   cursor: col-resize;
@@ -17,10 +34,13 @@ html, body, #app {
 }
 
 .editor-container {
-  height: 100%;
   display: flex;
 }
 
+.preview {
+  height: 100%;
+  overflow: auto;
+}
 .preview * {
   pointer-events: none;
 }
@@ -50,18 +70,6 @@ html, body, #app {
   box-shadow: 0 0 22px -2px #555;
 }
 
-#app > iframe {
-  display: block;
-  border: none;
-  width: 100%;
-  height: 100%;
-}
-
-#app > pre {
-  margin: 0;
-  height: 100%;
-}
-
 .instance-controls {
   position: absolute;
   top: 100px;
@@ -82,4 +90,15 @@ html, body, #app {
 }
 .instance-controls .fa:hover {
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.property-view .list-group .list-group-item {
+  padding: 15px;
+}
+.property-view .list-group .list-group-item input {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  width: 40%;
 }
