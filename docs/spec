@@ -5,7 +5,7 @@ First working prototype
   Be able to add new modules to the content. (Idea: left pane)
   Modules should be searchable/filterable by name and should show a preview
   🗸 Be able to delete instance from the content via the garbage icon that appears on the toolbar.
-  Be able to duplicate instance from the content via the clone icon that appears on the toolbar.
+  🗸 Be able to duplicate instance from the content via the clone icon that appears on the toolbar.
   Be able to edit properties of instance from the content, via the pencil icon that appears on the toolbar. On the right pane all editable properties should be shown, different controls for different property types. Currently supported: text, color, property.
   🗸 Be able to preview final rendered  version
   Be able to see modified content  json

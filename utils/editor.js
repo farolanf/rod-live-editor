@@ -79,32 +79,6 @@ function Editor(_content) {
     return null;
   }
 
-  // function findContainer(content, instance) {
-  //   let container;
-  //   if (instance.parent) {
-  //     _.forOwn(parent, function(val) {
-  //       if (Array.isArray(val) && containerIncludes(val, instance)) {
-  //         container = val;
-  //         return false;
-  //       }
-  //     });
-  //   }
-  //   else {
-  //     if (containerIncludes(content, instance)) {
-  //       container = content;
-  //     }
-  //   }
-  //   return container;
-  // }
-
-  // function containerIncludes(arr, instance) {
-  //   return !!_.find(arr, function(item) {
-  //     if (item.id === instance.id) {
-  //       return true;
-  //     }
-  //   });
-  // }
-
   function moveInstance(id, parentId, container, siblingId) {
     _moveInstance(_content, id, parentId, container, siblingId);
   }
