@@ -1,12 +1,13 @@
 const assert = require('assert');
 const _ = require('../libs/lodash.min');
-const editor = require('../utils/editor');
+const Editor = require('../utils/editor');
 
 global._ = _;
 
-let content;
-
 describe('utils', function() {
+
+  let editor;
+  let content;
 
   beforeEach(function() {
     content = [
@@ -16,22 +17,23 @@ describe('utils', function() {
         id: 3, 
         name: '3',
         body: [
-          {id: 5, name: '5'}
+          {id: 4, name: '4'}
         ]
       },
-      {id: 4, name: '4'},
+      {id: 5, name: '5'},
     ];
+    editor = Editor(content);
   });
 
   it('should find instance', function() {
-    const instance = editor.findInstance(content, 5);
+    const instance = editor.findInstance(5);
     assert.deepEqual(instance, {id: 5, name: '5'});
   });
 
   it('should remove instance', function() {
-    const instance = editor.removeInstance(content, 5);
+    const instance = editor.removeInstance(5);
     assert.deepEqual(instance, {id: 5, name: '5'});
-    assert(!editor.findInstance(content, 5));
+    assert.equal(editor.findInstance(5), null);
   });
 
   it('should move instance', function() {
@@ -44,27 +46,35 @@ describe('utils', function() {
         body: []
       },
       {
-        id: 4, 
-        name: '4',
+        id: 5, 
+        name: '5',
         content: [
-          {id: 5, name: '5'}
+          {id: 4, name: '4'}
         ]
       },
     ];
-    editor.moveInstance(content, 5, 4, 'content');
+    editor.moveInstance(4, 5, 'content');
     assert.deepEqual(content, expected);
   });
 
   it('should regenerate ids', function() {
-    const expected = {
-      id: 6, 
-      name: '3',
+    const instance = {
+      id: 1, 
+      name: '1',
       body: [
-        {id: 7, name: '5'}
+        {id: 2, name: '2'}
       ]
     };
-    editor.newInstanceId = 6;
-    editor.regenerateId(content[2]);
-    assert.deepEqual(content[2], expected);
+    const expected = {
+      id: 3, 
+      name: '1',
+      body: [
+        {id: 4, name: '2'}
+      ]
+    };
+    editor = Editor();
+    editor.newInstanceId = 3;
+    editor.regenerateId(instance);
+    assert.deepEqual(instance, expected);
   });
 });

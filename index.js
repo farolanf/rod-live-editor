@@ -1,54 +1,39 @@
 const SCROLL_SPEED = 1000; // pixels per second
 let selectedElement;
 
+const editor = Editor(content);
+
 const drake = dragula(null, {
   accepts(el, target, source, sibling) {
     return !$.contains(el, target);
   }
 });
 
-drake.on('over', function(el, container) {
-  $(container).addClass('dragover');
-}).on('out', function(el, container) {
-  $(container).removeClass('dragover');
-}).on('drop', function(el, target, source, sibling) {
-  const id = $(el).data('id');
-  const parentId = $(target).data('parent-id');
-  const container = $(target).data('name');
-  const siblingId = sibling ? $(sibling).data('id') : null;
-  editor.moveInstance(content, id, parentId, container, siblingId);
-}).on('dragend', function() {
-  if (selectedElement) {
-    showInstanceControls(selectedElement);
-  }
-});
-
 $(init);
 
 function init() {
-  prepareContent(content);
   initRoutes();
+  initDrake();
   initEditor();
   initInstanceControls();
 }
 
-function prepareContent(content) {
-  if (Array.isArray(content)) {
-    content.forEach(function(instance) {
-      instance.id = editor.newId();
-      prepareInstanceContainers(instance);
-    });
-  }
-  function prepareInstanceContainers(instance) {
-    for (const key in instance) {
-      if (instance.hasOwnProperty(key)) {
-        const val = instance[key];
-        if (Array.isArray(val)) {
-          prepareContent(val);
-        }
-      }
+function initDrake() {
+  drake.on('over', function(el, container) {
+    $(container).addClass('dragover');
+  }).on('out', function(el, container) {
+    $(container).removeClass('dragover');
+  }).on('drop', function(el, target, source, sibling) {
+    const id = $(el).data('id');
+    const parentId = $(target).data('parent-id');
+    const container = $(target).data('name');
+    const siblingId = sibling ? $(sibling).data('id') : null;
+    editor.moveInstance(content, id, parentId, container, siblingId);
+  }).on('dragend', function() {
+    if (selectedElement) {
+      showInstanceControls(selectedElement);
     }
-  }
+  });
 }
 
 function initRoutes() {

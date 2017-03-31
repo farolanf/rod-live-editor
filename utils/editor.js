@@ -1,25 +1,70 @@
 
-const editor = {
+function Editor(_content) {
 
-  getContainerPlaceholder(name, parentId, children) {
+  if (!(this instanceof Editor)) {
+    return new Editor(_content);
+  }
+
+  _content = _content || [];
+  let newInstanceId = 1;
+
+  prepareContent(_content);
+
+  return {
+    getContainerPlaceholder,
+    injectInstanceData,
+    findInstance,
+    removeInstance,
+    moveInstance,
+    regenerateId,
+    get newInstanceId() {return newInstanceId;},
+    set newInstanceId(val) {newInstanceId = val;},
+    get content() {return _content},
+  };
+
+  function prepareContent(content) {
+    if (Array.isArray(content)) {
+      content.forEach(function(instance) {
+        instance.id = newId();
+        prepareInstanceContainers(instance);
+      });
+    }
+  }
+
+  function prepareInstanceContainers(instance) {
+    for (const key in instance) {
+      if (instance.hasOwnProperty(key)) {
+        const val = instance[key];
+        if (Array.isArray(val)) {
+          prepareContent(val);
+        }
+      }
+    }
+  }
+
+  function getContainerPlaceholder(name, parentId, children) {
     const containerJson = JSON.stringify({
       name: name,
       parentId: parentId
     });
     return `<!-- instance-container ${containerJson} --> ${children}`;
-  },
+  }
 
-  injectInstanceData(str, id) {
+  function injectInstanceData(str, id) {
     return str.replace(/(<.*?)>/, `$1 data-id="${id}">`);
-  },
+  }
 
-  moveInstance(content, id, parentId, container, siblingId) {
-    const instance = editor.removeInstance(content, id);
-    const parent = editor.findInstance(content, parentId);
-    editor.insertInstance(instance, parent, container, siblingId);
-  },
+  function moveInstance(id, parentId, container, siblingId) {
+    _moveInstance(_content, id, parentId, container, siblingId);
+  }
 
-  insertInstance(instance, parent, container, siblingId) {
+  function _moveInstance(content, id, parentId, container, siblingId) {
+    const instance = _removeInstance(content, id);
+    const parent = _findInstance(content, parentId);
+    insertInstance(instance, parent, container, siblingId);
+  }
+
+  function insertInstance(instance, parent, container, siblingId) {
     if (!parent.hasOwnProperty(container)) {
       parent[container] = [];
     }
@@ -33,13 +78,21 @@ const editor = {
     else {
       arr.push(instance);
     }
-  },
+  }
 
-  removeInstance(arr, id) {
-    return editor.findInstance(arr, id, true);
-  },
+  function removeInstance(id) {
+    return _removeInstance(_content, id);
+  }
 
-  findInstance(arr, id, remove) {
+  function _removeInstance(arr, id) {
+    return _findInstance(arr, id, true);
+  }
+
+  function findInstance(id, remove) {
+    return _findInstance(_content, id, remove);
+  }
+
+  function _findInstance(arr, id, remove) {
     let result;
     const index = arr.findIndex(function(instance) {
       if (instance.id === id) {
@@ -49,7 +102,7 @@ const editor = {
         if (instance.hasOwnProperty(key)) {
           const val = instance[key];
           if (Array.isArray(val)) {
-            result = editor.findInstance(val, id, remove);
+            result = _findInstance(val, id, remove);
             if (result) {
               return true;
             }
@@ -69,42 +122,39 @@ const editor = {
       }
     }
     return null;
-  },
+  }
 
-  cloneInstance(content, id) {
-    const instance = editor.findInstance(content, id);
+  function cloneInstance(content, id) {
+    const instance = _findInstance(content, id);
     const newInstance = _.cloneDeep(instance);
-    editor.regenerateId(newInstance);
-    editor.insertAfter(newInstance, instance.id);
-  },
+    regenerateId(newInstance);
+    insertAfter(newInstance, instance.id);
+  }
 
-  regenerateId(instance) {
-    instance.id = editor.newId();
+  function regenerateId(instance) {
+    instance.id = newId();
     _.forOwn(instance, function(val) {
       if (Array.isArray(val)) {
         _.each(val, function(item) {
-          editor.regenerateId(item);
+          regenerateId(item);
         });
       }
     });
-  },
+  }
 
-  insertInstanceAfter(instance, siblingId) {
-    const container = editor.getContainer(siblingId);
-  },
+  function insertInstanceAfter(instance, siblingId) {
+    const container = getContainer(siblingId);
+  }
 
-  getContainer(id) {
-    
-  },
+  function getContainer(id) {
 
-  newId(start) {
-    if (typeof this.newInstanceId === 'undefined') {
-      this.newInstanceId = 1;
-    }
-    return this.newInstanceId++;
-  },
+  }
+
+  function newId() {
+    return newInstanceId++;
+  }
 };
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = editor;
+  module.exports = Editor;
 }
