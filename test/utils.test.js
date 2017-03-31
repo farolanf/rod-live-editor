@@ -1,5 +1,8 @@
 const assert = require('assert');
+const _ = require('../libs/lodash.min');
 const editor = require('../utils/editor');
+
+global._ = _;
 
 let content;
 
@@ -50,5 +53,18 @@ describe('utils', function() {
     ];
     editor.moveInstance(content, 5, 4, 'content');
     assert.deepEqual(content, expected);
+  });
+
+  it('should regenerate ids', function() {
+    const expected = {
+      id: 6, 
+      name: '3',
+      body: [
+        {id: 7, name: '5'}
+      ]
+    };
+    editor.newInstanceId = 6;
+    editor.regenerateId(content[2]);
+    assert.deepEqual(content[2], expected);
   });
 });

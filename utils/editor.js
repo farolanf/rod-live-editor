@@ -71,11 +71,28 @@ const editor = {
     return null;
   },
 
-  newId() {
-    if (typeof this.newIstanceId === 'undefined') {
-      this.newIstanceId = 1;
+  cloneInstance(content, id) {
+    const instance = editor.findInstance(content, id);
+    const newInstance = _.cloneDeep(instance);
+    this.regenerateId(newInstance);
+  },
+
+  regenerateId(instance) {
+    instance.id = editor.newId();
+    _.forOwn(instance, function(val) {
+      if (Array.isArray(val)) {
+        _.each(val, function(item) {
+          editor.regenerateId(item);
+        });
+      }
+    });
+  },
+
+  newId(start) {
+    if (typeof this.newInstanceId === 'undefined') {
+      this.newInstanceId = 1;
     }
-    return this.newIstanceId++;
+    return this.newInstanceId++;
   },
 };
 

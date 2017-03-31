@@ -200,6 +200,7 @@ function cloneInstance(el) {
   const clone = $(el).clone().insertAfter(el);
   initElement(clone);
   deselectInstance(clone);
+  editor.cloneInstance(content, $(el).data('id'));
 }
 
 function showInstanceControls(el) {
