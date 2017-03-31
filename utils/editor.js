@@ -11,8 +11,6 @@ function Editor(_content) {
   prepareContent(_content);
 
   return {
-    getContainerPlaceholder,
-    injectInstanceData,
     findInstance,
     removeInstance,
     moveInstance,
@@ -40,18 +38,6 @@ function Editor(_content) {
         }
       }
     }
-  }
-
-  function getContainerPlaceholder(name, parentId, children) {
-    const containerJson = JSON.stringify({
-      name: name,
-      parentId: parentId
-    });
-    return `<!-- instance-container ${containerJson} --> ${children}`;
-  }
-
-  function injectInstanceData(str, id) {
-    return str.replace(/(<.*?)>/, `$1 data-id="${id}">`);
   }
 
   function moveInstance(id, parentId, container, siblingId) {
@@ -154,6 +140,18 @@ function Editor(_content) {
     return newInstanceId++;
   }
 };
+
+Editor.getContainerPlaceholder = function(name, parentId, children) {
+  const containerJson = JSON.stringify({
+    name: name,
+    parentId: parentId
+  });
+  return `<!-- instance-container ${containerJson} --> ${children}`;
+}
+
+Editor.injectInstanceData = function(str, id) {
+  return str.replace(/(<.*?)>/, `$1 data-id="${id}">`);
+}
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = Editor;
