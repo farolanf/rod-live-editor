@@ -40,6 +40,7 @@ html, body, #app, #editor, .editor-container, .preview {
 .preview {
   height: 100%;
   overflow: auto;
+  border: none;
 }
 .preview * {
   pointer-events: none;

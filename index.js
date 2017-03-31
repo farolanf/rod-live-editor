@@ -208,10 +208,11 @@ function cloneInstance(el) {
 }
 
 function showInstanceControls(el) {
-  const body = $('body');
+  const parent = $('.preview')[0];
+  const prect = parent.getBoundingClientRect();
   const rect = el.getBoundingClientRect();
   const x = rect.right;
-  const y = rect.top + body.scrollTop();
+  const y = rect.top + prect.top;
   $('.instance-controls').css('left', x).css('top', y).removeClass('hidden');
 }
 
@@ -226,10 +227,20 @@ $(window).on('click', function() {
 });
 
 function renderPreview() {
-  $('.preview').html(render(content));
-  initElement('.preview');
+  $('.preview').attr('srcdoc', render(content)).on('load', function() {
+    const link = $('<link>', {
+      href: 'preview.css',
+      rel: 'stylesheet',
+    });
+    $preview('head').append(link);
+    initElement($preview('body'));
+  });
 }
 
 function showJsonModal() {
   $('#json-modal').modal();
+}
+
+function $preview(selector) {
+  return $('.preview').contents().find(selector);  
 }
