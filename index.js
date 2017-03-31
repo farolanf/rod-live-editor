@@ -28,7 +28,7 @@ function initDrake() {
     const parentId = $(target).data('parent-id');
     const container = $(target).data('name');
     const siblingId = sibling ? $(sibling).data('id') : null;
-    editor.moveInstance(content, id, parentId, container, siblingId);
+    editor.moveInstance(id, parentId, container, siblingId);
   }).on('dragend', function() {
     if (selectedElement) {
       showInstanceControls(selectedElement);
@@ -44,6 +44,7 @@ function initRoutes() {
       $('#editor').show();
     }),
     new senna.Route('/preview', function() {
+      hideInstanceControls();
       $('#app > *').hide();
       $('#app > iframe').attr('srcdoc', render(content)).show();
     })
@@ -56,8 +57,7 @@ function initEditor() {
     sizes: [75, 25],
     minSize: 0
   });
-  $('.preview').html(render(content));
-  initElement('.preview');
+  renderPreview();
   dragScroll(drake);
 }
 
@@ -172,7 +172,7 @@ function editInstanceContent(el) {
 
 function deleteInstance(el) {
   const id = $(el).data('id');
-  editor.removeInstance(content, id);
+  editor.removeInstance(id);
   $(el).remove();
   hideInstanceControls();
 }
@@ -185,7 +185,10 @@ function cloneInstance(el) {
   const clone = $(el).clone().insertAfter(el);
   initElement(clone);
   deselectInstance(clone);
-  editor.cloneInstance(content, $(el).data('id'));
+  const id = $(el).data('id');
+  editor.cloneInstance(id);
+  renderPreview();
+  selectInstance($(`[data-id=${id}]`)[0]);
 }
 
 function showInstanceControls(el) {
@@ -200,8 +203,14 @@ function hideInstanceControls() {
   $('.instance-controls').addClass('hidden');
 }
 
+function renderPreview() {
+  $('.preview').html(render(content));
+  initElement('.preview');
+}
+
 $(window).on('click', function() {
   deselectInstance(selectedElement);
   selectedElement = null;
+  hideInstanceControls();
 });
 

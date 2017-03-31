@@ -14,16 +14,19 @@ function Editor(_content) {
     findInstance,
     removeInstance,
     moveInstance,
+    cloneInstance,
     regenerateId,
     get newInstanceId() {return newInstanceId;},
     set newInstanceId(val) {newInstanceId = val;},
     get content() {return _content},
   };
 
-  function prepareContent(content) {
+  function prepareContent(content, parent, container) {
     if (Array.isArray(content)) {
       content.forEach(function(instance) {
         instance.id = newId();
+        instance.parent = parent;
+        instance.container = container;
         prepareInstanceContainers(instance);
       });
     }
@@ -34,44 +37,10 @@ function Editor(_content) {
       if (instance.hasOwnProperty(key)) {
         const val = instance[key];
         if (Array.isArray(val)) {
-          prepareContent(val);
+          prepareContent(val, instance, key);
         }
       }
     }
-  }
-
-  function moveInstance(id, parentId, container, siblingId) {
-    _moveInstance(_content, id, parentId, container, siblingId);
-  }
-
-  function _moveInstance(content, id, parentId, container, siblingId) {
-    const instance = _removeInstance(content, id);
-    const parent = _findInstance(content, parentId);
-    insertInstance(instance, parent, container, siblingId);
-  }
-
-  function insertInstance(instance, parent, container, siblingId) {
-    if (!parent.hasOwnProperty(container)) {
-      parent[container] = [];
-    }
-    const arr = parent[container];
-    if (siblingId) {
-      const siblingIndex = arr.findIndex(function(instance) {
-        return instance.id === siblingId;
-      });
-      arr.splice(siblingIndex, 0, instance);
-    }
-    else {
-      arr.push(instance);
-    }
-  }
-
-  function removeInstance(id) {
-    return _removeInstance(_content, id);
-  }
-
-  function _removeInstance(arr, id) {
-    return _findInstance(arr, id, true);
   }
 
   function findInstance(id, remove) {
@@ -110,11 +79,94 @@ function Editor(_content) {
     return null;
   }
 
-  function cloneInstance(content, id) {
+  // function findContainer(content, instance) {
+  //   let container;
+  //   if (instance.parent) {
+  //     _.forOwn(parent, function(val) {
+  //       if (Array.isArray(val) && containerIncludes(val, instance)) {
+  //         container = val;
+  //         return false;
+  //       }
+  //     });
+  //   }
+  //   else {
+  //     if (containerIncludes(content, instance)) {
+  //       container = content;
+  //     }
+  //   }
+  //   return container;
+  // }
+
+  // function containerIncludes(arr, instance) {
+  //   return !!_.find(arr, function(item) {
+  //     if (item.id === instance.id) {
+  //       return true;
+  //     }
+  //   });
+  // }
+
+  function moveInstance(id, parentId, container, siblingId) {
+    _moveInstance(_content, id, parentId, container, siblingId);
+  }
+
+  function _moveInstance(content, id, parentId, container, siblingId) {
+    const instance = _removeInstance(content, id);
+    const parent = _findInstance(content, parentId);
+    insertInstance(instance, parent, container, siblingId);
+  }
+
+  function insertInstance(instance, parent, container, siblingId) {
+    if (!parent.hasOwnProperty(container)) {
+      parent[container] = [];
+    }
+    const arr = parent[container];
+    if (siblingId) {
+      const siblingIndex = arr.findIndex(function(instance) {
+        return instance.id === siblingId;
+      });
+      arr.splice(siblingIndex, 0, instance);
+    }
+    else {
+      arr.push(instance);
+    }
+    instance.parent = parent;
+    instance.container = container; 
+  }
+
+  function removeInstance(id) {
+    return _removeInstance(_content, id);
+  }
+
+  function _removeInstance(arr, id) {
+    return _findInstance(arr, id, true);
+  }
+
+  function cloneInstance(id) {
+    _cloneInstance(_content, id);
+  }
+
+  function _cloneInstance(content, id) {
     const instance = _findInstance(content, id);
     const newInstance = _.cloneDeep(instance);
     regenerateId(newInstance);
-    insertAfter(newInstance, instance.id);
+    insertInstanceAfter(content, newInstance, instance);
+    newInstance.parent = instance.parent;
+  }
+
+  function insertInstanceAfter(content, instance, sibling) {
+    let container;
+    if (sibling.parent) {
+      container = sibling.parent[sibling.container];
+    }
+    else {
+      container = content;
+    }
+    const siblingIndex = _.findIndex(container, function(item) {
+      if (item.id === sibling.id) {
+        return true;
+      }
+    });
+    container.splice(siblingIndex + 1, 0, instance);
   }
 
   function regenerateId(instance) {
@@ -126,14 +178,6 @@ function Editor(_content) {
         });
       }
     });
-  }
-
-  function insertInstanceAfter(instance, siblingId) {
-    const container = getContainer(siblingId);
-  }
-
-  function getContainer(id) {
-
   }
 
   function newId() {
