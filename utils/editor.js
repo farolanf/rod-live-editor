@@ -74,7 +74,8 @@ const editor = {
   cloneInstance(content, id) {
     const instance = editor.findInstance(content, id);
     const newInstance = _.cloneDeep(instance);
-    this.regenerateId(newInstance);
+    editor.regenerateId(newInstance);
+    editor.insertAfter(newInstance, instance.id);
   },
 
   regenerateId(instance) {
@@ -86,6 +87,14 @@ const editor = {
         });
       }
     });
+  },
+
+  insertInstanceAfter(instance, siblingId) {
+    const container = editor.getContainer(siblingId);
+  },
+
+  getContainer(id) {
+    
   },
 
   newId(start) {
