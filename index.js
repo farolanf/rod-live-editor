@@ -16,7 +16,7 @@ drake.on('over', function(el, container) {
   const parentId = $(target).data('parent-id');
   const container = $(target).data('name');
   const siblingId = sibling ? $(sibling).data('id') : null;
-  moveInstance(content, id, parentId, container, siblingId);
+  editor.moveInstance(content, id, parentId, container, siblingId);
 }).on('dragend', function() {
   if (selectedElement) {
     showInstanceControls(selectedElement);
@@ -35,7 +35,7 @@ function init() {
 function prepareContent(content) {
   if (Array.isArray(content)) {
     content.forEach(function(instance) {
-      instance.id = newId();
+      instance.id = editor.newId();
       prepareInstanceContainers(instance);
     });
   }
@@ -187,7 +187,7 @@ function editInstanceContent(el) {
 
 function deleteInstance(el) {
   const id = $(el).data('id');
-  removeInstance(content, id);
+  editor.removeInstance(content, id);
   $(el).remove();
   hideInstanceControls();
 }
@@ -218,11 +218,4 @@ $(window).on('click', function() {
   deselectInstance(selectedElement);
   selectedElement = null;
 });
-
-function newId() {
-  if (typeof newId.id === 'undefined') {
-    newId.id = 1;
-  }
-  return newId.id++;
-}
 

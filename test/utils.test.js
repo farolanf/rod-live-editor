@@ -1,5 +1,5 @@
 const assert = require('assert');
-const utils = require('../utils');
+const editor = require('../utils/editor');
 
 let content;
 
@@ -21,14 +21,14 @@ describe('utils', function() {
   });
 
   it('should find instance', function() {
-    const instance = utils.findInstance(content, 5);
+    const instance = editor.findInstance(content, 5);
     assert.deepEqual(instance, {id: 5, name: '5'});
   });
 
   it('should remove instance', function() {
-    const instance = utils.removeInstance(content, 5);
+    const instance = editor.removeInstance(content, 5);
     assert.deepEqual(instance, {id: 5, name: '5'});
-    assert(!utils.findInstance(content, 5));
+    assert(!editor.findInstance(content, 5));
   });
 
   it('should move instance', function() {
@@ -48,7 +48,7 @@ describe('utils', function() {
         ]
       },
     ];
-    utils.moveInstance(content, 5, 4, 'content');
+    editor.moveInstance(content, 5, 4, 'content');
     assert.deepEqual(content, expected);
   });
 });
