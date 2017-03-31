@@ -13,7 +13,10 @@ function Instance(instance) {
     const props = {};
     _.forOwn(module.properties, function(val, key) {
       if (val.type !== 'container') {
-        props[key] = instance.hasOwnProperty(key) ? instance[key] : val.default;
+        props[key] = {
+          type: val.type,
+          value: instance.hasOwnProperty(key) ? instance[key] : val.default,
+        };
       }
     });
     return props;
