@@ -1,13 +1,31 @@
-html, body, #app {
+html, body, #app, #editor, .editor-container, .preview {
   height: 100%;
 }
 
+#app > iframe {
+  display: block;
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
+#app > pre {
+  margin: 0;
+  height: 100%;
+}
+
+#editor {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
 .navbar {
+  z-index: 1000;
   margin-bottom: 0;
 }
 
 .gutter {
-  background-color: #eee;
+  background-color: #ddd;
 }
 .gutter-horizontal {
   cursor: col-resize;
@@ -17,40 +35,13 @@ html, body, #app {
 }
 
 .editor-container {
-  height: 100%;
   display: flex;
 }
 
-.preview * {
-  pointer-events: none;
-}
-
-.instance-container {
-  pointer-events: auto;
-}
-.gu-unselectable .instance-container {
-  box-shadow: 0 0 4px 0 blue;
-}
-.gu-mirror .instance-container, .gu-transit .instance-container {
-  box-shadow: unset !important;
-}
-.instance {
-  cursor: move;
-  pointer-events: auto;
-}
-.instance.hover {
-  box-shadow: 0 0 4px 0 violet;
-}
-.instance[contenteditable='true'] {
-  cursor: text;
-  box-shadow: 0 0 22px -2px #555;
-}
-
-#app > iframe {
-  display: block;
-  border: none;
-  width: 100%;
+.preview {
   height: 100%;
+  overflow: auto;
+  border: none;
 }
 
 .instance-controls {
@@ -73,4 +64,19 @@ html, body, #app {
 }
 .instance-controls .fa:hover {
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.property-view .list-group .list-group-item {
+  padding: 15px;
+}
+.property-view .list-group .list-group-item input {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  width: 40%;
+}
+
+.ui-dialog {
+  padding: 19px 20px 9px 20px;
 }

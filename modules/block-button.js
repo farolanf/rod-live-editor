@@ -1,7 +1,5 @@
 modules["block-button"] = {
     "output": `
-<br><br>
-
     <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0"  align="center" style="Margin: auto">
         <tr>
             <td style="border-radius: 3px; background: %backgroundColor%; text-align: center;" class="button-td">

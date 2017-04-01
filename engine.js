@@ -118,13 +118,12 @@ function renderModule(instance) {
 
     if (!module.properties) {
         console.info("no properties in the module ", instance.name, " defined");
-        return output;
+        return Editor.injectInstanceData(output, instance.id);
     }
 
     var customReplace = true;
     for (var property in module.properties)
         output = output.replace(new RegExp('%' + property + '%', 'g'), getPropertyValue(property, instance, module, customReplace));
-
 
 	//Replace Global Variables
 	// for (var property in module.properties)
@@ -132,8 +131,8 @@ function renderModule(instance) {
 	for(var key in global) {
 		output = output.replace(new RegExp('%' + key + '%', 'g'), global[key]); 
 	}
-	
-    return output;
+
+    return Editor.injectInstanceData(output, instance.id);
 }
 
 function getPropertyValue(property, instance, module, customReplace) {
@@ -201,5 +200,5 @@ function getPropertyValue(property, instance, module, customReplace) {
             console.error("Missing \"condition\" child on \"replace\" parameter of property ", property, " in module ", instance.name);
         }
     }
-    return moduleProperty.type == "container" ? `<div class="instance-container" data-name="${property}">${render(value)}</div>` : value;
+    return moduleProperty.type == "container" ? Editor.getContainerPlaceholder(property, instance.id, render(value)) : value;
 }
