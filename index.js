@@ -11,6 +11,7 @@ function App() {
     showInstanceControls,
     hideInstanceControls,
     renderPreview,
+    renderInstance(instance) {preview.renderInstance(instance)},
     set preview(val) {preview = val;},
   };
 

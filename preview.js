@@ -19,6 +19,7 @@ function Preview() {
     editInstanceContent() {editInstanceContent(selectedElement)},
     cloneInstance() {cloneInstance(selectedElement)},
     deleteInstance() {deleteInstance(selectedElement)},
+    renderInstance,
   };
 
   $(window).on('click', function() {
@@ -172,5 +173,14 @@ function Preview() {
     editor.removeInstance(id);
     $(el).remove();
     app.hideInstanceControls();
+  }
+
+  function renderInstance(instance) {
+    const el = $(instance.render());
+    const lastEl = $(`[data-id="${instance.id}"]`).replaceWith(el);
+    initElement(el);
+    if (lastEl.is(selectedElement)) {
+      selectInstance(el[0]);
+    }
   }
 }

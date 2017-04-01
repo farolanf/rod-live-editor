@@ -11,6 +11,9 @@ function Instance(instance) {
 
   return {
     getProperties,
+    setProperty,
+    render,
+    get id() {return instance.id},
   };
 
   function getProperties() {
@@ -24,5 +27,13 @@ function Instance(instance) {
       }
     });
     return props;
+  }
+
+  function setProperty(name, value) {
+    instance[name] = value;
+  }
+
+  function render() {
+    return renderModule(instance);
   }
 }

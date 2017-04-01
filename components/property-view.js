@@ -6,8 +6,15 @@ function PropertyView(editor) {
   let instanceId;
 
   return {
-    setInstance(id) {instanceId = id; render()},
+    setInstance,
   };
+
+  function setInstance(id) {
+    if (id !== instanceId) {
+      instanceId = id;
+      render();
+    }
+  }
 
   function render() {
     const instance = Instance(instanceId);
@@ -18,10 +25,15 @@ function PropertyView(editor) {
       html += `
         <div class="list-group-item">
           <span class="name">${key}</span>
-          <input class="form-control" value="${color}" data-type="${prop.type}">
+          <input class="form-control" value="${color}" data-name="${key}" data-type="${prop.type}">
         </div>`;
     });
     $('#editor .property-view .list-group').html(html);
     $('.property-view [data-type="color"]').colorpicker();
+    $('.property-view input').on('change', function(e) {
+      const value = $(this).data('type') === 'color' ? `#${this.value}` : this.value;
+      instance.setProperty($(this).data('name'), value);
+      app.renderInstance(instance);
+    });
   }
 }
