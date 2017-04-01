@@ -187,7 +187,7 @@ modules["document-html-email"] = {
             "type": "container"
         },
         "footer": {
-            "default": "Place your footer content here",
+            "default": "<tr><td>Place your footer content here</td></tr>",
             "type": "container"
         },
         "backgroundColorHeader": {
