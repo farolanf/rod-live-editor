@@ -7,13 +7,13 @@ function Dragond(initialContainers, options) {
     start, end, over, enter, leave, drop,
   });
 
-  function start() {
-    $rootElement.addClass('dnd-dragging')
-    options.start && options.start.call(this);
+  function start(e, el, src) {
+    $rootElement.addClass('dg-dragging')
+    options.start && options.start.call(el, e, el, src);
   }
 
   function end() {
-    $rootElement.removeClass('dnd-dragging')
+    $rootElement.removeClass('dg-dragging')
     options.end && options.end.call(this);
   }
 
@@ -37,7 +37,7 @@ function Dragond(initialContainers, options) {
 function Dnd(initialContainers, options) {
   options = options || {};
   let containers = initialContainers || [];
-  let lastContainer;
+  let draggedElement, lastContainer, sourceContainer;
 
   initContainers();
   events();
@@ -58,12 +58,17 @@ function Dnd(initialContainers, options) {
 
   function dragstart(e) {
     processContainer(e.target, function(container) {
-      options.enter && options.enter.call(container);
+      draggedElement = e.target;
+      lastContainer = sourceContainer = container;
+      trigger('start', draggedElement, e, draggedElement, sourceContainer);
+      trigger('enter', container, e, draggedElement, container, sourceContainer);
     });
   }
 
   function dragend(e) {
-    lastContainer && options.leave && options.leave.call(lastContainer);
+    lastContainer && trigger('leave', lastContainer, e, draggedElement, lastContainer, sourceContainer);
+    trigger('end', draggedElement, e, draggedElement, lastContainer, sourceContainer);
+    draggedElement = lastContainer = sourceContainer = null;
   }
 
   function drag(e) {
@@ -71,10 +76,9 @@ function Dnd(initialContainers, options) {
 
   function dragenter(e) {
     processContainer(e.target, function(container) {
-      e.stopPropagation();
       if (container !== lastContainer) {
         lastContainer = container;
-        options.enter && options.enter.call(container);
+        trigger('enter', container, e, draggedElement, container, sourceContainer);
       }
     });
   }
@@ -82,11 +86,10 @@ function Dnd(initialContainers, options) {
   function dragleave(e) {
     processContainer(e.target, function(container) {
       if (container !== lastContainer || !overElement(e, container)) {
-        e.stopPropagation();
         if (container === lastContainer) {
           lastContainer = null;
         }
-        options.leave && options.leave.call(container);
+        trigger('leave', container, e, draggedElement, container, sourceContainer);
       }
     });
   }
@@ -94,14 +97,13 @@ function Dnd(initialContainers, options) {
   function dragover(e) {
     processContainer(e.target, function(container) {
       e.preventDefault();
-      options.over && options.over.call(container);
+      trigger('over', container, e, draggedElement, container, sourceContainer);
     });
   }
 
   function drop(e) {
     processContainer(e.target, function(container) {
-      e.stopPropagation();
-      options.drop && options.drop.call(container);
+      trigger('drop', container, e, draggedElement, container, sourceContainer);
     });
   }
 
@@ -142,5 +144,13 @@ function Dnd(initialContainers, options) {
     const y = e.clientY;
     const rect = el.getBoundingClientRect();
     return x >= rect.left && x < rect.right && y >= rect.top && y < rect.bottom;
+  }
+
+  function trigger(event) {
+    if (options[event]) {
+      const obj = arguments[1];
+      const args = Array.prototype.slice.call(arguments, 2);
+      options[event].apply(obj, args);
+    }
   }
 }

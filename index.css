@@ -86,6 +86,9 @@ html, body, #app, #editor, .editor-container, .preview {
   padding: 19px 20px 9px 20px;
 }
 
+.dg-dragging .list-group, .dg-dragging .module-view {
+  border: 1px dashed #888;
+}
 .dragover {
-  border: 1px solid blue;
+  border: 1px solid blue !important;
 }
