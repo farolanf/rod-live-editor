@@ -5,6 +5,15 @@ function App() {
   const propertyView = window.propertyView = PropertyView(editor);
   let preview;
 
+  const dnd = new Dnd(['.module-view', '.module-view .list-group'], {
+    enter() {
+      $(this).addClass('dragover');
+    },
+    leave() {
+      $(this).removeClass('dragover');
+    }   
+  });
+
   $(init);
 
   return {
@@ -51,8 +60,8 @@ function App() {
   }
 
   function initEditor() {
-    Split(['.preview', '.property-view'], {
-      sizes: [75, 25],
+    Split(['.module-view', '.preview', '.property-view'], {
+      sizes: [25, 50, 25],
       minSize: 0
     });
     renderPreview();

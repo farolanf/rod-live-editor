@@ -9,12 +9,6 @@ function Preview() {
   const SCROLL_SPEED = 1000; // pixels per second
   let selectedElement;
 
-  const drake = dragula(null, {
-    accepts(el, target, source, sibling) {
-      return !$.contains(el, target);
-    }
-  });
-
   app.preview = {
     editInstanceContent() {editInstanceContent(selectedElement)},
     cloneInstance() {cloneInstance(selectedElement)},
@@ -35,30 +29,10 @@ function Preview() {
   $(init);
 
   function init() {
-    initDrake();
-    dragScroll(drake);
     initElement('body');
   }
 
-  function initDrake() {
-    drake.on('over', function(el, container) {
-      $(container).addClass('dragover');
-    }).on('out', function(el, container) {
-      $(container).removeClass('dragover');
-    }).on('drop', function(el, target, source, sibling) {
-      const id = $(el).data('id');
-      const parentId = $(target).data('parent-id');
-      const container = $(target).data('name');
-      const siblingId = sibling ? $(sibling).data('id') : null;
-      editor.moveInstance(id, parentId, container, siblingId);
-    }).on('dragend', function() {
-      if (selectedElement) {
-        app.showInstanceControls(selectedElement);
-      }
-    });
-  }
-
-  function dragScroll(drake) {
+  function dragScroll() {
     const scrollInterval = 50;
     const scrollStep = SCROLL_SPEED / (1000 / scrollInterval);
     let dir = 0;
@@ -93,7 +67,6 @@ function Preview() {
     const meta = $('*', startElement).contents().filter(instanceCommentFilter);
     const containers = meta.parent();
     containers.addClass('instance-container');
-    drake.containers = drake.containers.concat(containers.toArray());
     containers.each(function(i) {
       const json = meta[i].nodeValue.replace('instance-container', '');
       const data = JSON.parse(json);
