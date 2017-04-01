@@ -3,6 +3,10 @@ function Instance(instance) {
     return new Instance(instance);
   }
   
+  if (typeof instance === 'string' || typeof instance === 'number') {
+    instance = editor.findInstance(instance);
+  }
+
   const module = modules[instance.name];
 
   return {

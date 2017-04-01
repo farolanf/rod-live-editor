@@ -10,7 +10,7 @@ function PropertyView(editor) {
   };
 
   function render() {
-    const instance = Instance(editor.findInstance(instanceId));
+    const instance = Instance(instanceId);
     const props = instance.getProperties();
     let html = '';
     _.forOwn(props, function(prop, key) {
