@@ -5,16 +5,7 @@ function App() {
   const propertyView = window.propertyView = PropertyView(editor);
   let preview;
 
-  const dragond = new Dragond(['.module-list', '.module-list .list-group'], {
-    start() {
-    },
-    enter() {
-      $(this).addClass('dragover');
-    },
-    leave() {
-      $(this).removeClass('dragover');
-    }   
-  });
+  const dragond = new Dragond(['.module-list', '.module-list .list-group']);
 
   $(init);
 

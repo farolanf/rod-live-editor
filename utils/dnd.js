@@ -35,10 +35,12 @@ function Dragond(initialContainers, options) {
   }
 
   function enter(e, el, con, src) {
+    con.classList.add('dg-dragover');
     options.enter && options.enter.call(this);
   }
 
   function leave(e, el, con, src) {
+    con.classList.remove('dg-dragover');
     options.leave && options.leave.call(this);
   }
 
