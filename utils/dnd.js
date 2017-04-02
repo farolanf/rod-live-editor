@@ -2,6 +2,7 @@
 function Dragond(initialContainers, options) {
   options = options || {};
   let shadowElement, offsetX, offsetY, screenOffsetX, screenOffsetY;
+  let posX, posY, lastX, lastY, dx, dy, lastPosTimer;
   const shadowContainer = document.body;
   const nullImg = document.createElement('IMG');
 
@@ -9,7 +10,13 @@ function Dragond(initialContainers, options) {
     start, end, drag, over, enter, leave, drop,
   });
 
-  return dnd;
+  updateLastPos();
+
+  return Object.assign({}, dnd, {destroy});
+
+  function destroy() {
+    clearTimeout(lastPosTimer);
+  }
 
   function start(e, el, src) {
     calcOffsets(e, el);
@@ -27,19 +34,6 @@ function Dragond(initialContainers, options) {
     shadowElement.parentNode.removeChild(shadowElement);
   }
 
-  function drag(e, el, con, src) {
-    dragShadow(e);
-    options.drag && options.drag.call(this);
-  }
-
-  function over(e, el, con, src) {
-    // console.log(con);
-    if (el.parentNode !== con) {
-      $(con).prepend(el);
-    }
-    options.over && options.over.call(this);
-  }
-
   function enter(e, el, con, src) {
     options.enter && options.enter.call(this);
   }
@@ -48,8 +42,45 @@ function Dragond(initialContainers, options) {
     options.leave && options.leave.call(this);
   }
 
+  function drag(e, el, con, src) {
+    posX = e.screenX - screenOffsetX;
+    posY = e.screenY - screenOffsetY;
+    newDx = posX - lastX;
+    newDy = posY - lastY;
+    if (newDx !== 0) {
+      dx = newDx;
+    }
+    if (newDy !== 0) {
+      dy = newDy;
+    }
+    dragShadow(e);
+    options.drag && options.drag.call(this);
+  }
+
+  function over(e, el, con, src) {
+    insert(e, el, con, e.target);
+    options.over && options.over.call(this);
+  }
+
   function drop(e, el, con, src) {
     options.drop && options.drop.call(this);
+  }
+
+  function insert(e, el, con, sib) {
+    if (el.parent !== con) {
+      if (dx < 0 || dy < 0) {
+        $(el).insertBefore(sib);
+      }
+      else {
+        $(el).insertAfter(sib);
+      }
+    }
+  }
+
+  function updateLastPos() {
+    lastX = posX;
+    lastY = posY;
+    lastPosTimer = setTimeout(updateLastPos, 100);
   }
 
   function createShadow(el) {
@@ -82,9 +113,12 @@ function Dnd(initialContainers, options) {
   let containers = initialContainers || [];
   let draggedElement, lastContainer, sourceContainer;
   const $body = $();
+  let di = 0;
+  let dragoverTick;
 
   initContainers();
   events(window);
+  tick();
 
   return {
     $body,
@@ -103,6 +137,11 @@ function Dnd(initialContainers, options) {
       .on('dragleave', dragleave)
       .on('drop', drop);
     console.log($body.toArray());
+  }
+
+  function tick() {
+    dragoverTick = true;
+    setTimeout(tick, 50);
   }
 
   function addIframe(selector) {
@@ -130,11 +169,6 @@ function Dnd(initialContainers, options) {
     draggedElement = lastContainer = sourceContainer = null;
   }
 
-  function drag(event) {
-    const e = event.originalEvent;
-    trigger('drag', draggedElement, e, draggedElement, lastContainer, sourceContainer);
-  }
-
   function dragenter(event) {
     const e = event.originalEvent;
     processContainer(e.target, function(container) {
@@ -157,13 +191,21 @@ function Dnd(initialContainers, options) {
     });
   }
 
-  function dragover(event) {
-    // console.log(event.target);
+  function drag(event) {
     const e = event.originalEvent;
-    processContainer(e.target, function(container) {
-      e.preventDefault();
-      trigger('over', container, e, draggedElement, container, sourceContainer);
-    });
+    trigger('drag', draggedElement, e, draggedElement, lastContainer, sourceContainer);
+  }
+
+  function dragover(event) {
+    if (dragoverTick) {
+      dragoverTick = false;
+      // console.log('dragover', di++);
+      const e = event.originalEvent;
+      processContainer(e.target, function(container) {
+        e.preventDefault();
+        trigger('over', container, e, draggedElement, container, sourceContainer);
+      });
+    }
   }
 
   function drop(event) {
