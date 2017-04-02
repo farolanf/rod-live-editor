@@ -4,6 +4,7 @@ function Dragond(initialContainers, options) {
   let posX, posY, lastX, lastY, dx, dy, lastPosTimer;
   const shadowContainer = document.body;
   const nullImg = document.createElement('IMG');
+  const topWindow = window;
 
   options = options || {};
   const dndOptions = Object.assign({}, options, {
@@ -35,6 +36,7 @@ function Dragond(initialContainers, options) {
     dnd.$body.removeClass('dg-dragging')
     options.end && options.end.call(this);
     shadowElement.parentNode.removeChild(shadowElement);
+    shadowElement = null;
   }
 
   function enter(e, el, con, src) {
@@ -48,6 +50,7 @@ function Dragond(initialContainers, options) {
   }
 
   function drag(e, el, con, src) {
+    calcScreenOffset(e);
     dragShadow(e);
     options.drag && options.drag.call(this);
   }
@@ -117,16 +120,30 @@ function Dragond(initialContainers, options) {
   }
 
   function dragShadow(e) {
-    shadowElement.style.left = `${e.screenX - screenOffsetX - offsetX}px`;
-    shadowElement.style.top = `${e.screenY - screenOffsetY - offsetY}px`;
+    if (shadowElement) {
+      const x = e.screenX - screenOffsetX;
+      const y = e.screenY - screenOffsetY;
+      shadowElement.style.left = `${x - offsetX}px`;
+      shadowElement.style.top = `${y - offsetY}px`;
+    }
   }
 
   function calcOffsets(e, el) {
-    screenOffsetX = e.screenX - e.clientX;
-    screenOffsetY = e.screenY - e.clientY;
     const rect = el.getBoundingClientRect();    
     offsetX = e.clientX - rect.left;
     offsetY = e.clientY - rect.top;
+  }
+
+  // screen offset is needed to get a consistent position on iframes.
+  // it needs to be calculated on the drag event of the
+  // top window, it can't be from the mouse event because the 
+  // coordinates are different, on the drag event it's window 
+  // coordinate while on the mouse event it's screen coordinate
+  function calcScreenOffset(e) {
+    if (e.view === topWindow) {
+      screenOffsetX = e.screenX - e.clientX;
+      screenOffsetY = e.screenY - e.clientY;
+    }
   }
 }
 
@@ -230,6 +247,7 @@ function Dnd(initialContainers, options) {
   }
 
   function drag(event) {
+    // console.log(event.screenX, event.screenY, event.clientX, event.clientY);
     const e = event.originalEvent;
     trigger('drag', draggedElement, e, draggedElement, lastContainer, sourceContainer);
   }
@@ -304,4 +322,8 @@ function Dnd(initialContainers, options) {
       options[event].apply(obj, args);
     }
   }
+}
+
+function dumdPos(e) {
+  console.log(e.screenX, e.screenY, e.clientX, e.clientY);
 }

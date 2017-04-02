@@ -95,6 +95,9 @@ html, body, #app, #editor, .editor-container, .preview {
   min-height: 30px;
 }
 
+.dg-dragging .module-view iframe {
+  pointer-events: none;
+}
 .dg-shadow {
   position: fixed !important;
   pointer-events: none !important;

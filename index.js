@@ -8,7 +8,12 @@ function App() {
   const dragond = new Dragond(['.module-list', '.module-list .list-group'], {
     getElement(el, src) {
       if ($(src).is('.module-view *')) {
-        return el.cloneNode(true);
+        const rect = el.getBoundingClientRect();
+        const clone = el.cloneNode(true);
+        clone.style.position = 'absolute';
+        clone.style.width = rect.width + 'px';
+        clone.style.height = rect.height + 'px';
+        // return clone;
       }
       return el;
     },

@@ -17,7 +17,7 @@ function Preview() {
     renderInstance,
   };
 
-  $(window).on('click', function() {
+  $(window).on('click', function(e) {
     deselectInstance(selectedElement);
     selectedElement = null;
     app.hideInstanceControls();
