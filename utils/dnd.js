@@ -2,16 +2,19 @@
 function Dragond(initialContainers, options) {
   options = options || {};
   const $rootElement = $(options.rootElement || 'body');
-  let $shadowElement;
+  let shadowElement, offsetX, offsetY, screenOffsetX, screenOffsetY;
+  const nullImg = document.createElement('IMG');
 
   const dnd = new Dnd(initialContainers, {
-    start, end, over, enter, leave, drop,
+    start, end, drag, over, enter, leave, drop,
   });
 
   function start(e, el, src) {
-    $rootElement.addClass('dg-dragging');
+    calcOffsets(e, el);
     createShadow(el);
     $(el).addClass('dg-dragged');
+    $rootElement.addClass('dg-dragging');
+    e.dataTransfer.setDragImage(nullImg, null, null);
     options.start && options.start.call(el, e, el, src);
   }
 
@@ -19,7 +22,12 @@ function Dragond(initialContainers, options) {
     $rootElement.removeClass('dg-dragging')
     $(el).removeClass('dg-dragged');
     options.end && options.end.call(this);
-    $shadowElement.remove();
+    shadowElement.parentNode.removeChild(shadowElement);
+  }
+
+  function drag(e, el, con, src) {
+    dragShadow(e);
+    options.drag && options.drag.call(this);
   }
 
   function over(e, el, con, src) {
@@ -41,10 +49,25 @@ function Dragond(initialContainers, options) {
   function createShadow(el) {
     const rect = el.getBoundingClientRect();
     const clone = el.cloneNode(true);
+    clone.removeAttribute('draggable');
     clone.style.width = rect.width + 'px';
     clone.style.height = rect.height + 'px';
     clone.classList.add('dg-shadow');
-    $shadowElement = $(clone).appendTo($rootElement);
+    $rootElement.append(clone);
+    shadowElement = clone;
+  }
+
+  function dragShadow(e) {
+    shadowElement.style.left = `${e.screenX - screenOffsetX - offsetX}px`;
+    shadowElement.style.top = `${e.screenY - screenOffsetY - offsetY}px`;
+  }
+
+  function calcOffsets(e, el) {
+    screenOffsetX = e.screenX - e.clientX;
+    screenOffsetY = e.screenY - e.clientY;
+    const rect = el.getBoundingClientRect();    
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
   }
 }
 
@@ -70,7 +93,8 @@ function Dnd(initialContainers, options) {
       .on('drop', drop);
   }
 
-  function dragstart(e) {
+  function dragstart(event) {
+    const e = event.originalEvent;
     processContainer(e.target, function(container) {
       draggedElement = e.target;
       lastContainer = sourceContainer = container;
@@ -79,16 +103,20 @@ function Dnd(initialContainers, options) {
     });
   }
 
-  function dragend(e) {
+  function dragend(event) {
+    const e = event.originalEvent;
     lastContainer && trigger('leave', lastContainer, e, draggedElement, lastContainer, sourceContainer);
     trigger('end', draggedElement, e, draggedElement, lastContainer, sourceContainer);
     draggedElement = lastContainer = sourceContainer = null;
   }
 
-  function drag(e) {
+  function drag(event) {
+    const e = event.originalEvent;
+    trigger('drag', draggedElement, e, draggedElement, lastContainer, sourceContainer);
   }
 
-  function dragenter(e) {
+  function dragenter(event) {
+    const e = event.originalEvent;
     processContainer(e.target, function(container) {
       if (container !== lastContainer) {
         lastContainer = container;
@@ -97,7 +125,8 @@ function Dnd(initialContainers, options) {
     });
   }
 
-  function dragleave(e) {
+  function dragleave(event) {
+    const e = event.originalEvent;
     processContainer(e.target, function(container) {
       if (container !== lastContainer || !overElement(e, container)) {
         if (container === lastContainer) {
@@ -108,14 +137,16 @@ function Dnd(initialContainers, options) {
     });
   }
 
-  function dragover(e) {
+  function dragover(event) {
+    const e = event.originalEvent;
     processContainer(e.target, function(container) {
       e.preventDefault();
       trigger('over', container, e, draggedElement, container, sourceContainer);
     });
   }
 
-  function drop(e) {
+  function drop(event) {
+    const e = event.originalEvent;
     processContainer(e.target, function(container) {
       trigger('drop', container, e, draggedElement, container, sourceContainer);
     });

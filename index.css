@@ -100,10 +100,8 @@ html, body, #app, #editor, .editor-container, .preview {
 }
 .dg-shadow {
   position: fixed !important;
+  pointer-events: none !important;
   margin: 0 !important;
   z-index: 9999 !important;
   opacity: 0.8;
-  top: 50%;
-  left: 50%;
-  background-color: red;
 }
