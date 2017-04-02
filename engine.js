@@ -170,7 +170,7 @@ function getPropertyValue(property, instance, module, customReplace) {
 
     //If property is of type text do replacements 
     if (moduleProperty.hasOwnProperty("type") && moduleProperty.type == "text") {
-        console.log(value);
+        // console.log(value);
     }
 
     /* Conditional Replace: override value property if necessary */

@@ -1,6 +1,6 @@
-body * {
-  pointer-events: none;
-}
+// body * {
+//   pointer-events: none;
+// }
 
 .gu-unselectable .instance-container {
   outline: 1px dashed blue;
@@ -25,4 +25,14 @@ body * {
 .instance[contenteditable='true'] {
   cursor: text;
   box-shadow: 0 0 22px -2px #555;
+}
+
+.dg-dragging td {
+  border: 1px dashed #888;
+}
+.dragover {
+  border: 1px solid red !important;
+}
+.dg-dragged {
+  opacity: 0.5;
 }

@@ -1,26 +1,28 @@
 
 function Dragond(initialContainers, options) {
   options = options || {};
-  const $rootElement = $(options.rootElement || 'body');
   let shadowElement, offsetX, offsetY, screenOffsetX, screenOffsetY;
+  const shadowContainer = document.body;
   const nullImg = document.createElement('IMG');
 
   const dnd = new Dnd(initialContainers, {
     start, end, drag, over, enter, leave, drop,
   });
 
+  return dnd;
+
   function start(e, el, src) {
     calcOffsets(e, el);
     createShadow(el);
     $(el).addClass('dg-dragged');
-    $rootElement.addClass('dg-dragging');
+    dnd.$body.addClass('dg-dragging');
     e.dataTransfer.setDragImage(nullImg, null, null);
     options.start && options.start.call(el, e, el, src);
   }
 
   function end(e, el, con, src) {
-    $rootElement.removeClass('dg-dragging')
     $(el).removeClass('dg-dragged');
+    dnd.$body.removeClass('dg-dragging')
     options.end && options.end.call(this);
     shadowElement.parentNode.removeChild(shadowElement);
   }
@@ -31,6 +33,10 @@ function Dragond(initialContainers, options) {
   }
 
   function over(e, el, con, src) {
+    // console.log(con);
+    if (el.parentNode !== con) {
+      $(con).prepend(el);
+    }
     options.over && options.over.call(this);
   }
 
@@ -53,7 +59,7 @@ function Dragond(initialContainers, options) {
     clone.style.width = rect.width + 'px';
     clone.style.height = rect.height + 'px';
     clone.classList.add('dg-shadow');
-    $rootElement.append(clone);
+    shadowContainer.append(clone);
     shadowElement = clone;
   }
 
@@ -75,22 +81,36 @@ function Dnd(initialContainers, options) {
   options = options || {};
   let containers = initialContainers || [];
   let draggedElement, lastContainer, sourceContainer;
+  const $body = $();
 
   initContainers();
-  events();
+  events(window);
 
   return {
+    $body,
+    addIframe,
+    addContainers,
     set containers(c) {containers = c; initContainers()},
   };
 
-  function events() {
-    $(window).on('dragstart', dragstart)
+  function events(win) {
+    $body.push(win.document.body);
+    $(win).on('dragstart', dragstart)
       .on('dragend', dragend)
       .on('drag', drag)
       .on('dragover', dragover)
       .on('dragenter', dragenter)
       .on('dragleave', dragleave)
       .on('drop', drop);
+    console.log($body.toArray());
+  }
+
+  function addIframe(selector) {
+    $(selector).each(function() {
+      if ($(this).is('iframe')) {
+        events(this.contentWindow);
+      }
+    });
   }
 
   function dragstart(event) {
@@ -138,6 +158,7 @@ function Dnd(initialContainers, options) {
   }
 
   function dragover(event) {
+    // console.log(event.target);
     const e = event.originalEvent;
     processContainer(e.target, function(container) {
       e.preventDefault();
@@ -156,6 +177,12 @@ function Dnd(initialContainers, options) {
     containers.forEach(function(c) {
       $(c).children().prop('draggable', 'true');
     });
+  }
+
+  function addContainers() {
+    containers = containers.concat(Array.prototype.slice.call(arguments));
+    initContainers();
+    console.log(getContainerElements());
   }
 
   function getContainerElements() {

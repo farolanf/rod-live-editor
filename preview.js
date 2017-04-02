@@ -1,5 +1,5 @@
 
-new Preview();
+// new Preview();
 
 function Preview() {
   const editor = window.parent.editor;
