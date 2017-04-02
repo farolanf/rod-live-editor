@@ -56,11 +56,8 @@ function Dragond(initialContainers, options) {
   }
 
   function over(e, el, con, src) {
-    posX = e.screenX - screenOffsetX;
-    posY = e.screenY - screenOffsetY;
-    dx = posX - lastX;
-    dy = posY - lastY;
-    insert(e, el, con, e.target);
+    calcDeltaPos(e);
+    // insert(e, el, con, e.target);
     options.over && options.over.call(this);
   }
 
@@ -77,31 +74,43 @@ function Dragond(initialContainers, options) {
         con.appendChild(el);
       }
       else if (dx !== 0 || dy !== 0) {
-        const len = 20;
-        const rect = target.getBoundingClientRect();
-        const left = rect.left + len;
-        const right = rect.right - len;
-        const top = rect.top + len;
-        const bottom = rect.bottom - len;
-        const x = e.screenX - screenOffsetX;
-        const y = e.screenY - screenOffsetY;
-        const beforeH = dx < 0;
-        const beforeV = dy < 0;
-        const allowBeforeH = x < left;
-        const allowBeforeV = y < top;
-        const allowAfterH = x > right;
-        const allowAfterV = y > bottom;
-        const sibling = target.closest('[draggable]');
-        if ((beforeH && allowBeforeH) || (beforeV && allowBeforeV)) {
-          $(el).insertBefore(sibling);
-        }
-        else if ((!beforeH && allowAfterH) || (!beforeV && allowAfterV)) {
-          $(el).insertAfter(sibling);
-        }
+        insertElement(e, el, target);
       }
     }
   }
 
+  function insertElement(e, el, target) {
+    const len = 5;
+    const rect = target.getBoundingClientRect();
+    const left = rect.left + len;
+    const right = rect.right - len;
+    const top = rect.top + len;
+    const bottom = rect.bottom - len;
+    const x = e.clientX;
+    const y = e.clientY;
+    const beforeH = dx < 0;
+    const beforeV = dy < 0;
+    const allowBeforeH = x < left;
+    const allowBeforeV = y < top;
+    const allowAfterH = x > right;
+    const allowAfterV = y > bottom;
+    const sibling = target.closest('[draggable]');
+    if ((beforeH && allowBeforeH) || (beforeV && allowBeforeV)) {
+      $(el).insertBefore(sibling);
+    }
+    else if ((!beforeH && allowAfterH) || (!beforeV && allowAfterV)) {
+      $(el).insertAfter(sibling);
+    }
+  }
+
+  function calcDeltaPos(e) {
+    posX = e.clientX;
+    posY = e.clientY;
+    dx = posX - lastX;
+    dy = posY - lastY;
+  }
+
+  // give time between update to support slow dragging
   function updateLastPos() {
     lastX = posX;
     lastY = posY;
@@ -120,11 +129,12 @@ function Dragond(initialContainers, options) {
   }
 
   function dragShadow(e) {
+    dumpPos(e);
     if (shadowElement) {
-      const x = e.screenX - screenOffsetX;
-      const y = e.screenY - screenOffsetY;
-      shadowElement.style.left = `${x - offsetX}px`;
-      shadowElement.style.top = `${y - offsetY}px`;
+      const rootClientX = e.screenX - screenOffsetX;
+      const rootClientY = e.screenY - screenOffsetY;
+      shadowElement.style.left = `${rootClientX - offsetX}px`;
+      shadowElement.style.top = `${rootClientY - offsetY}px`;
     }
   }
 
@@ -324,6 +334,6 @@ function Dnd(initialContainers, options) {
   }
 }
 
-function dumdPos(e) {
+function dumpPos(e) {
   console.log(e.screenX, e.screenY, e.clientX, e.clientY);
 }
