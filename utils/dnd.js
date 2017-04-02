@@ -64,7 +64,6 @@ function Dragond(initialContainers, options) {
 
   function insert(e, el, con, target) {
     if (el.parent !== con) {
-      console.log(target === con, con.childElementCount);
       if (target === con && con.childElementCount === 0) {
         con.appendChild(el);
       }
@@ -77,15 +76,16 @@ function Dragond(initialContainers, options) {
         const bottom = rect.bottom - len;
         const x = e.screenX - screenOffsetX;
         const y = e.screenY - screenOffsetY;
-        const before = dx < 0 || dy < 0;
-        const allowBefore = x < left || y < top;
-        const allowAfter = x > right || y > bottom;
-        if (before && allowBefore) {
-          // console.log(dx, dy, before, allowBefore);
+        const beforeH = dx < 0;
+        const beforeV = dy < 0;
+        const allowBeforeH = x < left;
+        const allowBeforeV = y < top;
+        const allowAfterH = x > right;
+        const allowAfterV = y > bottom;
+        if ((beforeH && allowBeforeH) || (beforeV && allowBeforeV)) {
           $(el).insertBefore(target);
         }
-        else if (!before && allowAfter) {
-          // console.log(dx, dy, before, allowAfter);
+        else if ((!beforeH && allowAfterH) || (!beforeV && allowAfterV)) {
           $(el).insertAfter(target);
         }
       }
