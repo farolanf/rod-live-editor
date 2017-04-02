@@ -47,14 +47,8 @@ function Dragond(initialContainers, options) {
   function drag(e, el, con, src) {
     posX = e.screenX - screenOffsetX;
     posY = e.screenY - screenOffsetY;
-    newDx = posX - lastX;
-    newDy = posY - lastY;
-    if (newDx !== 0) {
-      dx = newDx;
-    }
-    if (newDy !== 0) {
-      dy = newDy;
-    }
+    dx = posX - lastX;
+    dy = posY - lastY;
     dragShadow(e);
     options.drag && options.drag.call(this);
   }
@@ -68,13 +62,32 @@ function Dragond(initialContainers, options) {
     options.drop && options.drop.call(this);
   }
 
-  function insert(e, el, con, sib) {
+  function insert(e, el, con, target) {
     if (el.parent !== con) {
-      if (dx < 0 || dy < 0) {
-        $(el).insertBefore(sib);
+      console.log(target === con, con.childElementCount);
+      if (target === con && con.childElementCount === 0) {
+        con.appendChild(el);
       }
-      else {
-        $(el).insertAfter(sib);
+      else if (dx !== 0 || dy !== 0) {
+        const len = 20;
+        const rect = target.getBoundingClientRect();
+        const left = rect.left + len;
+        const right = rect.right - len;
+        const top = rect.top + len;
+        const bottom = rect.bottom - len;
+        const x = e.screenX - screenOffsetX;
+        const y = e.screenY - screenOffsetY;
+        const before = dx < 0 || dy < 0;
+        const allowBefore = x < left || y < top;
+        const allowAfter = x > right || y > bottom;
+        if (before && allowBefore) {
+          // console.log(dx, dy, before, allowBefore);
+          $(el).insertBefore(target);
+        }
+        else if (!before && allowAfter) {
+          // console.log(dx, dy, before, allowAfter);
+          $(el).insertAfter(target);
+        }
       }
     }
   }
@@ -82,7 +95,7 @@ function Dragond(initialContainers, options) {
   function updateLastPos() {
     lastX = posX;
     lastY = posY;
-    lastPosTimer = setTimeout(updateLastPos, 100);
+    lastPosTimer = setTimeout(updateLastPos, 200);
   }
 
   function createShadow(el) {
