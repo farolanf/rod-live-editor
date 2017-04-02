@@ -6,6 +6,8 @@ function App() {
   let preview;
 
   const dragond = new Dragond(['.module-view', '.module-view .list-group'], {
+    start() {
+    },
     enter() {
       $(this).addClass('dragover');
     },

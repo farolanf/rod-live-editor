@@ -38,7 +38,7 @@ html, body, #app, #editor, .editor-container, .preview {
   display: flex;
 }
 
-.module-view iframe {
+.list-group-item iframe {
   width: 100%;
   border: 1px solid #eee;
 }
@@ -86,9 +86,24 @@ html, body, #app, #editor, .editor-container, .preview {
   padding: 19px 20px 9px 20px;
 }
 
+.dg-dragging {
+  user-select: none !important;
+}
 .dg-dragging .list-group, .dg-dragging .module-view {
   border: 1px dashed #888;
 }
 .dragover {
   border: 1px solid blue !important;
+}
+.dg-dragged {
+  opacity: 0.5;
+}
+.dg-shadow {
+  position: fixed !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+  opacity: 0.8;
+  top: 50%;
+  left: 50%;
+  background-color: red;
 }

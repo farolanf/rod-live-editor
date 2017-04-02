@@ -2,35 +2,49 @@
 function Dragond(initialContainers, options) {
   options = options || {};
   const $rootElement = $(options.rootElement || 'body');
+  let $shadowElement;
 
   const dnd = new Dnd(initialContainers, {
     start, end, over, enter, leave, drop,
   });
 
   function start(e, el, src) {
-    $rootElement.addClass('dg-dragging')
+    $rootElement.addClass('dg-dragging');
+    createShadow(el);
+    $(el).addClass('dg-dragged');
     options.start && options.start.call(el, e, el, src);
   }
 
-  function end() {
+  function end(e, el, con, src) {
     $rootElement.removeClass('dg-dragging')
+    $(el).removeClass('dg-dragged');
     options.end && options.end.call(this);
+    $shadowElement.remove();
   }
 
-  function over() {
+  function over(e, el, con, src) {
     options.over && options.over.call(this);
   }
 
-  function enter() {
+  function enter(e, el, con, src) {
     options.enter && options.enter.call(this);
   }
 
-  function leave() {
+  function leave(e, el, con, src) {
     options.leave && options.leave.call(this);
   }
 
-  function drop() {
+  function drop(e, el, con, src) {
     options.drop && options.drop.call(this);
+  }
+
+  function createShadow(el) {
+    const rect = el.getBoundingClientRect();
+    const clone = el.cloneNode(true);
+    clone.style.width = rect.width + 'px';
+    clone.style.height = rect.height + 'px';
+    clone.classList.add('dg-shadow');
+    $shadowElement = $(clone).appendTo($rootElement);
   }
 }
 
