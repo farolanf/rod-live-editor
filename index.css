@@ -95,15 +95,6 @@ html, body, #app, #editor, .editor-container, .preview {
   min-height: 30px;
 }
 
-.dg-dragging .list-group, .dg-dragging .module-list {
-  border: 1px dashed #888;
-}
-.dg-dragover {
-  border: 1px solid blue !important;
-}
-.dg-dragged {
-  opacity: 0.5;
-}
 .dg-shadow {
   position: fixed !important;
   pointer-events: none !important;

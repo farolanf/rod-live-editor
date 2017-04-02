@@ -5,7 +5,19 @@ function App() {
   const propertyView = window.propertyView = PropertyView(editor);
   let preview;
 
-  const dragond = new Dragond(['.module-list', '.module-list .list-group']);
+  const dragond = new Dragond(['.module-list', '.module-list .list-group'], {
+    getElement(el, src) {
+      if ($(src).is('.module-view *')) {
+        return el.cloneNode(true);
+      }
+      return el;
+    },
+    accepts(el, con, src) {
+      return !$(con).is('.module-view *');
+    }
+  });
+
+  window.dragond = dragond;
 
   $(init);
 
@@ -102,9 +114,7 @@ function App() {
       </body>
     `);
     $('.preview').attr('srcdoc', html).on('load', function() {
-      const tds = $('.preview').contents().find('td').toArray();
       dragond.addIframe('.preview');
-      dragond.addContainers(tds);
     });
   }
 }

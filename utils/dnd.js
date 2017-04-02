@@ -1,18 +1,21 @@
 
 function Dragond(initialContainers, options) {
-  options = options || {};
   let shadowElement, offsetX, offsetY, screenOffsetX, screenOffsetY;
   let posX, posY, lastX, lastY, dx, dy, lastPosTimer;
   const shadowContainer = document.body;
   const nullImg = document.createElement('IMG');
 
-  const dnd = new Dnd(initialContainers, {
+  options = options || {};
+  const dndOptions = Object.assign({}, options, {
     start, end, drag, over, enter, leave, drop,
   });
+  const dnd = new Dnd(initialContainers, dndOptions);
 
   updateLastPos();
 
-  return Object.assign({}, dnd, {destroy});
+  return Object.assign({}, dnd, {
+    destroy,
+  });
 
   function destroy() {
     clearTimeout(lastPosTimer);
@@ -45,15 +48,15 @@ function Dragond(initialContainers, options) {
   }
 
   function drag(e, el, con, src) {
-    posX = e.screenX - screenOffsetX;
-    posY = e.screenY - screenOffsetY;
-    dx = posX - lastX;
-    dy = posY - lastY;
     dragShadow(e);
     options.drag && options.drag.call(this);
   }
 
   function over(e, el, con, src) {
+    posX = e.screenX - screenOffsetX;
+    posY = e.screenY - screenOffsetY;
+    dx = posX - lastX;
+    dy = posY - lastY;
     insert(e, el, con, e.target);
     options.over && options.over.call(this);
   }
@@ -64,6 +67,9 @@ function Dragond(initialContainers, options) {
 
   function insert(e, el, con, target) {
     if (el.parent !== con) {
+      if ($.contains(el, con)) {
+        return;
+      }
       if (target === con && con.childElementCount === 0) {
         con.appendChild(el);
       }
@@ -82,11 +88,12 @@ function Dragond(initialContainers, options) {
         const allowBeforeV = y < top;
         const allowAfterH = x > right;
         const allowAfterV = y > bottom;
+        const sibling = target.closest('[draggable]');
         if ((beforeH && allowBeforeH) || (beforeV && allowBeforeV)) {
-          $(el).insertBefore(target);
+          $(el).insertBefore(sibling);
         }
         else if ((!beforeH && allowAfterH) || (!beforeV && allowAfterV)) {
-          $(el).insertAfter(target);
+          $(el).insertAfter(sibling);
         }
       }
     }
@@ -124,12 +131,17 @@ function Dragond(initialContainers, options) {
 }
 
 function Dnd(initialContainers, options) {
-  options = options || {};
   let containers = initialContainers || [];
   let draggedElement, lastContainer, sourceContainer;
   const $body = $();
-  let di = 0;
   let dragoverTick;
+
+  const defaultOptions = {
+    copy: false,
+    accepts,
+    getElement,
+  };
+  options = Object.assign({}, defaultOptions, options || {});
 
   initContainers();
   events(window);
@@ -154,6 +166,17 @@ function Dnd(initialContainers, options) {
     console.log($body.toArray());
   }
 
+  function accepts(el, con, src) {
+    return true;
+  }
+
+  function getElement(el, src) {
+    if (options.copy) {
+      return el.cloneNode(true);
+    }
+    return el;
+  }
+
   function tick() {
     dragoverTick = true;
     setTimeout(tick, 50);
@@ -170,7 +193,7 @@ function Dnd(initialContainers, options) {
   function dragstart(event) {
     const e = event.originalEvent;
     processContainer(e.target, function(container) {
-      draggedElement = e.target;
+      draggedElement = options.getElement(e.target, container);
       lastContainer = sourceContainer = container;
       trigger('start', draggedElement, e, draggedElement, sourceContainer);
       trigger('enter', container, e, draggedElement, container, sourceContainer);
@@ -212,9 +235,9 @@ function Dnd(initialContainers, options) {
   }
 
   function dragover(event) {
-    if (dragoverTick) {
+    if (dragoverTick && 
+    options.accepts(draggedElement, lastContainer, sourceContainer)) {
       dragoverTick = false;
-      // console.log('dragover', di++);
       const e = event.originalEvent;
       processContainer(e.target, function(container) {
         e.preventDefault();
@@ -239,7 +262,6 @@ function Dnd(initialContainers, options) {
   function addContainers() {
     containers = containers.concat(Array.prototype.slice.call(arguments));
     initContainers();
-    console.log(getContainerElements());
   }
 
   function getContainerElements() {

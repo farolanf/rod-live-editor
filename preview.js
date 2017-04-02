@@ -1,10 +1,11 @@
 
-// new Preview();
+new Preview();
 
 function Preview() {
   const editor = window.parent.editor;
   const propertyView = window.parent.propertyView;
   const app = window.parent.app;
+  const dragond = window.parent.dragond;
 
   const SCROLL_SPEED = 1000; // pixels per second
   let selectedElement;
@@ -32,32 +33,6 @@ function Preview() {
     initElement('body');
   }
 
-  function dragScroll() {
-    const scrollInterval = 50;
-    const scrollStep = SCROLL_SPEED / (1000 / scrollInterval);
-    let dir = 0;
-    $(document.body).on('mousemove', function(e) {
-      const height = $(this).height();
-      const y = e.pageY - this.scrollTop;
-      const h = height * 0.1; 
-      if (y < height * 0.1) {
-        dir = (y - h) / h;
-      } else if (y > height * 0.9) {
-        dir = (y - height * 0.9) / h;
-      }
-      else {
-        dir = 0;
-      }
-    });
-    autoScroll();
-    function autoScroll() {
-      if (drake.dragging && dir !== 0) {
-        this.scrollTop += dir * scrollStep;
-      }
-      setTimeout(autoScroll.bind(document.body), scrollInterval);
-    }
-  }
-
   function initElement(startElement) {
     initContainers(startElement);
     initInstanceElements(startElement);
@@ -66,6 +41,7 @@ function Preview() {
   function initContainers(startElement) {
     const meta = $('*', startElement).contents().filter(instanceCommentFilter);
     const containers = meta.parent();
+    dragond.addContainers(containers);
     containers.addClass('instance-container');
     containers.each(function(i) {
       const json = meta[i].nodeValue.replace('instance-container', '');
