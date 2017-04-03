@@ -23,7 +23,6 @@ function PropertyView(editor) {
     const props = instance.getProperties();
     let html = `<div class="list-group-item module-name">${instance.name}</div>`;
     _.forOwn(props, function(prop, key) {
-      console.log(key, prop);
       const color = prop.value.replace('#', '');
       html += `
         <div class="list-group-item">

@@ -179,7 +179,7 @@ modules["document-html-email"] = {
             "type": "text"
         },
 		"body": {
-            "default": "Place your body content here",
+            "default": "<tr><td>Place your body content here</td></tr>",
             "type": "container"
         },
         "header": {
