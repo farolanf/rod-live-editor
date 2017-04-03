@@ -26,39 +26,39 @@ function Dragond(initialContainers, options) {
     options.shadow && dragShadow.create(el, e);
     $(el).addClass('dg-dragged');
     dnd.$body.addClass('dg-dragging');
-    options.start && options.start.call(el, e, el, src);
+    trigger('start', el, e, el, src);
   }
 
   function end(e, el, con, src) {
     $(el).removeClass('dg-dragged');
     dnd.$body.removeClass('dg-dragging')
-    options.end && options.end.call(this);
     options.shadow && dragShadow.remove();
+    trigger('end', el, e, el, con, src);
   }
 
   function enter(e, el, con, src) {
     con.classList.add('dg-dragover');
-    options.enter && options.enter.call(this);
+    trigger('enter', con, e, el, con, src);
   }
 
   function leave(e, el, con, src) {
     con.classList.remove('dg-dragover');
-    options.leave && options.leave.call(this);
+    trigger('leave', con, e, el, con, src);
   }
 
   function drag(e, el, con, src) {
     options.shadow && dragShadow.drag(e);
-    options.drag && options.drag.call(this);
+    trigger('drag', con, e, el, con, src);
   }
 
   function over(e, el, con, src) {
     deltaPos.update(e);
     insert(e, el, con);
-    options.over && options.over.call(this);
+    trigger('over', con, e, el, con, src);
   }
 
   function drop(e, el, con, src) {
-    options.drop && options.drop.call(this);
+    trigger('drop', con, e, el, con, src, nextSibling);
   }
 
   function insert(e, el, con) {
@@ -93,12 +93,21 @@ function Dragond(initialContainers, options) {
     const sibling = e.target.closest('[draggable]');
     if ((beforeH && allowBeforeH) || (beforeV && allowBeforeV)) {
       $(el).insertBefore(sibling);
+      nextSibling = sibling;
     }
     else if ((!beforeH && allowAfterH) || (!beforeV && allowAfterV)) {
       $(el).insertAfter(sibling);
+      nextSibling = $(el).next()[0];
     }
   }
 
+  function trigger(event) {
+    if (options[event]) {
+      const obj = arguments[1];
+      const args = Array.prototype.slice.call(arguments, 2);
+      options[event].apply(obj, args);
+    }
+  }
 }
 
 /**

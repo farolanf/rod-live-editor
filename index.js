@@ -20,7 +20,10 @@ function App() {
     },
     accepts(el, con, src) {
       return !$(con).is('.module-view *');
-    }
+    },
+    drop(e, el, con, src, sibling) {
+      console.log(el, con, sibling);
+    },
   });
 
   window.dragond = dragond;
@@ -95,7 +98,7 @@ function App() {
 
   function showInstanceControls(el) {
     const rect = el.getBoundingClientRect();
-    const pos = domutils.topClientPos(rect.right, rect.top, el);
+    const pos = domutils.topClientPos(rect.right, rect.top, el.ownerDocument.defaultView);
     $('.instance-controls').css('left', pos.x +'px')
       .css('top', pos.y+'px').removeClass('hidden');
   }
