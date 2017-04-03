@@ -1,8 +1,6 @@
 
 function Dragond(initialContainers, options) {
-  const shadowContainer = document.body;
-  let shadowElement, offsetX, offsetY;
-  const nullImg = document.createElement('IMG');
+  const dragShadow = new DragShadow();
   let posX, posY, lastX, lastY, dx, dy, lastPosTimer;
 
   options = options || {};
@@ -22,11 +20,7 @@ function Dragond(initialContainers, options) {
   }
 
   function start(e, el, src) {
-    calcOffsets(e, el);
-    if (options.shadow) {
-      createShadow(el);
-      e.dataTransfer.setDragImage(nullImg, null, null);
-    }
+    options.shadow && dragShadow.create(el, e);
     $(el).addClass('dg-dragged');
     dnd.$body.addClass('dg-dragging');
     options.start && options.start.call(el, e, el, src);
@@ -36,10 +30,7 @@ function Dragond(initialContainers, options) {
     $(el).removeClass('dg-dragged');
     dnd.$body.removeClass('dg-dragging')
     options.end && options.end.call(this);
-    if (options.shadow) {
-      shadowElement.parentNode.removeChild(shadowElement);
-      shadowElement = null;
-    }
+    options.shadow && dragShadow.remove();
   }
 
   function enter(e, el, con, src) {
@@ -53,7 +44,7 @@ function Dragond(initialContainers, options) {
   }
 
   function drag(e, el, con, src) {
-    options.shadow && dragShadow(e);
+    options.shadow && dragShadow.drag(e);
     options.drag && options.drag.call(this);
   }
 
@@ -118,8 +109,21 @@ function Dragond(initialContainers, options) {
     lastY = posY;
     lastPosTimer = setTimeout(updateLastPos, 200);
   }
+}
 
-  function createShadow(el) {
+function DragShadow() {
+  const shadowContainer = document.body;
+  const nullImg = document.createElement('IMG');
+  let shadowElement, offsetX, offsetY;
+
+  return {
+    create,
+    remove,
+    drag,
+  };
+
+  function create(el, e) {
+    calcOffsets(el, e);
     const rect = el.getBoundingClientRect();
     const clone = el.cloneNode(true);
     clone.removeAttribute('draggable');
@@ -128,9 +132,17 @@ function Dragond(initialContainers, options) {
     clone.classList.add('dg-shadow');
     shadowContainer.append(clone);
     shadowElement = clone;
+    e.dataTransfer.setDragImage(nullImg, null, null);
   }
 
-  function dragShadow(e) {
+  function remove() {
+    if (shadowElement && shadowElement.parentNode) {
+      shadowElement.parentNode.removeChild(shadowElement);
+      shadowElement = null;
+    }
+  }
+
+  function drag(e) {
     if (shadowElement) {
       const pos = domutils.topClientPos(e.clientX, e.clientY, e.view);
       shadowElement.style.left = `${pos.x - offsetX}px`;
@@ -138,7 +150,7 @@ function Dragond(initialContainers, options) {
     }
   }
 
-  function calcOffsets(e, el) {
+  function calcOffsets(el, e) {
     const rect = el.getBoundingClientRect();    
     offsetX = e.clientX - rect.left;
     offsetY = e.clientY - rect.top;
