@@ -26,7 +26,11 @@ function App() {
       // return !con.classList.contains('list-group');
     },
     drop(e, el, con, src, sibling) {
-      // console.log(el, con, sibling);
+      const id = $(el).data('id');
+      const parentId = $(con).data('parent-id');
+      const container = $(con).data('name');
+      const siblingId = $(sibling).data('id');
+      editor.moveInstance(id, parentId, container, siblingId);
     },
   });
 
