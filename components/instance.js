@@ -10,6 +10,7 @@ function Instance(instance) {
   }
 
   const module = modules[instance.name];
+  const renderer = new Renderer(modules, globalProperties);
 
   return {
     getProperties,
@@ -36,6 +37,6 @@ function Instance(instance) {
   }
 
   function render() {
-    return renderModule(instance);
+    return renderer.renderModule(instance);
   }
 }

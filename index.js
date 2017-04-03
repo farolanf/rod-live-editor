@@ -111,7 +111,8 @@ function App() {
   }
 
   function renderPreview() {
-    let html = render(content);
+    const renderer = new Renderer(modules, globalProperties);
+    let html = renderer.render(content);
     html = html.replace(/<\/head>/, `
         <link href="preview.css" rel="stylesheet">
       </head>

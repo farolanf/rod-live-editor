@@ -1,6 +1,6 @@
 'use strict';
 
-if (typeof require !== undefined) {
+if (typeof require !== 'undefined') {
     var Editor = require('./utils/editor');
 }
 
