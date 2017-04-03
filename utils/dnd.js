@@ -34,6 +34,7 @@ function Dragond(initialContainers, options) {
     dnd.$body.removeClass('dg-dragging')
     options.shadow && dragShadow.remove();
     trigger('end', el, e, el, con, src);
+    nextSibling = null;
   }
 
   function enter(e, el, con, src) {
@@ -52,13 +53,14 @@ function Dragond(initialContainers, options) {
   }
 
   function over(e, el, con, src) {
-    deltaPos.update(e);
-    insert(e, el, con);
+    // deltaPos.update(e);
+    // insert(e, el, con);
     trigger('over', con, e, el, con, src);
   }
 
   function drop(e, el, con, src) {
-    trigger('drop', con, e, el, con, src, nextSibling);
+    const sibling = $(el).next()[0];
+    trigger('drop', con, e, el, con, src, sibling);
   }
 
   function insert(e, el, con) {
@@ -93,11 +95,9 @@ function Dragond(initialContainers, options) {
     const sibling = e.target.closest('[draggable]');
     if ((beforeH && allowBeforeH) || (beforeV && allowBeforeV)) {
       $(el).insertBefore(sibling);
-      nextSibling = sibling;
     }
     else if ((!beforeH && allowAfterH) || (!beforeV && allowAfterV)) {
       $(el).insertAfter(sibling);
-      nextSibling = $(el).next()[0];
     }
   }
 
@@ -212,7 +212,6 @@ function Dnd(initialContainers, options) {
   let containers = initialContainers || [];
   let draggedElement, lastContainer, sourceContainer;
   const $body = $();
-  let dragoverTick;
 
   const defaultOptions = {
     copy: false,
@@ -223,7 +222,6 @@ function Dnd(initialContainers, options) {
 
   initContainers();
   events(window);
-  tick();
 
   return {
     $body,
@@ -253,11 +251,6 @@ function Dnd(initialContainers, options) {
       return el.cloneNode(true);
     }
     return el;
-  }
-
-  function tick() {
-    dragoverTick = true;
-    setTimeout(tick, 50);
   }
 
   function addIframe(selector) {
@@ -313,18 +306,17 @@ function Dnd(initialContainers, options) {
   }
 
   function dragover(event) {
-    if (dragoverTick && 
-    options.accepts(draggedElement, lastContainer, sourceContainer)) {
-      dragoverTick = false;
-      const e = event.originalEvent;
-      processContainer(e.target, function(container) {
+    const e = event.originalEvent;
+    processContainer(e.target, function(container) {
+      if (options.accepts(draggedElement, container, sourceContainer)) {
         e.preventDefault();
         trigger('over', container, e, draggedElement, container, sourceContainer);
-      });
-    }
+      }
+    });
   }
 
   function drop(event) {
+    console.log('drop');
     const e = event.originalEvent;
     processContainer(e.target, function(container) {
       trigger('drop', container, e, draggedElement, container, sourceContainer);
