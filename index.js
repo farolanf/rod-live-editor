@@ -6,6 +6,7 @@ function App() {
   let preview;
 
   const dragond = new Dragond(['.module-list', '.module-list .list-group'], {
+    shadow: true,
     getElement(el, src) {
       if ($(src).is('.module-view *')) {
         const rect = el.getBoundingClientRect();

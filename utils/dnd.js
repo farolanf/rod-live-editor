@@ -23,10 +23,12 @@ function Dragond(initialContainers, options) {
 
   function start(e, el, src) {
     calcOffsets(e, el);
-    createShadow(el);
+    if (options.shadow) {
+      createShadow(el);
+      e.dataTransfer.setDragImage(nullImg, null, null);
+    }
     $(el).addClass('dg-dragged');
     dnd.$body.addClass('dg-dragging');
-    e.dataTransfer.setDragImage(nullImg, null, null);
     options.start && options.start.call(el, e, el, src);
   }
 
@@ -34,8 +36,10 @@ function Dragond(initialContainers, options) {
     $(el).removeClass('dg-dragged');
     dnd.$body.removeClass('dg-dragging')
     options.end && options.end.call(this);
-    shadowElement.parentNode.removeChild(shadowElement);
-    shadowElement = null;
+    if (options.shadow) {
+      shadowElement.parentNode.removeChild(shadowElement);
+      shadowElement = null;
+    }
   }
 
   function enter(e, el, con, src) {
@@ -49,7 +53,7 @@ function Dragond(initialContainers, options) {
   }
 
   function drag(e, el, con, src) {
-    dragShadow(e);
+    options.shadow && dragShadow(e);
     options.drag && options.drag.call(this);
   }
 
@@ -127,7 +131,6 @@ function Dragond(initialContainers, options) {
   }
 
   function dragShadow(e) {
-    // dumpPos(e);
     if (shadowElement) {
       const pos = domutils.topClientPos(e.clientX, e.clientY, e.view);
       shadowElement.style.left = `${pos.x - offsetX}px`;
