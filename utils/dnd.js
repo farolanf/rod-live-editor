@@ -1,7 +1,12 @@
 
+/**
+ * High level drag and drop functionality. 
+ * Moves element across containers and between iframes.
+ * 
+ */
 function Dragond(initialContainers, options) {
   const dragShadow = new DragShadow();
-  let posX, posY, lastX, lastY, dx, dy, lastPosTimer;
+  const deltaPos = new DeltaPos();
 
   options = options || {};
   const dndOptions = Object.assign({}, options, {
@@ -9,14 +14,12 @@ function Dragond(initialContainers, options) {
   });
   const dnd = new Dnd(initialContainers, dndOptions);
 
-  updateLastPos();
-
   return Object.assign({}, dnd, {
     destroy,
   });
 
   function destroy() {
-    clearTimeout(lastPosTimer);
+    deltaPos.destroy();
   }
 
   function start(e, el, src) {
@@ -49,7 +52,7 @@ function Dragond(initialContainers, options) {
   }
 
   function over(e, el, con, src) {
-    calcDeltaPos(e);
+    deltaPos.update(e);
     insert(e, el, con);
     options.over && options.over.call(this);
   }
@@ -66,7 +69,7 @@ function Dragond(initialContainers, options) {
       if (e.target === con && con.childElementCount === 0) {
         con.appendChild(el);
       }
-      else if (dx !== 0 || dy !== 0) {
+      else if (deltaPos.x !== 0 || deltaPos.y !== 0) {
         insertElement(e, el);
       }
     }
@@ -81,8 +84,8 @@ function Dragond(initialContainers, options) {
     const bottom = rect.bottom - len;
     const x = e.clientX;
     const y = e.clientY;
-    const beforeH = dx < 0;
-    const beforeV = dy < 0;
+    const beforeH = deltaPos.x < 0;
+    const beforeV = deltaPos.y < 0;
     const allowBeforeH = x < left;
     const allowBeforeV = y < top;
     const allowAfterH = x > right;
@@ -96,7 +99,30 @@ function Dragond(initialContainers, options) {
     }
   }
 
-  function calcDeltaPos(e) {
+}
+
+/**
+ * Calculate delta pos to decide insertion place.
+ */
+function DeltaPos() {
+  let posX, posY, lastX, lastY, dx, dy;
+  let lastPosTimer, interval = 200;
+
+  updateLastPos();
+
+  return {
+    update,
+    destroy,
+    get x() {return dx},
+    get y() {return dy},
+    set interval(val) {interval = val},
+  };
+
+  function destroy() {
+    clearTimeout(lastPosTimer);
+  }
+
+  function update(e) {
     posX = e.clientX;
     posY = e.clientY;
     dx = posX - lastX;
@@ -107,10 +133,13 @@ function Dragond(initialContainers, options) {
   function updateLastPos() {
     lastX = posX;
     lastY = posY;
-    lastPosTimer = setTimeout(updateLastPos, 200);
+    lastPosTimer = setTimeout(updateLastPos, interval);
   }
 }
 
+/**
+ * Create drag shadow that can be styled with css.
+ */
 function DragShadow() {
   const shadowContainer = document.body;
   const nullImg = document.createElement('IMG');
@@ -157,6 +186,19 @@ function DragShadow() {
   }
 }
 
+/**
+ * Core drag and drop functionaly with simple events behavior.
+ * 
+ * options: {
+ *   copy: boolean,                     # clone element on drag
+ *   accepts: function(el, con, src),   # determine if element can be dragged
+ *   getElement: function(el, src),     # get the element that will be placed
+ * }
+ * 
+ * addIframe(selector)
+ * addContainers(c1, c2, ...)           
+ * containers                           # can be set to a new array of containers
+ */
 function Dnd(initialContainers, options) {
   let containers = initialContainers || [];
   let draggedElement, lastContainer, sourceContainer;
