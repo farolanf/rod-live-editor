@@ -38,12 +38,12 @@ function Dragond(initialContainers, options) {
   }
 
   function enter(e, el, con, src) {
-    // $(con).addClass('dg-dragover');
+    $(con).addClass('dg-dragover');
     options.enter && options.enter.call(this, e, el, con, src);
   }
 
   function leave(e, el, con, src) {
-    // con.classList.remove('dg-dragover');
+    $(con).removeClass('dg-dragover');
     options.leave && options.leave.call(this, e, el, con, src);
   }
 

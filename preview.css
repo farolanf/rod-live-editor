@@ -18,10 +18,12 @@ body * {
 }
 
 .dg-dragging .instance-container {
-  border: 1px dashed #888;
+  outline: 2px dashed #aaa;
+  outline-offset: -2px;
 }
 .dg-dragover {
-  border: 1px solid blue !important;
+  outline: 2px solid blue !important;
+  outline-offset: -2px;
 }
 .dg-dragged .instance-container, .dg-shadow .instance-container {
   border: none !important;

@@ -34,7 +34,7 @@ function Editor(_content) {
   }
 
   function prepareInstanceContainers(instance) {
-    for (const key in instance) {
+    for (let key in instance) {
       if (instance.hasOwnProperty(key)) {
         const val = instance[key];
         if (Array.isArray(val)) {
@@ -54,7 +54,7 @@ function Editor(_content) {
       if (instance.id === id) {
         return true;
       }
-      for (const key in instance) {
+      for (let key in instance) {
         if (instance.hasOwnProperty(key)) {
           const val = instance[key];
           if (Array.isArray(val)) {

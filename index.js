@@ -3,6 +3,7 @@
 window.app = new App();
 
 function App() {
+  const renderer = new Renderer(modules, globalProperties);
   const editor = window.editor = Editor(content);
   const propertyView = window.propertyView = PropertyView(editor);
   let preview;
@@ -57,7 +58,7 @@ function App() {
       new senna.Route('/preview', function() {
         hideInstanceControls();
         $('#app > *').hide();
-        $('#app > iframe').attr('srcdoc', render(content)).show();
+        $('#app > iframe').attr('srcdoc', renderer.render(content)).show();
       }),
       new senna.Route('/json', function() {
         hideInstanceControls();
@@ -111,7 +112,6 @@ function App() {
   }
 
   function renderPreview() {
-    const renderer = new Renderer(modules, globalProperties);
     let html = renderer.render(content);
     html = html.replace(/<\/head>/, `
         <link href="preview.css" rel="stylesheet">
