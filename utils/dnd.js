@@ -27,40 +27,40 @@ function Dragond(initialContainers, options) {
     options.shadow && dragShadow.create(el, e);
     $(el).addClass('dg-dragged');
     dnd.$body.addClass('dg-drag-on');
-    options.start && options.start.call(el, e, el, src);
+    options.start && options.start.call(this, e, el, src);
   }
 
   function end(e, el, con, src) {
     $(el).removeClass('dg-dragged');
     dnd.$body.removeClass('dg-drag-on')
     options.shadow && dragShadow.remove();
-    options.end && options.end.call(el, e, el, con, src);
+    options.end && options.end.call(this, e, el, con, src);
   }
 
   function enter(e, el, con, src) {
     $(con).addClass('dg-dragover');
-    options.enter && options.enter.call(con, e, el, con, src);
+    options.enter && options.enter.call(this, e, el, con, src);
   }
 
   function leave(e, el, con, src) {
     con.classList.remove('dg-dragover');
-    options.leave && options.leave.call(con, e, el, con, src);
+    options.leave && options.leave.call(this, e, el, con, src);
   }
 
   function drag(e, el, con, src) {
     options.shadow && dragShadow.drag(e);
-    options.drag && options.drag.call(con, e, el, con, src);
+    options.drag && options.drag.call(this, e, el, con, src);
   }
 
   function over(e, el, con, src) {
     // deltaPos.update(e);
     // insert(e, el, con);
-    options.over && options.over.call(con, e, el, con, src);
+    options.over && options.over.call(this, e, el, con, src);
   }
 
   function drop(e, el, con, src) {
     const sibling = $(el).next()[0];
-    options.drop && options.drop.call(con, e, el, con, src, sibling);
+    options.drop && options.drop.call(this, e, el, con, src, sibling);
   }
 
   function insert(e, el, con) {
@@ -260,7 +260,7 @@ function Dnd(initialContainers, options) {
       draggedElement = options.getElement(e.target, container);
       lastContainer = sourceContainer = container;
       options.start && options.start.call(draggedElement, e, draggedElement, sourceContainer);
-      // options.enter && options.enter.call(container, e, draggedElement, container, sourceContainer);
+      options.enter && options.enter.call(container, e, draggedElement, container, sourceContainer);
     });
   }
 
@@ -332,12 +332,6 @@ function Dnd(initialContainers, options) {
   function getContainerElements() {
     return containers.reduce(function(arr, c) {
       return arr.concat($(c).toArray());
-    }, []);
-  }
-
-  function getOtherContainers(not) {
-    return containers.reduce(function(arr, c) {
-      return arr.concat($(c).not(not).toArray());
     }, []);
   }
 
