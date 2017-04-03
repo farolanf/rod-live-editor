@@ -7,7 +7,6 @@ var globalProperties = {
     "backgroundColorFooter": "blue",
     "backgroundColor": "#fff",
     "hiddenPreheader": "test",
-
 };
 
 var content = [{

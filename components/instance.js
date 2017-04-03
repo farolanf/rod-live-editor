@@ -17,6 +17,7 @@ function Instance(instance) {
     setProperty,
     render,
     get id() {return instance.id},
+    get name() {return instance.name},
   };
 
   function getProperties() {
