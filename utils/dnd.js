@@ -26,7 +26,10 @@ function Dragond(initialContainers, options) {
   function start(e, el, src) {
     // options.shadow && dragShadow.create(el, e);
     // $(el).addClass('dg-dragged');
-    dnd.$body.addClass('dg-dragging');
+    setTimeout(function() {
+      // defer style to avoid capturing it on the drag image
+      dnd.$body.addClass('dg-dragging');
+    });
     options.start && options.start.call(this, e, el, src);
   }
 
@@ -38,7 +41,10 @@ function Dragond(initialContainers, options) {
   }
 
   function enter(e, el, con, src) {
-    $(con).addClass('dg-dragover');
+    setTimeout(function() {
+      // defer style to avoid capturing it on the drag image
+      $(con).addClass('dg-dragover');
+    });
     options.enter && options.enter.call(this, e, el, con, src);
   }
 
@@ -260,6 +266,7 @@ function Dnd(initialContainers, options) {
       draggedElement = options.getElement(e.target, container);
       lastContainer = sourceContainer = container;
       options.start && options.start.call(draggedElement, e, draggedElement, sourceContainer);
+      options.enter && options.enter.call(container, e, draggedElement, container, sourceContainer);
     });
   }
 
