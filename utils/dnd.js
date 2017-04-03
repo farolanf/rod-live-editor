@@ -1,10 +1,9 @@
 
 function Dragond(initialContainers, options) {
-  let shadowElement, offsetX, offsetY, screenOffsetX, screenOffsetY;
+  let shadowElement, offsetX, offsetY;
   let posX, posY, lastX, lastY, dx, dy, lastPosTimer;
   const shadowContainer = document.body;
   const nullImg = document.createElement('IMG');
-  const topWindow = window;
 
   options = options || {};
   const dndOptions = Object.assign({}, options, {
@@ -27,7 +26,7 @@ function Dragond(initialContainers, options) {
     createShadow(el);
     $(el).addClass('dg-dragged');
     dnd.$body.addClass('dg-dragging');
-    // e.dataTransfer.setDragImage(nullImg, null, null);
+    e.dataTransfer.setDragImage(nullImg, null, null);
     options.start && options.start.call(el, e, el, src);
   }
 
@@ -50,8 +49,7 @@ function Dragond(initialContainers, options) {
   }
 
   function drag(e, el, con, src) {
-    calcScreenOffset(e);
-    // dragShadow(e);
+    dragShadow(e);
     options.drag && options.drag.call(this);
   }
 
@@ -129,12 +127,11 @@ function Dragond(initialContainers, options) {
   }
 
   function dragShadow(e) {
-    dumpPos(e);
+    // dumpPos(e);
     if (shadowElement) {
-      const rootClientX = e.screenX - screenOffsetX;
-      const rootClientY = e.screenY - screenOffsetY;
-      shadowElement.style.left = `${rootClientX - offsetX}px`;
-      shadowElement.style.top = `${rootClientY - offsetY}px`;
+      const pos = domutils.topClientPos(e.clientX, e.clientY, e.view);
+      shadowElement.style.left = `${pos.x - offsetX}px`;
+      shadowElement.style.top = `${pos.y - offsetY}px`;
     }
   }
 
@@ -142,18 +139,6 @@ function Dragond(initialContainers, options) {
     const rect = el.getBoundingClientRect();    
     offsetX = e.clientX - rect.left;
     offsetY = e.clientY - rect.top;
-  }
-
-  // screen offset is needed to get a consistent position on iframes.
-  // it needs to be calculated on the drag event of the
-  // top window, it can't be from the mouse event because the 
-  // coordinates are different, on the drag event it's window 
-  // coordinate while on the mouse event it's screen coordinate
-  function calcScreenOffset(e) {
-    if (e.view === topWindow) {
-      screenOffsetX = e.screenX - e.clientX;
-      screenOffsetY = e.screenY - e.clientY;
-    }
   }
 }
 
@@ -257,7 +242,6 @@ function Dnd(initialContainers, options) {
   }
 
   function drag(event) {
-    // console.log(event.screenX, event.screenY, event.clientX, event.clientY);
     const e = event.originalEvent;
     trigger('drag', draggedElement, e, draggedElement, lastContainer, sourceContainer);
   }

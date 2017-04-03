@@ -1,8 +1,7 @@
 
 const domutils = {
   // convert to the root client coordinate
-  topClientPos(x, y, refElement) {
-    let win = refElement.ownerDocument.defaultView;
+  topClientPos(x, y, win) {
     const top = win.top;
     while (win !== top) {
       if (win.frameElement) {

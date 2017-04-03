@@ -104,4 +104,5 @@ html, body, #app, #editor, .editor-container, .preview {
   margin: 0 !important;
   z-index: 9999 !important;
   opacity: 0.8;
+  border: 1px solid blue;
 }
