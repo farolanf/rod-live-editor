@@ -75,10 +75,7 @@ function Dragond(initialContainers, options) {
   }
 
   function insert(e, el, con) {
-    if (el.parent !== con) {
-      if ($.contains(el, con)) {
-        return;
-      }
+    if (!$.contains(el, con)) {
       if (e.target === con && con.childElementCount === 0) {
         con.appendChild(el);
       }
