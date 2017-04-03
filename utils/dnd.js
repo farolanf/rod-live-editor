@@ -1,9 +1,9 @@
 
 function Dragond(initialContainers, options) {
-  let shadowElement, offsetX, offsetY;
-  let posX, posY, lastX, lastY, dx, dy, lastPosTimer;
   const shadowContainer = document.body;
+  let shadowElement, offsetX, offsetY;
   const nullImg = document.createElement('IMG');
+  let posX, posY, lastX, lastY, dx, dy, lastPosTimer;
 
   options = options || {};
   const dndOptions = Object.assign({}, options, {
