@@ -256,7 +256,7 @@ function Dnd(initialContainers, options) {
   function dragstart(event) {
     console.log('dragstart');
     const e = event.originalEvent;
-    processContainer(e.target, function(container) {
+    findContainer(e.target, function(container) {
       draggedElement = options.getElement(e.target, container);
       lastContainer = sourceContainer = container;
       options.start && options.start.call(draggedElement, e, draggedElement, sourceContainer);
@@ -274,7 +274,7 @@ function Dnd(initialContainers, options) {
 
   function dragenter(event) {
     const e = event.originalEvent;
-    processContainer(e.target, function(container) {
+    findContainer(e.target, function(container) {
       if (container !== lastContainer) {
         lastContainer = container;
         options.enter && options.enter.call(container, e, draggedElement, container, sourceContainer);
@@ -284,7 +284,7 @@ function Dnd(initialContainers, options) {
 
   function dragleave(event) {
     const e = event.originalEvent;
-    processContainer(e.target, function(container) {
+    findContainer(e.target, function(container) {
       if (container !== lastContainer || !overElement(e, container)) {
         if (container === lastContainer) {
           lastContainer = null;
@@ -301,7 +301,7 @@ function Dnd(initialContainers, options) {
 
   function dragover(event) {
     const e = event.originalEvent;
-    processContainer(e.target, function(container) {
+    findContainer(e.target, function(container) {
       if (options.accepts(draggedElement, container, sourceContainer)) {
         e.preventDefault();
         options.over && options.over.call(container, e, draggedElement, container, sourceContainer);
@@ -312,7 +312,7 @@ function Dnd(initialContainers, options) {
   function drop(event) {
     console.log('drop');
     const e = event.originalEvent;
-    processContainer(e.target, function(container) {
+    findContainer(e.target, function(container) {
       options.drop && options.drop.call(container, e, draggedElement, container, sourceContainer);
     });
   }
@@ -342,7 +342,7 @@ function Dnd(initialContainers, options) {
     }
   }
 
-  function processContainer(el, fn) {
+  function findContainer(el, fn) {
     const containerElement = findClosestContainer(el);
     if (containerElement) {
       fn(containerElement);

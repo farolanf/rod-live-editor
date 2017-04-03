@@ -10,18 +10,19 @@ function App() {
   const dragond = new Dragond(['.module-list', '.module-list .list-group'], {
     shadow: false,
     getElement(el, src) {
-      if ($(src).is('.module-view *')) {
-        const rect = el.getBoundingClientRect();
-        const clone = el.cloneNode(true);
-        clone.style.position = 'absolute';
-        clone.style.width = rect.width + 'px';
-        clone.style.height = rect.height + 'px';
-        // return clone;
-      }
+      // if ($(src).is('.module-view *')) {
+      //   const rect = el.getBoundingClientRect();
+      //   const clone = el.cloneNode(true);
+      //   clone.style.position = 'absolute';
+      //   clone.style.width = rect.width + 'px';
+      //   clone.style.height = rect.height + 'px';
+      //   // return clone;
+      // }
       return el;
     },
     accepts(el, con, src) {
-      return !con.classList.contains('list-group');
+      return true;
+      // return !con.classList.contains('list-group');
     },
     drop(e, el, con, src, sibling) {
       console.log(el, con, sibling);
