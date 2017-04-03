@@ -1,3 +1,4 @@
+'use strict';
 
 /**
  * High level drag and drop functionality. 
@@ -25,42 +26,41 @@ function Dragond(initialContainers, options) {
   function start(e, el, src) {
     options.shadow && dragShadow.create(el, e);
     $(el).addClass('dg-dragged');
-    dnd.$body.addClass('dg-dragging');
-    trigger('start', el, e, el, src);
+    dnd.$body.addClass('dg-drag-on');
+    options.start && options.start.call(el, e, el, src);
   }
 
   function end(e, el, con, src) {
     $(el).removeClass('dg-dragged');
-    dnd.$body.removeClass('dg-dragging')
+    dnd.$body.removeClass('dg-drag-on')
     options.shadow && dragShadow.remove();
-    trigger('end', el, e, el, con, src);
-    nextSibling = null;
+    options.end && options.end.call(el, e, el, con, src);
   }
 
   function enter(e, el, con, src) {
-    con.classList.add('dg-dragover');
-    trigger('enter', con, e, el, con, src);
+    $(con).addClass('dg-dragover');
+    options.enter && options.enter.call(con, e, el, con, src);
   }
 
   function leave(e, el, con, src) {
     con.classList.remove('dg-dragover');
-    trigger('leave', con, e, el, con, src);
+    options.leave && options.leave.call(con, e, el, con, src);
   }
 
   function drag(e, el, con, src) {
     options.shadow && dragShadow.drag(e);
-    trigger('drag', con, e, el, con, src);
+    options.drag && options.drag.call(con, e, el, con, src);
   }
 
   function over(e, el, con, src) {
     // deltaPos.update(e);
     // insert(e, el, con);
-    trigger('over', con, e, el, con, src);
+    options.over && options.over.call(con, e, el, con, src);
   }
 
   function drop(e, el, con, src) {
     const sibling = $(el).next()[0];
-    trigger('drop', con, e, el, con, src, sibling);
+    options.drop && options.drop.call(con, e, el, con, src, sibling);
   }
 
   function insert(e, el, con) {
@@ -98,14 +98,6 @@ function Dragond(initialContainers, options) {
     }
     else if ((!beforeH && allowAfterH) || (!beforeV && allowAfterV)) {
       $(el).insertAfter(sibling);
-    }
-  }
-
-  function trigger(event) {
-    if (options[event]) {
-      const obj = arguments[1];
-      const args = Array.prototype.slice.call(arguments, 2);
-      options[event].apply(obj, args);
     }
   }
 }
@@ -211,7 +203,7 @@ function DragShadow() {
 function Dnd(initialContainers, options) {
   let containers = initialContainers || [];
   let draggedElement, lastContainer, sourceContainer;
-  const $body = $();
+  let $body = $();
 
   const defaultOptions = {
     copy: false,
@@ -224,14 +216,14 @@ function Dnd(initialContainers, options) {
   events(window);
 
   return {
-    $body,
+    get $body() {return $body},
     addIframe,
     addContainers,
     set containers(c) {containers = c; initContainers()},
   };
 
   function events(win) {
-    $body.push(win.document.body);
+    $body = $body.add(win.document.body);
     $(win).on('dragstart', dragstart)
       .on('dragend', dragend)
       .on('drag', drag)
@@ -262,19 +254,21 @@ function Dnd(initialContainers, options) {
   }
 
   function dragstart(event) {
+    console.log('dragstart');
     const e = event.originalEvent;
     processContainer(e.target, function(container) {
       draggedElement = options.getElement(e.target, container);
       lastContainer = sourceContainer = container;
-      trigger('start', draggedElement, e, draggedElement, sourceContainer);
-      trigger('enter', container, e, draggedElement, container, sourceContainer);
+      options.start && options.start.call(draggedElement, e, draggedElement, sourceContainer);
+      // options.enter && options.enter.call(container, e, draggedElement, container, sourceContainer);
     });
   }
 
   function dragend(event) {
+    console.log('dragend');
     const e = event.originalEvent;
-    lastContainer && trigger('leave', lastContainer, e, draggedElement, lastContainer, sourceContainer);
-    trigger('end', draggedElement, e, draggedElement, lastContainer, sourceContainer);
+    lastContainer && options.leave && options.leave.call(lastContainer, e, draggedElement, lastContainer, sourceContainer);
+    options.end && options.end.call(draggedElement, e, draggedElement, lastContainer, sourceContainer);
     draggedElement = lastContainer = sourceContainer = null;
   }
 
@@ -283,7 +277,7 @@ function Dnd(initialContainers, options) {
     processContainer(e.target, function(container) {
       if (container !== lastContainer) {
         lastContainer = container;
-        trigger('enter', container, e, draggedElement, container, sourceContainer);
+        options.enter && options.enter.call(container, e, draggedElement, container, sourceContainer);
       }
     });
   }
@@ -295,14 +289,14 @@ function Dnd(initialContainers, options) {
         if (container === lastContainer) {
           lastContainer = null;
         }
-        trigger('leave', container, e, draggedElement, container, sourceContainer);
+        options.leave && options.leave.call(container, e, draggedElement, container, sourceContainer);
       }
     });
   }
 
   function drag(event) {
     const e = event.originalEvent;
-    trigger('drag', draggedElement, e, draggedElement, lastContainer, sourceContainer);
+    options.drag && options.drag.call(draggedElement, e, draggedElement, lastContainer, sourceContainer);
   }
 
   function dragover(event) {
@@ -310,7 +304,7 @@ function Dnd(initialContainers, options) {
     processContainer(e.target, function(container) {
       if (options.accepts(draggedElement, container, sourceContainer)) {
         e.preventDefault();
-        trigger('over', container, e, draggedElement, container, sourceContainer);
+        options.over && options.over.call(container, e, draggedElement, container, sourceContainer);
       }
     });
   }
@@ -319,7 +313,7 @@ function Dnd(initialContainers, options) {
     console.log('drop');
     const e = event.originalEvent;
     processContainer(e.target, function(container) {
-      trigger('drop', container, e, draggedElement, container, sourceContainer);
+      options.drop && options.drop.call(container, e, draggedElement, container, sourceContainer);
     });
   }
 
@@ -332,6 +326,7 @@ function Dnd(initialContainers, options) {
   function addContainers() {
     containers = containers.concat(Array.prototype.slice.call(arguments));
     initContainers();
+    console.log(getContainerElements());
   }
 
   function getContainerElements() {
@@ -365,14 +360,6 @@ function Dnd(initialContainers, options) {
     const y = e.clientY;
     const rect = el.getBoundingClientRect();
     return x >= rect.left && x < rect.right && y >= rect.top && y < rect.bottom;
-  }
-
-  function trigger(event) {
-    if (options[event]) {
-      const obj = arguments[1];
-      const args = Array.prototype.slice.call(arguments, 2);
-      options[event].apply(obj, args);
-    }
   }
 }
 

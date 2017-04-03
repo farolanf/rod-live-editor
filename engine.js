@@ -1,3 +1,5 @@
+'use strict';
+
 function removeJsComments(str) {
     str = ('__' + str + '__').split('');
     var mode = {
@@ -175,7 +177,7 @@ function getPropertyValue(property, instance, module, customReplace) {
 
     /* Conditional Replace: override value property if necessary */
     if ((alias || customReplace) && moduleProperty.hasOwnProperty("replace")) {
-        replaceProperty = moduleProperty.replace;
+        var replaceProperty = moduleProperty.replace;
 
         if (replaceProperty.hasOwnProperty("condition")) {
             var conditionFunction = replaceProperty.condition;

@@ -1,3 +1,5 @@
+'use strict';
+
 function PropertyView(editor) {
   if (!(this instanceof PropertyView)) {
     return new PropertyView(editor);

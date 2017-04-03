@@ -1,3 +1,5 @@
+'use strict';
+
 window.app = new App();
 
 function App() {
@@ -19,7 +21,7 @@ function App() {
       return el;
     },
     accepts(el, con, src) {
-      return !$(con).is('.module-view *');
+      return !con.classList.contains('list-group');
     },
     drop(e, el, con, src, sibling) {
       console.log(el, con, sibling);
@@ -110,13 +112,11 @@ function App() {
   function renderPreview() {
     let html = render(content);
     html = html.replace(/<\/head>/, `
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />  </head>
         <link href="preview.css" rel="stylesheet">
       </head>
     `);
     html = html.replace(/<\/body>/, `
         <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js"></script>
         <script src="preview.js"></script>
       </body>
     `);

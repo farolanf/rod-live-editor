@@ -1,3 +1,4 @@
+'use strict';
 
 const domutils = {
   // convert to the root client coordinate

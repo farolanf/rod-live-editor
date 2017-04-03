@@ -1,3 +1,5 @@
+'use strict';
+
 const assert = require('assert');
 const _ = require('../libs/lodash.min');
 const Editor = require('../utils/editor');

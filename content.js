@@ -1,3 +1,5 @@
+'use strict';
+
 var global = {
     "color1": "#eeeeee",
     "color2": "green",

@@ -1,3 +1,4 @@
+'use strict';
 
 new Preview();
 
@@ -71,15 +72,19 @@ function Preview() {
         deselectInstance(selectedElement);
       }
       selectInstance(this);
-    }).on('blur', function(e) {
+    })
+    .on('blur', function(e) {
       deselectInstance(this);
-    }).on('dblclick', function(e) {
+    })
+    .on('dblclick', function(e) {
       e.stopPropagation();
       editInstanceContent(this);
-    }).on('mouseover', function(e) {
+    })
+    .on('mouseover', function(e) {
       e.stopPropagation();
       $(this).addClass('hover');
-    }).on('mouseout', function(e) {
+    })
+    .on('mouseout', function(e) {
       $(this).removeClass('hover');
     });
   }
