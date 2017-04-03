@@ -1,6 +1,6 @@
 'use strict';
 
-var global = {
+var globalProperties = {
     "color1": "#eeeeee",
     "color2": "green",
     "backgroundColorBody": "white",
@@ -9,6 +9,7 @@ var global = {
     "hiddenPreheader": "test",
 
 };
+
 var content = [{
     "name": "document-html-email",
     "backgroundColorHeader": "green",
