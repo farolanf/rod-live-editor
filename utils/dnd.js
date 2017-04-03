@@ -25,17 +25,17 @@ function Dragond(initialContainers, options) {
 
   function start(e, el, src) {
     // options.shadow && dragShadow.create(el, e);
-    // $(el).addClass('dg-dragged');
+    // defer style to avoid capturing it on the drag image
     setTimeout(function() {
-      // defer style to avoid capturing it on the drag image
+      $(el).addClass('dg-dragged');
       dnd.$body.addClass('dg-dragging');
     });
     options.start && options.start.call(this, e, el, src);
   }
 
   function end(e, el, con, src) {
-    // $(el).removeClass('dg-dragged');
     // options.shadow && dragShadow.remove();
+    $(el).removeClass('dg-dragged');
     dnd.$body.removeClass('dg-dragging');
     options.end && options.end.call(this, e, el, con, src);
   }
