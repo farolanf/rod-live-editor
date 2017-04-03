@@ -93,12 +93,9 @@ function App() {
   }
 
   function showInstanceControls(el) {
-    const parent = $('.preview')[0];
-    const prect = parent.getBoundingClientRect();
     const rect = el.getBoundingClientRect();
-    const x = rect.right;
-    const y = rect.top + prect.top;
-    $('.instance-controls').css('left', x).css('top', y).removeClass('hidden');
+    const pos = domutils.topClientPos(rect.right, rect.top, el);
+    $('.instance-controls').css('left', pos.x).css('top', pos.y).removeClass('hidden');
   }
 
   function hideInstanceControls() {

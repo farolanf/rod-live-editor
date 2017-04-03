@@ -27,7 +27,7 @@ function Dragond(initialContainers, options) {
     createShadow(el);
     $(el).addClass('dg-dragged');
     dnd.$body.addClass('dg-dragging');
-    e.dataTransfer.setDragImage(nullImg, null, null);
+    // e.dataTransfer.setDragImage(nullImg, null, null);
     options.start && options.start.call(el, e, el, src);
   }
 
@@ -51,13 +51,13 @@ function Dragond(initialContainers, options) {
 
   function drag(e, el, con, src) {
     calcScreenOffset(e);
-    dragShadow(e);
+    // dragShadow(e);
     options.drag && options.drag.call(this);
   }
 
   function over(e, el, con, src) {
     calcDeltaPos(e);
-    // insert(e, el, con, e.target);
+    insert(e, el, con);
     options.over && options.over.call(this);
   }
 
@@ -65,23 +65,23 @@ function Dragond(initialContainers, options) {
     options.drop && options.drop.call(this);
   }
 
-  function insert(e, el, con, target) {
+  function insert(e, el, con) {
     if (el.parent !== con) {
       if ($.contains(el, con)) {
         return;
       }
-      if (target === con && con.childElementCount === 0) {
+      if (e.target === con && con.childElementCount === 0) {
         con.appendChild(el);
       }
       else if (dx !== 0 || dy !== 0) {
-        insertElement(e, el, target);
+        insertElement(e, el);
       }
     }
   }
 
-  function insertElement(e, el, target) {
+  function insertElement(e, el) {
     const len = 5;
-    const rect = target.getBoundingClientRect();
+    const rect = e.target.getBoundingClientRect();
     const left = rect.left + len;
     const right = rect.right - len;
     const top = rect.top + len;
@@ -94,7 +94,7 @@ function Dragond(initialContainers, options) {
     const allowBeforeV = y < top;
     const allowAfterH = x > right;
     const allowAfterV = y > bottom;
-    const sibling = target.closest('[draggable]');
+    const sibling = e.target.closest('[draggable]');
     if ((beforeH && allowBeforeH) || (beforeV && allowBeforeV)) {
       $(el).insertBefore(sibling);
     }
