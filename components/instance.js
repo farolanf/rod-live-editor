@@ -23,7 +23,7 @@ function Instance(instance) {
   function getProperties() {
     const props = {};
     _.forOwn(module.properties, function(val, key) {
-      if (val.type !== 'container') {
+      if (val.type !== 'container' && !val.alias) {
         props[key] = {
           type: val.type,
           value: instance.hasOwnProperty(key) ? instance[key] : val.default,
