@@ -62,8 +62,8 @@ function Dragond(initialContainers, options) {
   }
 
   function over(e, el, con, src) {
-    // deltaPos.update(e);
-    // insert(e, el, con);
+    deltaPos.update(e);
+    insert(e, el, con);
     options.over && options.over.call(this, e, el, con, src);
   }
 

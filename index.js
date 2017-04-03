@@ -26,7 +26,7 @@ function App() {
       // return !con.classList.contains('list-group');
     },
     drop(e, el, con, src, sibling) {
-      console.log(el, con, e.target, sibling);
+      // console.log(el, con, sibling);
     },
   });
 
