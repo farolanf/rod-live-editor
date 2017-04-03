@@ -266,7 +266,7 @@ modules["document-html-email"] = {
         },
         "_backgroundColorMain": {
             "alias": "backgroundColorMain",
-            "output": {
+            "replace": {
                 "condition": function(value) {
                     return (value != "") ? true : false;
                 },
