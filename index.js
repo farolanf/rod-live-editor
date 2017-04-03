@@ -95,7 +95,8 @@ function App() {
   function showInstanceControls(el) {
     const rect = el.getBoundingClientRect();
     const pos = domutils.topClientPos(rect.right, rect.top, el);
-    $('.instance-controls').css('left', pos.x).css('top', pos.y).removeClass('hidden');
+    $('.instance-controls').css('left', pos.x +'px')
+      .css('top', pos.y+'px').removeClass('hidden');
   }
 
   function hideInstanceControls() {

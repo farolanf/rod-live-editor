@@ -55,7 +55,7 @@ html, body, #app, #editor, .editor-container, .preview {
 }
 
 .instance-controls {
-  position: absolute;
+  position: fixed;
   top: 100px;
   left: 100px;
   display: flex;
