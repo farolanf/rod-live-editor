@@ -272,10 +272,11 @@ function Dnd(initialContainers, options) {
   }
 
   function dragenter(event) {
-    console.log('dragenter');
+    console.log('dragenter', event.target);
     const e = event.originalEvent;
     findContainer(e.target, function(container) {
       if (container !== lastContainer) {
+        console.log(container);
         lastContainer = container;
         options.enter && options.enter.call(container, e, draggedElement, container, sourceContainer);
       }
@@ -283,7 +284,7 @@ function Dnd(initialContainers, options) {
   }
 
   function dragleave(event) {
-    console.log('dragleave');
+    console.log('dragleave', event.target);
     const e = event.originalEvent;
     findContainer(e.target, function(container) {
       if (container !== lastContainer || !overElement(e, container)) {
@@ -296,13 +297,13 @@ function Dnd(initialContainers, options) {
   }
 
   function drag(event) {
-    console.log('drag');
+    // console.log('drag');
     const e = event.originalEvent;
     options.drag && options.drag.call(draggedElement, e, draggedElement, lastContainer, sourceContainer);
   }
 
   function dragover(event) {
-    console.log('dragover');
+    // console.log('dragover');
     const e = event.originalEvent;
     findContainer(e.target, function(container) {
       if (options.accepts(draggedElement, container, sourceContainer)) {

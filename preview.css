@@ -20,6 +20,7 @@ body * {
 .dg-dragging .instance-container {
   outline: 2px dashed #aaa;
   outline-offset: -2px;
+  pointer-events: auto;
 }
 .dg-dragover {
   outline: 2px solid blue !important;
