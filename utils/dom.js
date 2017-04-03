@@ -1,6 +1,6 @@
 
 const domutils = {
-  // traverse the ancestors to add up client coords
+  // convert to the root client coordinate
   topClientPos(x, y, refElement) {
     let win = refElement.ownerDocument.defaultView;
     const top = win.top;
