@@ -77,7 +77,7 @@ function Dragond(initialContainers, options) {
   }
 
   function insert(e, el, con) {
-    if (!$.contains(el, con)) {
+    if (!$.contains(el, con) && canPlace(el, con)) {
       if (e.target === con && con.childElementCount === 0) {
         con.appendChild(el);
       }
@@ -109,6 +109,33 @@ function Dragond(initialContainers, options) {
     else if ((!beforeH && allowAfterH) || (!beforeV && allowAfterV)) {
       $(el).insertAfter(sibling);
     }
+  }
+
+  function canPlace(el, con) {
+    const tags = {
+      'TABLE': ['CAPTION', 'COLGROUP', 'THEAD', 'TBODY', 'TFOOT'],
+      'TBODY': ['TR'],
+      'TR': ['TH', 'TD'],
+    };
+    if (tags[con.tagName] && !tags[con.tagName].includes(el.tagName)) {
+      return false;
+    }
+    let found = false;
+    let valid = false;
+    _.forOwn(tags, function(arr, key) {
+      if (arr.includes(el.tagName)) {
+        if (!found) {
+          found = true;
+        }
+        if (con.tagName === key) {
+          valid = true;
+          return false;
+        }
+      }
+    });
+    const result = !found || (found && valid);
+    // console.log(el.tagName, con.tagName, result);
+    return result;
   }
 }
 
