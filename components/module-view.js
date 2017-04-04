@@ -11,22 +11,9 @@ function ModuleView(modules, renderer) {
   function init() {
     const $list = $('<div class="list-group">');
     _.forOwn(modules, function(val, key) {
-      const content = {name: key};
-      const body = renderer.renderModule(content);
-      const html = body.includes('</html>') ? body : 
-        ` <html>
-            <body>
-              ${body}
-            </body>
-          </html>
-        `;
-      const iframe = $('<iframe>');
-      iframe.attr('srcdoc', html);
-
       const $item = $(`<div class="list-group-item" data-name="${key}">`);
       $item.append(`<div class="module-name">${key}</div>`);
-      $item.append(iframe);
-
+      $item.append(getPreview(key));
       $list.append($item);
     });
     $('.module-view .module-list').html($list.html());
@@ -35,33 +22,29 @@ function ModuleView(modules, renderer) {
       placement: 'right',
       html: true,
       title: function() {return $(this).data('name')},
-      content: function() {return getPreview(this)},
+      content: function() {return getPreview($(this).data('name'), true)},
     }).on('click dragstart', function() {
       $(this).popover('hide');
     });
   }
 
-  function getPreview(el) {
+  function getPreview(name, large) {
+    const style = large ? 'style="width: 800px; height: 600px"' : '';
     const html = `
       <html>
-        <body>
-          ${getElement$(el).html()}
+        <body style="text-align: center">
+          ${renderer.renderModule({name})}
         </body>
       </html>
     `;
-    const $iframe = $('<iframe>');
+    const $iframe = $(`<iframe ${style}>`);
     $iframe.attr('srcdoc', html);
-    $('body').prepend($iframe);
-    return $iframe.html();
-  }
-
-  function getElement$(el) {
-    const name = $(el).data('name');
-    const content = {name: name, id: -1};
-    return $(renderer.renderModule(content));
+    return $iframe;
   }
 
   function getElement(el) {
-    return getElement$(el);
+    const name = $(el).data('name');
+    const content = {name: name, id: -1};
+    return $(renderer.renderModule(content))[0];
   }
 }

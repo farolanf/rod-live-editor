@@ -109,3 +109,7 @@ html, body, #app, #editor, .editor-container, .preview {
 .module-name {
   color: #888;
 }
+
+.popover {
+  max-width: 100%;
+}
