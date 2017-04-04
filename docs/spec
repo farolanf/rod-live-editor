@@ -3,7 +3,7 @@ First working prototype
   🗸 Be able to re-order instances via drag and drop.
   🗸 On mouse hover, only the selected instance should be highlighted and not it’s parents too. (I have already solved this if you need to know how to do it in less than 5 minutes - see email I sent you)
   🗸 Be able to add new modules to the content. (Idea: left pane)
-  Modules should be searchable/filterable by name and should show a preview
+  🗸 Modules should be searchable/filterable by name and should show a preview
   🗸 Be able to delete instance from the content via the garbage icon that appears on the toolbar.
   🗸 Be able to duplicate instance from the content via the clone icon that appears on the toolbar.
   🗸 Be able to edit properties of instance from the content, via the pencil icon that appears on the toolbar. On the right pane all editable properties should be shown, different controls for different property types. Currently supported: text, color, property.
