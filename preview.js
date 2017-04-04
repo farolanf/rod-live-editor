@@ -58,7 +58,7 @@ function Preview() {
   }
 
   function initInstanceElements(startElement) {
-    const childrenSelector = '.instance-container > *:not(br)';
+    const childrenSelector = '.instance-container > [data-id]:not(br)';
     if ($(startElement).is(childrenSelector)) {
       initInstanceElement(startElement);
     }

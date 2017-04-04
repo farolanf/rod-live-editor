@@ -77,8 +77,8 @@ function App() {
         // return !con.classList.contains('list-group');
       },
       drop(e, el, con, src, sibling) {
+        console.log('move', el, con, src, sibling);
         if ($(el).is('.instance') && $(con).is('.instance-container')) {
-          // console.log('move', el, con, src, sibling, el.parentNode);
           con = new ContainerElement(con);
           src = new ContainerElement(src);
           el = new InstanceElement(el);

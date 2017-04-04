@@ -84,6 +84,7 @@ function Dragond(initialContainers, options) {
   }
 
   function insert(e, el, con) {
+      console.log('insert');
     if (!$.contains(el, con) && canPlace(el, con)) {
       if (e.target === con && con.childElementCount === 0) {
         con.appendChild(el);
@@ -109,7 +110,8 @@ function Dragond(initialContainers, options) {
     const allowBeforeV = y < top;
     const allowAfterH = x > right;
     const allowAfterV = y > bottom;
-    const sibling = e.target.closest('[draggable]');
+    const sibling = e.target.closest('.instance-container > *');
+    console.log('sibling', e.target, sibling);
     if ((beforeH && allowBeforeH) || (beforeV && allowBeforeV)) {
       $(el).insertBefore(sibling);
     }

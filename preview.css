@@ -17,10 +17,12 @@ body * {
   box-shadow: 0 0 22px -2px #555;
 }
 
+.dg-dragging * {
+  pointer-events: auto;
+}
 .dg-dragging .instance-container {
   outline: 2px dashed #aaa;
   outline-offset: -2px;
-  pointer-events: auto;
 }
 .dg-dragover {
   outline: 2px solid blue !important;
