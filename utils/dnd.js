@@ -87,17 +87,19 @@ function Dragond(initialContainers, options) {
 
   function insert(e, el, con) {
     if (!$.contains(el, con) && canPlace(el, con)) {
-      if (e.target === con && con.childElementCount === 0) {
-        con.appendChild(el);
-        parent = con;
+      if (e.target === con) {
+        if (con.childElementCount === 0) {
+          con.appendChild(el);
+          parent = con;
+        }
       }
       else if (deltaPos.x !== 0 || deltaPos.y !== 0) {
-        insertElement(e, el);
+        insertElement(e, el, con);
       }
     }
   }
 
-  function insertElement(e, el) {
+  function insertElement(e, el, con) {
     const len = 5;
     const rect = e.target.getBoundingClientRect();
     const left = rect.left + len;
@@ -112,7 +114,7 @@ function Dragond(initialContainers, options) {
     const allowBeforeV = y < top;
     const allowAfterH = x > right;
     const allowAfterV = y > bottom;
-    const sibling = e.target.closest('.instance-container > *');
+    const sibling = findSibling(e.target, con);
     if ((beforeH && allowBeforeH) || (beforeV && allowBeforeV)) {
       $(el).insertBefore(sibling);
       parent = sibling.parentNode;
@@ -121,6 +123,13 @@ function Dragond(initialContainers, options) {
       $(el).insertAfter(sibling);
       parent = sibling.parentNode;
     }
+  }
+
+  function findSibling(el, parent) {
+    while (el.parentElement && el.parentElement !== parent) {
+      el = el.parentElement;
+    }
+    return el;
   }
 
   function canPlace(el, con) {
