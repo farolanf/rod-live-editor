@@ -1,12 +1,14 @@
-var global = {
+'use strict';
+
+var globalProperties = {
     "color1": "#eeeeee",
     "color2": "green",
     "backgroundColorBody": "white",
     "backgroundColorFooter": "blue",
     "backgroundColor": "#fff",
     "hiddenPreheader": "test",
-
 };
+
 var content = [{
     "name": "document-html-email",
     "backgroundColorHeader": "green",
@@ -30,6 +32,9 @@ var content = [{
                 "name": "block-text",
                 "text": " is ready!"
             }]
+        },
+        {
+            "name": "block-image"
         },
         {
             "name": "block-image"

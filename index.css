@@ -38,6 +38,19 @@ html, body, #app, #editor, .editor-container, .preview {
   display: flex;
 }
 
+.module-view {
+  height: 100%;
+  overflow: auto;
+}
+.module-view .list-group-item {
+  cursor: move;
+}
+.module-view iframe {
+  width: 100%;
+  border: 1px solid #eee;
+  pointer-events: none;
+}
+
 .preview {
   height: 100%;
   overflow: auto;
@@ -45,7 +58,7 @@ html, body, #app, #editor, .editor-container, .preview {
 }
 
 .instance-controls {
-  position: absolute;
+  position: fixed;
   top: 100px;
   left: 100px;
   display: flex;
@@ -79,4 +92,24 @@ html, body, #app, #editor, .editor-container, .preview {
 
 .ui-dialog {
   padding: 19px 20px 9px 20px;
+}
+
+.dg-dragging .module-view iframe {
+  pointer-events: none;
+}
+.dg-shadow {
+  position: fixed !important;
+  pointer-events: none !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+  opacity: 0.8;
+  border: 1px solid blue;
+}
+
+.module-name {
+  color: #888;
+}
+
+.popover {
+  max-width: 100%;
 }

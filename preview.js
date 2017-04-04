@@ -1,3 +1,4 @@
+'use strict';
 
 new Preview();
 
@@ -5,24 +6,22 @@ function Preview() {
   const editor = window.parent.editor;
   const propertyView = window.parent.propertyView;
   const app = window.parent.app;
+  const dragond = window.parent.dragond;
 
   const SCROLL_SPEED = 1000; // pixels per second
   let selectedElement;
-
-  const drake = dragula(null, {
-    accepts(el, target, source, sibling) {
-      return !$.contains(el, target);
-    }
-  });
 
   app.preview = {
     editInstanceContent() {editInstanceContent(selectedElement)},
     cloneInstance() {cloneInstance(selectedElement)},
     deleteInstance() {deleteInstance(selectedElement)},
     renderInstance,
+    renderContainerChildren,
+    cleanContainer,
+    initElement,
   };
 
-  $(window).on('click', function() {
+  $(window).on('click', function(e) {
     deselectInstance(selectedElement);
     selectedElement = null;
     app.hideInstanceControls();
@@ -35,53 +34,7 @@ function Preview() {
   $(init);
 
   function init() {
-    initDrake();
-    dragScroll(drake);
     initElement('body');
-  }
-
-  function initDrake() {
-    drake.on('over', function(el, container) {
-      $(container).addClass('dragover');
-    }).on('out', function(el, container) {
-      $(container).removeClass('dragover');
-    }).on('drop', function(el, target, source, sibling) {
-      const id = $(el).data('id');
-      const parentId = $(target).data('parent-id');
-      const container = $(target).data('name');
-      const siblingId = sibling ? $(sibling).data('id') : null;
-      editor.moveInstance(id, parentId, container, siblingId);
-    }).on('dragend', function() {
-      if (selectedElement) {
-        app.showInstanceControls(selectedElement);
-      }
-    });
-  }
-
-  function dragScroll(drake) {
-    const scrollInterval = 50;
-    const scrollStep = SCROLL_SPEED / (1000 / scrollInterval);
-    let dir = 0;
-    $(document.body).on('mousemove', function(e) {
-      const height = $(this).height();
-      const y = e.pageY - this.scrollTop;
-      const h = height * 0.1; 
-      if (y < height * 0.1) {
-        dir = (y - h) / h;
-      } else if (y > height * 0.9) {
-        dir = (y - height * 0.9) / h;
-      }
-      else {
-        dir = 0;
-      }
-    });
-    autoScroll();
-    function autoScroll() {
-      if (drake.dragging && dir !== 0) {
-        this.scrollTop += dir * scrollStep;
-      }
-      setTimeout(autoScroll.bind(document.body), scrollInterval);
-    }
   }
 
   function initElement(startElement) {
@@ -93,7 +46,7 @@ function Preview() {
     const meta = $('*', startElement).contents().filter(instanceCommentFilter);
     const containers = meta.parent();
     containers.addClass('instance-container');
-    drake.containers = drake.containers.concat(containers.toArray());
+    dragond.addContainers(containers);
     containers.each(function(i) {
       const json = meta[i].nodeValue.replace('instance-container', '');
       const data = JSON.parse(json);
@@ -106,8 +59,8 @@ function Preview() {
   }
 
   function initInstanceElements(startElement) {
-    const childrenSelector = '.instance-container > *:not(br)';
-    if ($(startElement).is(childrenSelector)) {
+    const childrenSelector = '.instance-container > [data-id]:not(br)';
+    if ($(startElement).is('[data-id]')) {
       initInstanceElement(startElement);
     }
     $(childrenSelector, startElement).each(function(i, el) {
@@ -122,15 +75,19 @@ function Preview() {
         deselectInstance(selectedElement);
       }
       selectInstance(this);
-    }).on('blur', function(e) {
+    })
+    .on('blur', function(e) {
       deselectInstance(this);
-    }).on('dblclick', function(e) {
+    })
+    .on('dblclick', function(e) {
       e.stopPropagation();
       editInstanceContent(this);
-    }).on('mouseover', function(e) {
+    })
+    .on('mouseover', function(e) {
       e.stopPropagation();
       $(this).addClass('hover');
-    }).on('mouseout', function(e) {
+    })
+    .on('mouseout', function(e) {
       $(this).removeClass('hover');
     });
   }
@@ -177,10 +134,23 @@ function Preview() {
 
   function renderInstance(instance) {
     const el = $(instance.render());
-    const lastEl = $(`[data-id="${instance.id}"]`).replaceWith(el);
+    const lastEl = $(`[data-id="${instance.id}"]`);
+    dragond.removeFoundContainers(lastEl);
+    lastEl.replaceWith(el);
     initElement(el);
     if (lastEl.is(selectedElement)) {
       selectInstance(el[0]);
     }
+  }
+
+  function renderContainerChildren(instance, name) {
+    const el = $(instance.renderContainerChildren(name));
+    $(`[data-name="${name}"][data-parent-id="${instance.id}"]`).append(el);
+    initElement(el);
+  }
+
+  function cleanContainer(name, parentId) {
+    $(`.instance-container[data-name="${name}"][data-parent-id="${parentId}"]`)
+      .children().not('[data-id]').remove();
   }
 }

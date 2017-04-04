@@ -2,16 +2,6 @@ body * {
   pointer-events: none;
 }
 
-.gu-unselectable .instance-container {
-  outline: 1px dashed blue;
-  pointer-events: auto;
-}
-.gu-unselectable .instance-container.dragover {
-  outline: 2px solid blue;
-}
-.gu-mirror .instance-container, .gu-transit .instance-container {
-  outline: none !important;
-}
 .instance, tr.instance > * {
   cursor: move;
   pointer-events: auto;
@@ -25,4 +15,25 @@ body * {
 .instance[contenteditable='true'] {
   cursor: text;
   box-shadow: 0 0 22px -2px #555;
+}
+
+.dg-dragging * {
+  pointer-events: auto;
+}
+.dg-dragging .instance-container {
+  outline: 2px dashed #aaa;
+  outline-offset: -2px;
+}
+.dg-dragover {
+  outline: 2px solid blue !important;
+  outline-offset: -2px;
+}
+.dg-dragover.dg-invalid {
+  outline: 2px solid red !important;
+}
+.dg-dragged .instance-container, .dg-shadow .instance-container {
+  border: none !important;
+}
+.dg-dragged {
+  opacity: 0.5;
 }

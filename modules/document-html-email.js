@@ -149,7 +149,7 @@ modules["document-html-email"] = {
     </style>
 
 </head>
-<body width="100%" %_backgroundColorMain% style="Margin: 0; mso-line-height-rule: exactly;">
+<body width="100%" %_backgroundColorMain% style="margin: 0; mso-line-height-rule: exactly;">
     
 	<center style="width: 100%; text-align: left; %backgroundColorMain% ">
 		%hiddenPreheader%
@@ -179,7 +179,7 @@ modules["document-html-email"] = {
             "type": "text"
         },
 		"body": {
-            "default": "Place your body content here",
+            "default": "<tr><td>Place your body content here</td></tr>",
             "type": "container"
         },
         "header": {
@@ -266,7 +266,7 @@ modules["document-html-email"] = {
         },
         "_backgroundColorMain": {
             "alias": "backgroundColorMain",
-            "output": {
+            "replace": {
                 "condition": function(value) {
                     return (value != "") ? true : false;
                 },

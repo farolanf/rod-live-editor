@@ -1,3 +1,5 @@
+'use strict';
+
 function PropertyView(editor) {
   if (!(this instanceof PropertyView)) {
     return new PropertyView(editor);
@@ -19,7 +21,7 @@ function PropertyView(editor) {
   function render() {
     const instance = Instance(instanceId);
     const props = instance.getProperties();
-    let html = '';
+    let html = `<div class="list-group-item module-name">${instance.name}</div>`;
     _.forOwn(props, function(prop, key) {
       const color = prop.value.replace('#', '');
       html += `

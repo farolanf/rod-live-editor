@@ -1,3 +1,4 @@
+'use strict';
 
 function Editor(_content) {
 
@@ -11,11 +12,13 @@ function Editor(_content) {
   prepareContent(_content);
 
   return {
+    createInstance,
     findInstance,
     removeInstance,
     moveInstance,
     cloneInstance,
     regenerateId,
+    newId,
     get newInstanceId() {return newInstanceId;},
     set newInstanceId(val) {newInstanceId = val;},
     get content() {return _content},
@@ -33,7 +36,7 @@ function Editor(_content) {
   }
 
   function prepareInstanceContainers(instance) {
-    for (const key in instance) {
+    for (let key in instance) {
       if (instance.hasOwnProperty(key)) {
         const val = instance[key];
         if (Array.isArray(val)) {
@@ -53,7 +56,7 @@ function Editor(_content) {
       if (instance.id === id) {
         return true;
       }
-      for (const key in instance) {
+      for (let key in instance) {
         if (instance.hasOwnProperty(key)) {
           const val = instance[key];
           if (Array.isArray(val)) {
@@ -87,6 +90,13 @@ function Editor(_content) {
     const instance = _removeInstance(content, id);
     const parent = _findInstance(content, parentId);
     insertInstance(instance, parent, container, siblingId);
+  }
+
+  function createInstance(name, parentId, container, siblingId) {
+    const instance = {name: name, id: newId()};
+    const parent = _findInstance(content, parentId);
+    insertInstance(instance, parent, container, siblingId);
+    return instance;
   }
 
   function insertInstance(instance, parent, container, siblingId) {
@@ -167,8 +177,8 @@ Editor.getContainerPlaceholder = function(name, parentId, children) {
   return `<!-- instance-container ${containerJson} --> ${children}`;
 }
 
-Editor.injectInstanceData = function(str, id) {
-  return str.replace(/(<.*?)>/, `$1 data-id="${id}">`);
+Editor.injectInstanceData = function(str, id, name) {
+  return str.replace(/(<.*?)>/, `$1 data-id="${id}" data-name="${name}">`);
 }
 
 if (typeof module !== 'undefined' && module.exports) {
