@@ -49,12 +49,19 @@ function Dragond(initialContainers, options) {
     // defer style to avoid capturing it on the drag image
     setTimeout(function() {
       $(con).addClass('dg-dragover');
+      if (canPlace(el, con)) {
+        $(con).removeClass('dg-invalid');
+      }
+      else {
+        $(con).addClass('dg-invalid');
+        options.invalid && options.invalid.call(this, e, el, con, src);
+      }
     });
     options.enter && options.enter.call(this, e, el, con, src);
   }
 
   function leave(e, el, con, src) {
-    $(con).removeClass('dg-dragover');
+    $(con).removeClass('dg-dragover dg-invalid');
     options.leave && options.leave.call(this, e, el, con, src);
   }
 

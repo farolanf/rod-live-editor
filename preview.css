@@ -26,6 +26,9 @@ body * {
   outline: 2px solid blue !important;
   outline-offset: -2px;
 }
+.dg-dragover.dg-invalid {
+  outline: 2px solid red !important;
+}
 .dg-dragged .instance-container, .dg-shadow .instance-container {
   border: none !important;
 }
