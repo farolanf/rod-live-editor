@@ -19,6 +19,7 @@ function Dragond(initialContainers, options) {
   const dndDestroy = dnd.destroy;
 
   return Object.assign(dnd, {
+    options,
     destroy,
   });
 
@@ -354,7 +355,7 @@ function Dnd(initialContainers, options) {
     // console.log('dragleave');
     const e = event.originalEvent;
     findContainer(e.target, function(container) {
-      if (container !== lastContainer || !overElement(e, container)) {
+      if (container !== lastContainer || !domutils.overElement(e, container)) {
         if (container === lastContainer) {
           lastContainer = null;
         }
@@ -439,13 +440,6 @@ function Dnd(initialContainers, options) {
       }
     });
     containers = _.difference(containers, removes);
-  }
-
-  function overElement(e, el) {
-    const x = e.clientX;
-    const y = e.clientY;
-    const rect = el.getBoundingClientRect();
-    return x >= rect.left && x < rect.right && y >= rect.top && y < rect.bottom;
   }
 }
 

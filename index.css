@@ -48,6 +48,7 @@ html, body, #app, #editor, .editor-container, .preview {
 .module-view iframe {
   width: 100%;
   border: 1px solid #eee;
+  pointer-events: none;
 }
 
 .preview {

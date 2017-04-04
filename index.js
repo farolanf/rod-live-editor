@@ -70,7 +70,7 @@ function App() {
         return el;
       },
       accepts(el, con, src) {
-        return !$(con).is('.module-view *');
+        return !$(con).is('.module-view *') && $(el).is('[data-id]');
       },
       end(e, el, con, src, sibling) {
         // console.log('drop', el, con, src, sibling);

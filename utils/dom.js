@@ -14,4 +14,11 @@ const domutils = {
     }
     return {x, y};
   },
+
+  overElement(e, el) {
+    const x = e.clientX;
+    const y = e.clientY;
+    const rect = el.getBoundingClientRect();
+    return x >= rect.left && x < rect.right && y >= rect.top && y < rect.bottom;
+  },
 };
