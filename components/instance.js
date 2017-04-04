@@ -7,6 +7,9 @@ function Instance(instance) {
   
   if (typeof instance === 'string' || typeof instance === 'number') {
     instance = editor.findInstance(instance);
+    if (!instance) {
+      throw new Error('invalid instance id');
+    }
   }
 
   const module = modules[instance.name];

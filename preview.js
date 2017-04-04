@@ -93,6 +93,7 @@ function Preview() {
   }
 
   function selectInstance(el) {
+    console.log(el);
     selectedElement = el;
     $(el).addClass('active');
     app.showInstanceControls(el);

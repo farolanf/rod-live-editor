@@ -90,7 +90,7 @@ function App() {
     con = new ContainerElement(con);
     sibling = new InstanceElement(sibling);
     const instance = editor.createInstance(name, con.parentId, con.name, sibling.id);
-    $(el).data('id', instance.id);
+    $(el).attr('data-id', instance.id);
     preview.initElement(el);
   }
 
