@@ -44,8 +44,8 @@ function Preview() {
   function initContainers(startElement) {
     const meta = $('*', startElement).contents().filter(instanceCommentFilter);
     const containers = meta.parent();
-    dragond.addContainers(containers);
     containers.addClass('instance-container');
+    dragond.addContainers(containers);
     containers.each(function(i) {
       const json = meta[i].nodeValue.replace('instance-container', '');
       const data = JSON.parse(json);

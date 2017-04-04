@@ -78,7 +78,7 @@ function App() {
       },
       drop(e, el, con, src, sibling) {
         if ($(el).is('.instance') && $(con).is('.instance-container')) {
-          console.log('move', el, con, src, sibling, el.parentNode);
+          // console.log('move', el, con, src, sibling, el.parentNode);
           const id = $(el).data('id');
           const parentId = $(con).data('parent-id');
           const container = $(con).data('name');
