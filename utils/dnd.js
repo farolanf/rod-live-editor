@@ -15,13 +15,15 @@ function Dragond(initialContainers, options) {
     start, end, drag, over, enter, leave, drop,
   });
   const dnd = new Dnd(initialContainers, dndOptions);
+  const dndDestroy = dnd.destroy;
 
-  return Object.assign({}, dnd, {
+  return Object.assign(dnd, {
     destroy,
   });
 
   function destroy() {
     deltaPos.destroy();
+    dndDestroy();
   }
 
   function start(e, el, src) {
@@ -227,6 +229,7 @@ function Dnd(initialContainers, options) {
     get $body() {return $body},
     addIframe,
     addContainers,
+    destroy,
     set containers(c) {containers = c; initContainers()},
   };
 
@@ -240,6 +243,13 @@ function Dnd(initialContainers, options) {
       .on('dragleave', dragleave)
       .on('drop', drop);
     console.log($body.toArray());
+  }
+
+  function destroy() {
+    $body.each(function() {
+      const win = this.ownerDocument.defaultView;
+      $(win).off('dragstart dragend drag dragover dragenter dragleave drop');
+    });
   }
 
   function accepts(el, con, src) {

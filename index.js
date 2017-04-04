@@ -6,46 +6,7 @@ function App() {
   const renderer = new Renderer(modules, globalProperties);
   const editor = window.editor = Editor(content);
   const propertyView = window.propertyView = PropertyView(editor);
-  let preview;
-
-  const dragond = new Dragond(['.module-list', '.module-list .list-group'], {
-    shadow: false,
-    getElement(el, src) {
-      // if ($(src).is('.module-view *')) {
-      //   const rect = el.getBoundingClientRect();
-      //   const clone = el.cloneNode(true);
-      //   clone.style.position = 'absolute';
-      //   clone.style.width = rect.width + 'px';
-      //   clone.style.height = rect.height + 'px';
-      //   // return clone;
-      // }
-      return el;
-    },
-    accepts(el, con, src) {
-      return true;
-      // return !con.classList.contains('list-group');
-    },
-    drop(e, el, con, src, sibling) {
-      if (el.parentNode !== con) {
-        // invalid markup, rerender the whole document
-        console.log('invalid markup, rerender the whole document');
-        renderPreview();
-      }
-      if ($(el).is('.instance') && $(con).is('.instance-container')) {
-        console.log('move', el, con, src, sibling, el.parentNode);
-        const id = $(el).data('id');
-        const parentId = $(con).data('parent-id');
-        const container = $(con).data('name');
-        const siblingId = $(sibling).data('id');
-        editor.moveInstance(id, parentId, container, siblingId);
-        cleanInstance(parentId);
-        preview.cleanContainer(container, parentId);
-        renderContainerChildren(src);
-      }
-    },
-  });
-
-  window.dragond = dragond;
+  let preview, dragond;
 
   $(init);
 
@@ -59,6 +20,7 @@ function App() {
 
   function init() {
     initRoutes();
+    initDrag();
     initEditor();
     initInstanceControls();
     initActions();
@@ -93,8 +55,47 @@ function App() {
     return value;
   }
 
+  function initDrag() {
+    if (dragond) {
+      dragond.destroy();
+    }
+    dragond = new Dragond(['.module-list', '.module-list .list-group'], {
+      shadow: false,
+      getElement(el, src) {
+        // if ($(src).is('.module-view *')) {
+        //   const rect = el.getBoundingClientRect();
+        //   const clone = el.cloneNode(true);
+        //   clone.style.position = 'absolute';
+        //   clone.style.width = rect.width + 'px';
+        //   clone.style.height = rect.height + 'px';
+        //   // return clone;
+        // }
+        return el;
+      },
+      accepts(el, con, src) {
+        return true;
+        // return !con.classList.contains('list-group');
+      },
+      drop(e, el, con, src, sibling) {
+        if ($(el).is('.instance') && $(con).is('.instance-container')) {
+          console.log('move', el, con, src, sibling, el.parentNode);
+          const id = $(el).data('id');
+          const parentId = $(con).data('parent-id');
+          const container = $(con).data('name');
+          const siblingId = $(sibling).data('id');
+          editor.moveInstance(id, parentId, container, siblingId);
+          cleanInstance(parentId);
+          preview.cleanContainer(container, parentId);
+          renderContainerChildren(src);
+        }
+      },
+    });
+
+    window.dragond = dragond;
+  }
+
   function initActions() {
-    $('.refresh-btn').on('click', renderPreview);
+    $('.refresh-btn').on('click', refresh);
   }
 
   function initEditor() {
@@ -142,7 +143,7 @@ function App() {
         <script src="preview.js"></script>
       </body>
     `);
-    $('.preview').attr('srcdoc', html).on('load', function() {
+    $('.preview').attr('srcdoc', html).off('load').on('load', function() {
       dragond.addIframe('.preview');
     });
   }
@@ -160,4 +161,10 @@ function App() {
     const instance = new Instance(id);
     instance.cleanContainers();
   }
+
+  function refresh() {
+    initDrag();
+    renderPreview();
+  }
+
 }
