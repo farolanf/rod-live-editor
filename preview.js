@@ -133,7 +133,9 @@ function Preview() {
 
   function renderInstance(instance) {
     const el = $(instance.render());
-    const lastEl = $(`[data-id="${instance.id}"]`).replaceWith(el);
+    const lastEl = $(`[data-id="${instance.id}"]`);
+    dragond.removeFoundContainers(lastEl);
+    lastEl.replaceWith(el);
     initElement(el);
     if (lastEl.is(selectedElement)) {
       selectInstance(el[0]);

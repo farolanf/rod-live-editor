@@ -229,6 +229,7 @@ function Dnd(initialContainers, options) {
     get $body() {return $body},
     addIframe,
     addContainers,
+    removeFoundContainers,
     destroy,
     set containers(c) {containers = c; initContainers()},
   };
@@ -346,7 +347,10 @@ function Dnd(initialContainers, options) {
   }
 
   function addContainers() {
-    containers = containers.concat(Array.prototype.slice.call(arguments));
+    _.each(arguments, function(val) {
+      containers = containers.concat($(val).toArray());
+    });
+    containers = _.uniq(containers);
     initContainers();
     console.log(getContainerElements());
   }
@@ -369,6 +373,21 @@ function Dnd(initialContainers, options) {
     if (containerElement) {
       fn(containerElement);
     }    
+  }
+
+  function removeFoundContainers(startEl) {
+    // instanceof jQuery failed so using this instead
+    if (startEl.jquery) {
+      console.warn('expects a dom element, got jQuery object instead, using the first element');
+      startEl = startEl[0];
+    }
+    const removes = [];
+    _.each(containers, function(con) {
+      if ($.contains(startEl, con)) {
+        removes.push(con);
+      }
+    });
+    containers = _.difference(containers, removes);
   }
 
   function overElement(e, el) {
