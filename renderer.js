@@ -9,6 +9,8 @@ function Renderer(modules, globalProperties) {
     return {
         render,
         renderModule,
+        renderContainer,
+        getPropertyValue,
     };
 
     function removeJsComments(str) {
@@ -136,7 +138,7 @@ function Renderer(modules, globalProperties) {
 
         var customReplace = true;
         for (var property in module.properties)
-            output = output.replace(new RegExp('%' + property + '%', 'g'), getPropertyValue(property, instance, module, customReplace));
+            output = output.replace(new RegExp('%' + property + '%', 'g'), getPropertyValue(property, instance, module, customReplace, true));
 
         //Replace Global Variables
         // for (var property in module.properties)
@@ -148,7 +150,7 @@ function Renderer(modules, globalProperties) {
         return Editor.injectInstanceData(output, instance.id);
     }
 
-    function getPropertyValue(property, instance, module, customReplace) {
+    function getPropertyValue(property, instance, module, customReplace, withMeta) {
         var value = '';
         var moduleProperty = module.properties ? module.properties[property] : null;
 
@@ -164,7 +166,7 @@ function Renderer(modules, globalProperties) {
 
             if (module.properties.hasOwnProperty(alias)) {
                 // There is an alias, use values from a different property, but do not use the customReplace so we get the raw value.
-                value = getPropertyValue(alias, instance, module, false);
+                value = getPropertyValue(alias, instance, module, false, withMeta);
             } else {
                 console.error("Invalid alias in ", property, " in module ", instance.name, ". There is no property named ", alias);
             }
@@ -212,7 +214,13 @@ function Renderer(modules, globalProperties) {
                 console.error("Missing \"condition\" child on \"replace\" parameter of property ", property, " in module ", instance.name);
             }
         }
-        return moduleProperty.type == "container" ? Editor.getContainerPlaceholder(property, instance.id, render(value)) : value;
+        return moduleProperty.type == "container" ? 
+            (withMeta ? renderContainer(property, instance.id, value) : render(value)) 
+            : value;
+    }
+
+    function renderContainer(name, id, value) {
+        return Editor.getContainerPlaceholder(name, id, render(value));
     }
 }
 

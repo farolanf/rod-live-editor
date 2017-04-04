@@ -16,6 +16,8 @@ function Preview() {
     cloneInstance() {cloneInstance(selectedElement)},
     deleteInstance() {deleteInstance(selectedElement)},
     renderInstance,
+    renderContainerChildren,
+    cleanContainer,
   };
 
   $(window).on('click', function(e) {
@@ -136,5 +138,16 @@ function Preview() {
     if (lastEl.is(selectedElement)) {
       selectInstance(el[0]);
     }
+  }
+
+  function renderContainerChildren(instance, name) {
+    const el = $(instance.renderContainerChildren(name));
+    $(`[data-name="${name}"][data-parent-id="${instance.id}"]`).append(el);
+    initElement(el);
+  }
+
+  function cleanContainer(name, parentId) {
+    $(`.instance-container[data-name="${name}"][data-parent-id="${parentId}"]`)
+      .children().not('[data-id]').remove();
   }
 }
