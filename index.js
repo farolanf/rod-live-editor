@@ -63,34 +63,45 @@ function App() {
     dragond = new Dragond(['.module-list', '.module-list .list-group'], {
       shadow: false,
       getElement(el, src) {
-        // if ($(src).is('.module-view *')) {
-        //   const rect = el.getBoundingClientRect();
-        //   const clone = el.cloneNode(true);
-        //   clone.style.position = 'absolute';
-        //   clone.style.width = rect.width + 'px';
-        //   clone.style.height = rect.height + 'px';
-        //   // return clone;
-        // }
+        if ($(src).is('.module-view *')) {
+          const newEl = moduleView.getElement(el);
+          return newEl;
+        }
         return el;
       },
       accepts(el, con, src) {
         return !$(con).is('.module-view *');
       },
       end(e, el, con, src, sibling) {
-        console.log('move', el, con, src, sibling);
-        if ($(el).is('.instance') && $(con).is('.instance-container')) {
-          con = new ContainerElement(con);
-          src = new ContainerElement(src);
-          el = new InstanceElement(el);
-          sibling = new InstanceElement(sibling);
-          editor.moveInstance(el.id, con.parentId, con.name, sibling.id);
-          preview.cleanContainer(con.name, con.parentId);
-          renderContainerChildren(src);
+        // console.log('drop', el, con, src, sibling);
+        if ($(el).data('id') === -1) {
+          onCreateInstance(el, con, src, sibling);
+        } else if ($(el).is('.instance') && $(con).is('.instance-container')) {
+          onMoveInstance(el, con, src, sibling);
         }
       },
     });
 
     window.dragond = dragond;
+  }
+
+  function onCreateInstance(el, con, src, sibling) {
+    const name = $(el).data('name');
+    con = new ContainerElement(con);
+    sibling = new InstanceElement(sibling);
+    const instance = editor.createInstance(name, con.parentId, con.name, sibling.id);
+    $(el).data('id', instance.id);
+    preview.initElement(el);
+  }
+
+  function onMoveInstance(el, con, src, sibling) {
+    con = new ContainerElement(con);
+    src = new ContainerElement(src);
+    el = new InstanceElement(el);
+    sibling = new InstanceElement(sibling);
+    editor.moveInstance(el.id, con.parentId, con.name, sibling.id);
+    preview.cleanContainer(con.name, con.parentId);
+    renderContainerChildren(src);
   }
 
   function initActions() {

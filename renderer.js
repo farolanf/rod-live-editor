@@ -133,7 +133,7 @@ function Renderer(modules, globalProperties) {
 
         if (!module.properties) {
             console.info("no properties in the module ", instance.name, " defined");
-            return Editor.injectInstanceData(output, instance.id);
+            return Editor.injectInstanceData(output, instance.id, instance.name);
         }
 
         var customReplace = true;
@@ -147,7 +147,7 @@ function Renderer(modules, globalProperties) {
             output = output.replace(new RegExp('%' + key + '%', 'g'), globalProperties[key]); 
         }
 
-        return Editor.injectInstanceData(output, instance.id);
+        return Editor.injectInstanceData(output, instance.id, instance.name);
     }
 
     function getPropertyValue(property, instance, module, customReplace, withMeta) {

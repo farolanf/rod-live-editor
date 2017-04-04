@@ -18,6 +18,7 @@ function Preview() {
     renderInstance,
     renderContainerChildren,
     cleanContainer,
+    initElement,
   };
 
   $(window).on('click', function(e) {
@@ -59,7 +60,7 @@ function Preview() {
 
   function initInstanceElements(startElement) {
     const childrenSelector = '.instance-container > [data-id]:not(br)';
-    if ($(startElement).is(childrenSelector)) {
+    if ($(startElement).is('[data-id]')) {
       initInstanceElement(startElement);
     }
     $(childrenSelector, startElement).each(function(i, el) {

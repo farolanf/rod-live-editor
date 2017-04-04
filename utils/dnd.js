@@ -291,7 +291,7 @@ function Dnd(initialContainers, options) {
       .on('dragenter', dragenter)
       .on('dragleave', dragleave)
       .on('drop', drop);
-    console.log($body.toArray());
+    // console.log($body.toArray());
   }
 
   function destroy() {
@@ -400,7 +400,7 @@ function Dnd(initialContainers, options) {
     });
     containers = _.uniq(containers);
     initContainers();
-    console.log(getContainerElements());
+    // console.log(getContainerElements());
   }
 
   function getContainerElements() {
@@ -427,6 +427,9 @@ function Dnd(initialContainers, options) {
     // instanceof jQuery failed so using this instead
     if (startEl.jquery) {
       console.warn('expects a dom element, got jQuery object instead, using the first element');
+      if (startEl.length <= 0) {
+        throw new Error('empty array');
+      }
       startEl = startEl[0];
     }
     const removes = [];

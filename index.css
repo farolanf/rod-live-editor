@@ -42,8 +42,10 @@ html, body, #app, #editor, .editor-container, .preview {
   height: 100%;
   overflow: auto;
 }
-
-.list-group-item iframe {
+.module-view .list-group-item {
+  cursor: move;
+}
+.module-view iframe {
   width: 100%;
   border: 1px solid #eee;
 }
@@ -86,16 +88,9 @@ html, body, #app, #editor, .editor-container, .preview {
   transform: translateY(-50%);
   width: 40%;
 }
-.property-view .list-group-item.module-name {
-  color: #888;
-}
 
 .ui-dialog {
   padding: 19px 20px 9px 20px;
-}
-
-.module-list, .module-view .list-group {
-  min-height: 30px;
 }
 
 .dg-dragging .module-view iframe {
@@ -108,4 +103,8 @@ html, body, #app, #editor, .editor-container, .preview {
   z-index: 9999 !important;
   opacity: 0.8;
   border: 1px solid blue;
+}
+
+.module-name {
+  color: #888;
 }
