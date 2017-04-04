@@ -9,6 +9,7 @@ function Dragond(initialContainers, options) {
   const dragShadow = new DragShadow();
   const deltaPos = new DeltaPos();
   let originalSibling;
+  let parent;
 
   options = options || {};
   const dndOptions = Object.assign({}, options, {
@@ -41,8 +42,9 @@ function Dragond(initialContainers, options) {
     // options.shadow && dragShadow.remove();
     $(el).removeClass('dg-dragged');
     dnd.$body.removeClass('dg-dragging');
-    options.end && options.end.call(this, e, el, con, src);
-    originalSibling = null;
+    const sibling = $(el).next()[0];
+    options.end && options.end.call(this, e, el, parent, src, sibling);
+    parent = originalSibling = null;
   }
 
   function enter(e, el, con, src) {
@@ -84,10 +86,10 @@ function Dragond(initialContainers, options) {
   }
 
   function insert(e, el, con) {
-      console.log('insert');
     if (!$.contains(el, con) && canPlace(el, con)) {
       if (e.target === con && con.childElementCount === 0) {
         con.appendChild(el);
+        parent = con;
       }
       else if (deltaPos.x !== 0 || deltaPos.y !== 0) {
         insertElement(e, el);
@@ -111,12 +113,13 @@ function Dragond(initialContainers, options) {
     const allowAfterH = x > right;
     const allowAfterV = y > bottom;
     const sibling = e.target.closest('.instance-container > *');
-    console.log('sibling', e.target, sibling);
     if ((beforeH && allowBeforeH) || (beforeV && allowBeforeV)) {
       $(el).insertBefore(sibling);
+      parent = sibling.parentNode;
     }
     else if ((!beforeH && allowAfterH) || (!beforeV && allowAfterV)) {
       $(el).insertAfter(sibling);
+      parent = sibling.parentNode;
     }
   }
 
