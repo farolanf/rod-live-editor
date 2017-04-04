@@ -9,6 +9,27 @@ function ModuleView(modules, renderer) {
   });
 
   function init() {
+    initSearch();
+    fill();
+  }
+
+  function initSearch() {
+    $('.module-view .module-search').on('keyup', function(e) {
+      if (e.key === 'Escape') {
+        e.target.value = '';
+      }
+      filterModules(e.target.value);
+    });
+  }
+
+  function filterModules(str) {
+    $('.module-view .list-group-item').each(function() {
+      const match = !str || $(this).is(`[data-name*="${str}"]`);
+      $(this).toggleClass('hidden', !match);
+    });
+  }
+
+  function fill() {
     const $list = $('<div class="list-group">');
     _.forOwn(modules, function(val, key) {
       const $item = $(`<div class="list-group-item" data-name="${key}">`);

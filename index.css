@@ -42,6 +42,11 @@ html, body, #app, #editor, .editor-container, .preview {
   height: 100%;
   overflow: auto;
 }
+.module-view .module-search {
+  position: sticky;
+  top: 0;
+  z-index: 10000;
+}
 .module-view .list-group-item {
   cursor: move;
 }
