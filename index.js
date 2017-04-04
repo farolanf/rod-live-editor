@@ -79,13 +79,12 @@ function App() {
       drop(e, el, con, src, sibling) {
         if ($(el).is('.instance') && $(con).is('.instance-container')) {
           // console.log('move', el, con, src, sibling, el.parentNode);
-          const id = $(el).data('id');
-          const parentId = $(con).data('parent-id');
-          const container = $(con).data('name');
-          const siblingId = $(sibling).data('id');
-          editor.moveInstance(id, parentId, container, siblingId);
-          cleanInstance(parentId);
-          preview.cleanContainer(container, parentId);
+          con = new ContainerElement(con);
+          src = new ContainerElement(src);
+          el = new InstanceElement(el);
+          sibling = new InstanceElement(sibling);
+          editor.moveInstance(el.id, con.parentId, con.name, sibling.id);
+          preview.cleanContainer(con.name, con.parentId);
           renderContainerChildren(src);
         }
       },
@@ -149,17 +148,10 @@ function App() {
   }
 
   function renderContainerChildren(con) {
-    const name = $(con).data('name');
-    const parentId = $(con).data('parent-id');
-    const instance = new Instance(parentId);
-    if (instance.getContainers()[name].isDefault) {
-      preview.renderContainerChildren(instance, name);
+    con.parentInstance.cleanContainers();
+    if (con.parentInstance.getContainers()[con.name].isDefault) {
+      preview.renderContainerChildren(con.parentInstance, con.name);
     }
-  }
-
-  function cleanInstance(id) {
-    const instance = new Instance(id);
-    instance.cleanContainers();
   }
 
   function refresh() {

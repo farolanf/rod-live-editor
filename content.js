@@ -37,6 +37,9 @@ var content = [{
             "name": "block-image"
         },
         {
+            "name": "block-image"
+        },
+        {
             "name": "1-column",
             "padding": "0 40px 40px",
             "textAlign": "justify",
