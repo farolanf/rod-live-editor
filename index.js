@@ -6,6 +6,7 @@ function App() {
   const renderer = new Renderer(modules, globalProperties);
   const editor = window.editor = Editor(content);
   const propertyView = window.propertyView = PropertyView(editor);
+  const moduleView = new ModuleView(modules, renderer);
   let preview, dragond;
 
   $(init);
@@ -73,8 +74,7 @@ function App() {
         return el;
       },
       accepts(el, con, src) {
-        return true;
-        // return !con.classList.contains('list-group');
+        return !$(con).is('.module-view *');
       },
       end(e, el, con, src, sibling) {
         console.log('move', el, con, src, sibling);
