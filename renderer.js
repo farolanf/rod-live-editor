@@ -101,18 +101,18 @@ function Renderer(modules, globalProperties) {
         return modules[name];
     }
 
-    function render(content) {
+    function render(content, clean) {
         if (Array.isArray(content)) {
             var output = '';
             for (var i = 0; i < content.length; ++i)
-                output += renderModule(content[i]);
+                output += renderModule(content[i], clean);
             return output;
         }
 
-        return renderModule(content);
+        return renderModule(content, clean);
     }
 
-    function renderModule(instance) {
+    function renderModule(instance, clean) {
         if (typeof instance != 'object') {
             return instance;
         }
@@ -133,12 +133,14 @@ function Renderer(modules, globalProperties) {
 
         if (!module.properties) {
             console.info("no properties in the module ", instance.name, " defined");
-            return Editor.injectInstanceData(output, instance.id, instance.name);
+            return clean ? output : 
+                Editor.injectInstanceData(output, instance.id, instance.name);
         }
 
         var customReplace = true;
         for (var property in module.properties)
-            output = output.replace(new RegExp('%' + property + '%', 'g'), getPropertyValue(property, instance, module, customReplace, true));
+            output = output.replace(new RegExp('%' + property + '%', 'g'), 
+                getPropertyValue(property, instance, module, customReplace, clean));
 
         //Replace Global Variables
         // for (var property in module.properties)
@@ -147,10 +149,11 @@ function Renderer(modules, globalProperties) {
             output = output.replace(new RegExp('%' + key + '%', 'g'), globalProperties[key]); 
         }
 
-        return Editor.injectInstanceData(output, instance.id, instance.name);
+        return clean ? output :
+            Editor.injectInstanceData(output, instance.id, instance.name);
     }
 
-    function getPropertyValue(property, instance, module, customReplace, withMeta) {
+    function getPropertyValue(property, instance, module, customReplace, clean) {
         var value = '';
         var moduleProperty = module.properties ? module.properties[property] : null;
 
@@ -166,7 +169,7 @@ function Renderer(modules, globalProperties) {
 
             if (module.properties.hasOwnProperty(alias)) {
                 // There is an alias, use values from a different property, but do not use the customReplace so we get the raw value.
-                value = getPropertyValue(alias, instance, module, false, withMeta);
+                value = getPropertyValue(alias, instance, module, false, clean);
             } else {
                 console.error("Invalid alias in ", property, " in module ", instance.name, ". There is no property named ", alias);
             }
@@ -215,7 +218,7 @@ function Renderer(modules, globalProperties) {
             }
         }
         return moduleProperty.type == "container" ? 
-            (withMeta ? renderContainer(property, instance.id, value) : render(value)) 
+            (clean ? render(value, clean) : renderContainer(property, instance.id, value)) 
             : value;
     }
 
