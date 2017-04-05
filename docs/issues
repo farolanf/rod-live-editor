@@ -1,0 +1,6 @@
+
+# duplicate on move
+drag a new module to the preview pane to create a new instance.
+Move it around, it will be dupplicated on every move but currently invisible.
+Refresh to see the dupplicates.
+
