@@ -27,7 +27,7 @@ modules["block-button"] = {
             "type": "text"
             },
         "url": {
-            "default": "http:://pianoencyclopedia.com",
+            "default": "http://pianoencyclopedia.com",
             "type": "url"
             }
     }
