@@ -21,7 +21,7 @@ function InstanceMap(content, propertyView) {
       height: '100%',
       overflow: 'hidden'
     }).find('.popover-content').css({
-      height: '100%',
+      height: 'calc(100% - 30px)',
       overflow: 'auto'
     });
     $('.instance-map .instance-map__instance').on('click', function(e) {
