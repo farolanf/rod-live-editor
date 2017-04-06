@@ -24,6 +24,11 @@ function InstanceMap(content, propertyView) {
       height: '100%',
       overflow: 'auto'
     });
+    $('.instance-map .instance-map__instance').on('click', function(e) {
+      e.stopPropagation();
+      const id = $(this).data('id');
+      propertyView.setInstance(id);
+    });
   });
 
   $(window).on('click', function() {
@@ -50,7 +55,7 @@ function InstanceMap(content, propertyView) {
 
   function renderInstance(instance) {
     const html = `
-      <div class="instance-map__instance">
+      <div class="instance-map__instance" data-id="${instance.id}">
         <span>${instance.name}</span>
         ${renderContainers(instance)}
       </div>
