@@ -279,6 +279,7 @@ function Dnd(initialContainers, options) {
     addIframe,
     addContainers,
     removeFoundContainers,
+    replaceBody,
     destroy,
     set containers(c) {containers = c; initContainers()},
   };
@@ -440,6 +441,11 @@ function Dnd(initialContainers, options) {
       }
     });
     containers = _.difference(containers, removes);
+  }
+
+  function replaceBody(prev, el) {
+    const i = $.inArray(prev, $body);
+    $body.splice(i, 1, el);
   }
 }
 
