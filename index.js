@@ -74,8 +74,7 @@ function App() {
         return !$(con).is('.module-view *') && $(el).is('[data-id]');
       },
       end(e, el, con, src, sibling) {
-        // console.log('drop', el, con, src, sibling);
-        if ($(el).data('id') === -1) {
+        if (+$(el).attr('data-id') === -1) {
           onCreateInstance(el, con, src, sibling);
         } else if ($(el).is('.instance') && $(con).is('.instance-container')) {
           onMoveInstance(el, con, src, sibling);
@@ -88,11 +87,13 @@ function App() {
 
   function onCreateInstance(el, con, src, sibling) {
     const name = $(el).data('name');
-    con = new ContainerElement(con);
+    const container = $(con).data('name');
+    const parentId = $(con).data('parent-id');
     sibling = new InstanceElement(sibling);
-    const instance = editor.createInstance(name, con.parentId, con.name, sibling.id);
+    const instance = editor.createInstance(name, parentId, container, sibling.id);
     $(el).attr('data-id', instance.id);
     preview.initElement(el);
+    preview.cleanContainer(container, parentId);
   }
 
   function onMoveInstance(el, con, src, sibling) {
