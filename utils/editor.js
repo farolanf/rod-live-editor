@@ -178,6 +178,9 @@ Editor.getContainerPlaceholder = function(name, parentId, children) {
 }
 
 Editor.injectInstanceData = function(str, id, name) {
+  if (!/^\s*<[^]*>\s*$/.test(str)) {
+    str = `<span>${str}</span>`;
+  }
   return str.replace(/(<.*?)>/, `$1 data-id="${id}" data-name="${name}">`);
 }
 

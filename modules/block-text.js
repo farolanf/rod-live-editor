@@ -1,5 +1,5 @@
 modules["block-text"] = {
-    "output": `<p>%text%</p>`,
+    "output": `%text%`,
     "properties": {
         "text": {
             "default": "Place your text here",
