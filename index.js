@@ -6,6 +6,7 @@ function App() {
   const renderer = new Renderer(modules, globalProperties);
   const editor = window.editor = Editor(content);
   const propertyView = window.propertyView = PropertyView(editor);
+  const instanceMap = new InstanceMap(content, propertyView);
   const moduleView = new ModuleView(modules, renderer);
   let preview, dragond;
 

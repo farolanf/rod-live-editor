@@ -133,13 +133,36 @@ function Preview() {
   }
 
   function renderInstance(instance) {
-    const el = $(instance.render());
-    const lastEl = $(`[data-id="${instance.id}"]`);
-    dragond.removeFoundContainers(lastEl);
-    lastEl.replaceWith(el);
-    initElement(el);
-    if (lastEl.is(selectedElement)) {
-      selectInstance(el[0]);
+    const html = instance.render();
+    const prev = $(`[data-id="${instance.id}"]`);
+    dragond.removeFoundContainers(prev);
+    replaceElement(prev, html);
+  }
+
+  function replaceElement(prev, html) {
+    if (prev.find('head, body').length > 0) {
+      if (prev.find('head').length > 0) {
+        const head = html.replace(/[^]*<head[^]*?>([^]*)<\/head>[^]*/, '$1');
+        prev.find('head').replaceWith($('<head>').html(head));
+        $('head').append('<link href="preview.css" rel="stylesheet">');
+      } 
+      if (prev.find('body').length > 0) {
+        const body = html.replace(/[^]*<body[^]*?>([^]*)<\/body>[^]*/, '$1');
+        prev.find('body').replaceWith($('<body>').html(body));
+        const el = prev.find('body')[0];
+        initElement(el);
+        $('body').append(`
+          <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+          <script src="preview.js"></script>
+        `);
+      }
+    } else {
+      const el = $(html);
+      prev.replaceWith(el);
+      initElement(el);
+      if (prev.is(selectedElement)) {
+        selectInstance(el[0]);
+      }
     }
   }
 
