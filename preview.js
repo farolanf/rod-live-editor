@@ -147,9 +147,11 @@ function Preview() {
         $('head').append('<link href="preview.css" rel="stylesheet">');
       } 
       if (prev.find('body').length > 0) {
+        const prevBody = prev.find('body')[0];
         const body = html.replace(/[^]*<body[^]*?>([^]*)<\/body>[^]*/, '$1');
         prev.find('body').replaceWith($('<body>').html(body));
         const el = prev.find('body')[0];
+        dragond.replaceBody(prevBody, el);
         initElement(el);
         $('body').append(`
           <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
