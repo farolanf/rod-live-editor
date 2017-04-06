@@ -14,7 +14,7 @@ function InstanceMap(content, propertyView) {
     $(this).popover('toggle');
   })
   .on('inserted.bs.popover', function(e) {
-    $('.instance-map', this).off().on('click', function(e) {
+    $('.popover').on('click', function(e) {
       e.stopPropagation();
     });
     $('.popover').css({
