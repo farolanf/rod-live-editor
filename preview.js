@@ -135,7 +135,7 @@ function Preview() {
   function renderInstance(instance) {
     const html = instance.render();
     const prev = $(`[data-id="${instance.id}"]`);
-    dragond.removeFoundContainers(prev);
+    dragond.removeFoundContainers(prev[0]);
     replaceElement(prev, html);
   }
 
