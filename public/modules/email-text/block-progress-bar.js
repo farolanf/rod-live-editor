@@ -1,4 +1,5 @@
-modules["block-progress-bar"] = {
+{
+    "name": "block-progress-bar",
     "output": `
 <table cellpadding="0" cellspacing="0" width="100%">
 <tr>
