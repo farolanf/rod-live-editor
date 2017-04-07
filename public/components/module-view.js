@@ -38,7 +38,7 @@ function ModuleView(modules, renderer) {
       $('.module-view .module-groups').on('change', function() {
         const name = $(this).find(':selected').val();
         fillModules(name);
-      });
+      }).trigger('change');
     });
   }
 

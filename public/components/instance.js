@@ -12,7 +12,7 @@ function Instance(instance) {
     }
   }
 
-  const module = modules[instance.name];
+  const module = modules.modules[instance.name];
   const renderer = new Renderer(modules, globalProperties);
 
   return {
