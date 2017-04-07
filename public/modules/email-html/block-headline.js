@@ -1,4 +1,5 @@
-modules["block-headline"] = {
+{
+    "name": "block-headline",
     "output": `
 	<table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0"  width="100%">
         <tr>

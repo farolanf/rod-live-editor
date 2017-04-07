@@ -1,4 +1,5 @@
-modules["2-column-image-image"] = {
+{
+    "name": "2-column-image-image",
     "output": `
                <tr>
                     <td %backgroundColor% align="center" height="100%" valign="top" width="100%">

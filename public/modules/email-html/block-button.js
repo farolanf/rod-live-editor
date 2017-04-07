@@ -1,4 +1,5 @@
-modules["block-button"] = {
+{
+    "name": "block-button",
     "output": `
     <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0"  align="center" style="Margin: auto">
         <tr>

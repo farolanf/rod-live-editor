@@ -1,4 +1,5 @@
-modules["document-html-email"] = {
+{
+    "name": "document-html-email",
     "output": `<!DOCTYPE html>
 	<html lang="en">
 	<head>

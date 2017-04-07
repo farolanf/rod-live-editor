@@ -1,4 +1,5 @@
-modules["1-column-spacer"] = {
+{
+    "name": "1-column-spacer",
     "output": `
 				<tr>
                     <td %backgroundColor% height="%height%" style="font-size: 0; line-height: 0;">
