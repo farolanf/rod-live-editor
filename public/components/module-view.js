@@ -10,7 +10,7 @@ function ModuleView(modules, renderer) {
 
   function init() {
     initSearch();
-    fill();
+    fillGroups();
   }
 
   function initSearch() {
@@ -29,7 +29,26 @@ function ModuleView(modules, renderer) {
     });
   }
 
-  function fill() {
+  function fillGroups() {
+    modules.getGroups(function(groups) {
+      groups.forEach(function(group) {
+        $('.module-view .module-groups')
+          .append(`<option value="${group}">${group}</option`);
+      });
+      $('.module-view .module-groups').on('change', function() {
+        const name = $(this).find(':selected').val();
+        fillModules(name);
+      }).trigger('change');
+    });
+  }
+
+  function fillModules(name) {
+    modules.getGroupModules(name, function(data) {
+      fillModuleList(data);
+    });
+  }
+
+  function fillModuleList(modules) {
     const $list = $('<div class="list-group">');
     _.forOwn(modules, function(val, key) {
       const $item = $(`<div class="list-group-item" data-name="${key}">`);

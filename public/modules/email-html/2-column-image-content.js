@@ -1,4 +1,5 @@
-modules["2-column-image-image"] = {
+{
+    "name": "2-column-image-content",
     "output": `
                <tr>
                     <td %backgroundColor% align="center" height="100%" valign="top" width="100%">
@@ -19,15 +20,12 @@ modules["2-column-image-image"] = {
                                         <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" width="100%">
                                             <tr>
                                                 <td style="padding: 10px 10px;">
-                                                    <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: %fontSize%;text-align: left;">
+                                                    <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: 14px;text-align: left;">
                                                         <tr>
                                                             <td>
-                                                                <img src="%imageUrlLeft%" aria-hidden="true" width="310" height="" border="0" alt="%imageAltLeft%" class="center-on-narrow" style="width: 100%; max-width: 310px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
+                                                                <img src="%imageUrl%" aria-hidden="true" width="310" height="" border="0" alt="%imageAlt" class="center-on-narrow" style="width: 100%; max-width: 310px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
                                                             </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="font-family: sans-serif; padding-top: 10px; text-align: %textAlign%; font-size: %fontSize%; line-height: %lineHeight%; color: %color%;" class="stack-column-center">%contentLeft%</td>
-                                                        </tr>
+                                                        </tr> 
                                                     </table>
                                                 </td>
                                             </tr>
@@ -41,14 +39,9 @@ modules["2-column-image-image"] = {
                                         <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" width="100%">
                                             <tr>
                                                 <td style="padding: 10px 10px;">
-                                                    <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: %fontSize%;text-align: left;">
+                                                    <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: %fontSize%;text-align: left;"> 
                                                         <tr>
-                                                            <td>
-                                                                <img src="%imageUrlRight%" aria-hidden="true" width="310" height="" border="0" alt="%imageAltLeft%" class="center-on-narrow" style="width: 100%; max-width: 310px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="font-family: sans-serif; padding-top: 10px; text-align: %textAlign%; font-size: %fontSize%; line-height: %lineHeight%; color: %color%;" class="stack-column-center"> %contentRight%</td>
+                                                            <td style="font-family: sans-serif; padding-top: 10px; text-align: %textAlign%; font-size: %fontSize%; line-height: %lineHeight%; color: %color%;" class="stack-column-center"> %content%</td>
                                                         </tr>
                                                     </table>
                                                 </td>
@@ -73,12 +66,9 @@ modules["2-column-image-image"] = {
 `,
     "properties": {
       
-		"contentLeft": {
-            "default": "Content Left",
-            "type": "container"
-        },
-        "contentRight": {
-            "default": "Content Right",
+	
+        "content": {
+            "default": "Content",
             "type": "container"
         },
         "backgroundColor": {
@@ -92,23 +82,16 @@ modules["2-column-image-image"] = {
                 "false": ""
             }
         },
-        "imageUrlLeft": {
+        "imageUrl": {
             "default": "http://placehold.it/310",
             "type": "image-url"
         },
-        "imageUrlRight": {
-            "default": "http://placehold.it/310",
-            "type": "image-url"
-        },
-        "imageAltLeft": {
-            "default": "alt left text",
+        
+        "imageAlt": {
+            "default": "alt text",
             "type": "text"
         },
-        "imageAltRight": {
-            "default": "alt right text",
-            "type": "text"
-        }, 
-          "textAlign": {
+         "textAlign": {
               "default": "center",
               "type": "property"
           },

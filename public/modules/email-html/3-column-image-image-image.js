@@ -1,4 +1,5 @@
-modules["3-column-image-image-image"] = {
+{
+    "name": "3-column-image-image-image",
     "output": `<tr>
                     <td %backgroundColor% align="center" height="100%" valign="top" width="100%" style="padding: 10px 0;">
                         <!--[if mso]>

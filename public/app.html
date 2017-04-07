@@ -36,6 +36,7 @@
 
         <div class="editor-container">
           <div class="module-view">
+            <select class="form-control module-groups"></select>
             <input class="form-control module-search" placeholder="search module...">
             <div class="module-list">
               <div class="list-group container-1">
@@ -100,26 +101,13 @@
     <script src="libs/color-picker/jquery.colorpicker.js"></script>
     <script src="libs/senna-min.js"></script>
     <script src="libs/lodash.min.js"></script>
+    <script src="libs/EventEmitter.min.js"></script>
+
     <script src="utils/dom.js"></script>
     <script src="utils/dnd.js"></script>
     <script src="utils/editor.js"></script>
 
-    <script> var modules = {};</script>
-    <script src="modules/document-html-email.js"></script>
-    <script src="modules/1-column-hero-image.js"></script>
-    <script src="modules/1-column.js"></script>
-    <script src="modules/1-column-spacer.js"></script>
-    <script src="modules/2-column-image-image.js"></script>
-    <script src="modules/2-column-image-content.js"></script>
-    <script src="modules/3-column-image-image-image.js"></script> 
-    <script src="modules/block-text.js"></script>
-    <script src="modules/block-button.js"></script>
-    <script src="modules/block-image.js"></script>
-    <script src="modules/block-headline.js"></script>
-    <script src="modules/block-list-container.js"></script>
-    <script src="modules/block-list-item.js"></script>
-    <script src="modules/block-progress-bar.js"></script>
-
+    <script src="modules.js"></script>
     <script src="content.js"></script>
     <script src="renderer.js"></script>
 

@@ -277,6 +277,7 @@ function Dnd(initialContainers, options) {
   return {
     get $body() {return $body},
     addIframe,
+    removeIframe,
     addContainers,
     removeFoundContainers,
     replaceBody,
@@ -294,6 +295,10 @@ function Dnd(initialContainers, options) {
       .on('dragleave', dragleave)
       .on('drop', drop);
     // console.log($body.toArray());
+  }
+
+  function eventsOff(win) {
+    $(win).off('dragstart dragend drag dragover dragenter dragleave drop');
   }
 
   function destroy() {
@@ -318,6 +323,15 @@ function Dnd(initialContainers, options) {
     $(selector).each(function() {
       if ($(this).is('iframe')) {
         events(this.contentWindow);
+      }
+    });
+  }
+
+  function removeIframe(selector) {
+    $(selector).each(function() {
+      if ($(this).is('iframe')) {
+        eventsOff(this.contentWindow);
+        replaceBody(this.contentWindow.document.body);
       }
     });
   }
@@ -445,7 +459,14 @@ function Dnd(initialContainers, options) {
 
   function replaceBody(prev, el) {
     const i = $.inArray(prev, $body);
-    $body.splice(i, 1, el);
+    if (i === -1) {
+      return;
+    }
+    if (el) {
+      $body.splice(i, 1, el);
+    } else {
+      $body.splice(i, 1);
+    }
   }
 }
 

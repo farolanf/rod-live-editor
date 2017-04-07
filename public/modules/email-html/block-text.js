@@ -1,4 +1,5 @@
-modules["block-text"] = {
+{
+    "name": "block-text",
     "output": `%text%`,
     "properties": {
         "text": {

@@ -1,4 +1,5 @@
-modules["document-html-email"] = {
+{
+    "name": "document-html-email",
     "output": `<!DOCTYPE html>
 	<html lang="en">
 	<head>
@@ -183,7 +184,7 @@ modules["document-html-email"] = {
             "type": "container"
         },
         "header": {
-            "default": "<tr><td>Place your header content here</td></tr>",
+            "default": "<tr><td>(email-text) Place your header content here</td></tr>",
             "type": "container"
         },
         "footer": {
