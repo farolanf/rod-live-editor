@@ -108,6 +108,7 @@ function App() {
   }
 
   function initActions() {
+    $('.save-btn').on('click', save);
     $('.refresh-btn').on('click', refresh);
   }
 
@@ -171,9 +172,43 @@ function App() {
     }
   }
 
+  function save() {
+    const savingToast = toast('Saving...', 'info');
+    $.ajax({
+      url: '/api/save',
+      method: 'POST',
+      dataType: 'JSON',
+      data: {
+        content: JSON.stringify(content, filterContent),
+      },
+      success,
+      error,
+    });
+    function success() {
+      savingToast.reset();
+      toast('Document saved.');
+    }
+    function error(xhr, status) {
+      savingToast.reset();
+      toast('Fail to save document.', 'error');
+      console.log(status);
+    }
+  }
+
   function refresh() {
     initDrag();
     renderPreview();
   }
 
+  function toast(msg, type) {
+    const colors = {
+      info: '#039be5',
+      error: '#ef5350',
+    };
+    return $.toast({
+      text: msg,
+      position: 'top-right',
+      bgColor: colors[type || 'info'],
+    });
+  }
 }
