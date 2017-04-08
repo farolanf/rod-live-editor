@@ -12,8 +12,8 @@ function Instance(instance) {
     }
   }
 
-  const module = modules.modules[instance.name];
-  const renderer = new Renderer(modules, globalProperties);
+  const module = store.modules.modules()[instance.name];
+  const renderer = store.createRenderer();
 
   return {
     getContainers,

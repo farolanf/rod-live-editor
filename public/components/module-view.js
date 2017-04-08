@@ -1,6 +1,8 @@
 'use strict';
 
-function ModuleView(modules, renderer) {
+function ModuleView(store, initialGroup) {
+
+  const modules = store.modules;
 
   init();
 
@@ -38,7 +40,11 @@ function ModuleView(modules, renderer) {
       $('.module-view .module-groups').on('change', function() {
         const name = $(this).find(':selected').val();
         fillModules(name);
-      }).trigger('change');
+      });
+      if (initialGroup) {
+        $('.module-view .module-groups').val(initialGroup);  
+      }
+      $('.module-view .module-groups').trigger('change');
     });
   }
 
@@ -69,6 +75,7 @@ function ModuleView(modules, renderer) {
   }
 
   function getPreview(name, large) {
+    const renderer = store.createRenderer();
     const style = large ? 'style="width: 800px; height: 600px"' : '';
     const html = `
       <html>
@@ -83,6 +90,7 @@ function ModuleView(modules, renderer) {
   }
 
   function getElement(el) {
+    const renderer = store.createRenderer();
     const name = $(el).data('name');
     const content = {name: name, id: -1};
     return $(renderer.renderModule(content))[0];

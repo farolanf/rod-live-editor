@@ -1,15 +1,10 @@
 'use strict';
 
-function Editor(_content) {
+function Editor(content) {
 
-  if (!(this instanceof Editor)) {
-    return new Editor(_content);
-  }
-
-  _content = _content || [];
   let newInstanceId = 1;
 
-  prepareContent(_content);
+  content.subscribe(load);
 
   return {
     createInstance,
@@ -21,8 +16,12 @@ function Editor(_content) {
     newId,
     get newInstanceId() {return newInstanceId;},
     set newInstanceId(val) {newInstanceId = val;},
-    get content() {return _content},
+    get content() {return content.content()},
   };
+
+  function load() {
+    prepareContent(content.content());
+  }
 
   function prepareContent(content, parent, container) {
     if (Array.isArray(content)) {
@@ -47,7 +46,7 @@ function Editor(_content) {
   }
 
   function findInstance(id, remove) {
-    return _findInstance(_content, id, remove);
+    return _findInstance(content.content(), id, remove);
   }
 
   function _findInstance(arr, id, remove) {
@@ -83,7 +82,7 @@ function Editor(_content) {
   }
 
   function moveInstance(id, parentId, container, siblingId) {
-    _moveInstance(_content, id, parentId, container, siblingId);
+    _moveInstance(content.content(), id, parentId, container, siblingId);
   }
 
   function _moveInstance(content, id, parentId, container, siblingId) {
@@ -94,7 +93,7 @@ function Editor(_content) {
 
   function createInstance(name, parentId, container, siblingId) {
     const instance = {name: name, id: newId()};
-    const parent = _findInstance(content, parentId);
+    const parent = _findInstance(content.content(), parentId);
     insertInstance(instance, parent, container, siblingId);
     return instance;
   }
@@ -118,7 +117,7 @@ function Editor(_content) {
   }
 
   function removeInstance(id) {
-    return _removeInstance(_content, id);
+    return _removeInstance(content.content(), id);
   }
 
   function _removeInstance(arr, id) {
@@ -126,7 +125,7 @@ function Editor(_content) {
   }
 
   function cloneInstance(id) {
-    _cloneInstance(_content, id);
+    _cloneInstance(content.content(), id);
   }
 
   function _cloneInstance(content, id) {

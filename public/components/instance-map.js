@@ -38,7 +38,7 @@ function InstanceMap(content, propertyView) {
   function getContent(content) {
     const html = `
       <div class="instance-map">
-        ${render(content)}
+        ${render(content.content())}
       </div>
     `;
     return html;

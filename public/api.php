@@ -22,9 +22,20 @@ Flight::route('/api/module/group/@name', function($name) {
   Flight::json($modules);
 });
 
+Flight::route('/api/content/@id', function($id) {
+  // TODO: load content with id:$id from database
+  // load sample content
+  $file = join('/', [__DIR__, 'db', 'content.js']);
+  $content = file_get_contents($file);
+  $data = array('content' => json_encode($content));
+  Flight::json($data);
+});
+
 Flight::route('POST /api/save', function() {
   $req = Flight::request();
+  $id = $req->data->id;
   $json = $req->data->content;
-  echo $json;
+  echo "id: $id\ncontent: $json";
+  // TODO: save to db
 });
 ?>

@@ -98,7 +98,7 @@ function Renderer(modules, globalProperties) {
     }
 
     function getModule(name) {
-        return modules.modules[name];
+        return modules[name];
     }
 
     function render(content, clean) {

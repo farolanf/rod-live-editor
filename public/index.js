@@ -1,15 +1,20 @@
 'use strict';
 
+window.store = new Store();
 window.app = new App();
 
 function App() {
-  const modules = window.modules = new Modules();
-  const renderer = new Renderer(modules, globalProperties);
-  const editor = window.editor = Editor(content);
+
+  const uri = URI(window.location.href);
+  const query = parseQuery();
+  const editor = window.editor = new Editor(store.content);
+  const moduleView = new ModuleView(store, query.moduleGroup);
   const propertyView = window.propertyView = PropertyView(editor);
-  const instanceMap = new InstanceMap(content, propertyView);
-  const moduleView = new ModuleView(modules, renderer);
+  const instanceMap = new InstanceMap(store.content, propertyView);
   let preview, dragond;
+
+  store.content.subscribe(renderPreview);
+  store.modules.subscribe(renderPreview);
 
   $(init);
 
@@ -27,28 +32,34 @@ function App() {
     initEditor();
     initInstanceControls();
     initActions();
+    if (query.id) {
+      store.content.loadContent(query.id);  
+    }
   }
 
   function initRoutes() {
+    const url = window.location.pathname + window.location.search;
     const app = new senna.App();
     app.addRoutes([
-      new senna.Route('/', function() {
-        $('#app > *').hide();
-        $('#editor').show();
-      }),
       new senna.Route('/preview', function() {
+        const renderer = store.createRenderer();
+        const html = renderer.render(store.content.content(), true);
         hideInstanceControls();
         $('#app > *').hide();
-        $('#app > iframe').attr('srcdoc', renderer.render(content, true)).show();
+        $('#app > iframe').attr('srcdoc', html).show();
       }),
       new senna.Route('/json', function() {
         hideInstanceControls();
         $('#app > *').hide();
-        const json = JSON.stringify(content, filterContent, 2);
+        const json = JSON.stringify(store.content.content(), filterContent, 2);
         $('#app > #content-json').html(json).show();
-      })
+      }),
+      new senna.Route(url, function() {
+        $('#app > *').hide();
+        $('#editor').show();
+      }),
     ]);
-    app.navigate('/');
+    app.navigate(url);
   }
 
   function filterContent(key, value) {
@@ -117,9 +128,6 @@ function App() {
       sizes: [25, 50, 25],
       minSize: 0
     });
-    modules.subscribe(function() {
-      renderPreview();
-    });
   }
 
   function initInstanceControls() {
@@ -150,7 +158,7 @@ function App() {
 
   function renderPreview() {
     dragond.removeIframe('.preview');
-    let html = renderer.render(content);
+    let html = store.createRenderer().render(store.content.content());
     html = html.replace(/<\/head>/, `
         <link href="preview.css" rel="stylesheet">
       </head>
@@ -174,13 +182,14 @@ function App() {
 
   function save() {
     const savingToast = toast('Saving...', 'info');
+    const data = {
+      id: query.id,
+      content: JSON.stringify(store.content.content(), filterContent),
+    };
     $.ajax({
       url: '/api/save',
       method: 'POST',
-      dataType: 'JSON',
-      data: {
-        content: JSON.stringify(content, filterContent),
-      },
+      data,
       success,
       error,
     });
@@ -191,7 +200,7 @@ function App() {
     function error(xhr, status) {
       savingToast.reset();
       toast('Fail to save document.', 'error');
-      console.log(status);
+      console.log(status, xhr, data);
     }
   }
 
@@ -210,5 +219,9 @@ function App() {
       position: 'top-right',
       bgColor: colors[type || 'info'],
     });
+  }
+
+  function parseQuery() {
+    return URI(window.location.href).search(true);
   }
 }
