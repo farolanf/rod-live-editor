@@ -32,7 +32,7 @@ function ModuleView(store, initialGroup) {
   }
 
   function fillGroups() {
-    modules.getGroups(function(groups) {
+    modules.loadGroups(function(groups) {
       groups.forEach(function(group) {
         $('.module-view .module-groups')
           .append(`<option value="${group}">${group}</option`);
@@ -49,7 +49,7 @@ function ModuleView(store, initialGroup) {
   }
 
   function fillModules(name) {
-    modules.getGroupModules(name, function(data) {
+    modules.loadGroupModules(name, function(data) {
       fillModuleList(data);
     });
   }

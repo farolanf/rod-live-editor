@@ -190,6 +190,7 @@ function App() {
     const data = {
       id: query.id,
       content: JSON.stringify(store.content.content(), filterContent),
+      moduleGroup: store.modules.group(),
     };
     $.ajax({
       url: '/api/save',

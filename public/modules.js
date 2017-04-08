@@ -3,25 +3,28 @@
 function Modules() {
   const ee = new EventEmitter();
   let modules = {};
+  let group;
 
   return Object.assign(this, {
     modules() {return modules},
-    getGroups,
-    getGroupModules,
+    group() {return group},
+    loadGroups,
+    loadGroupModules,
     subscribe,
   });
 
-  function getGroups(cb) {
+  function loadGroups(cb) {
     $.getJSON('/api/module/group', cb);
   }
 
-  function getGroupModules(name, success, error) {
+  function loadGroupModules(name, success, error) {
     $.ajax({
       url: `/api/module/group/${name}`,
       success: _success,
       error: _error,
     });
     function _success(data) {
+      group = name;
       loadModules(data);
       success && success(modules);
       ee.emit('modules', modules);

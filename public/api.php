@@ -34,8 +34,9 @@ Flight::route('/api/content/@id', function($id) {
 Flight::route('POST /api/save', function() {
   $req = Flight::request();
   $id = $req->data->id;
-  $json = $req->data->content;
-  echo "id: $id\ncontent: $json";
+  $content = $req->data->content;
+  $moduleGroup = $req->data->moduleGroup;
   // TODO: save to db
+  // save($id, $content, $moduleGroup);
 });
 ?>
