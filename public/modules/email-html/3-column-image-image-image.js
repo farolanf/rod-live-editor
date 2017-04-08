@@ -124,15 +124,15 @@
             }
         },
 		  "imageUrlLeft": {
-            "default": "http://placehold.it/200",
+            "default": "img/200.png",
             "type": "image-url"
         },
          "imageUrlCenter": {
-            "default": "http://placehold.it/200",
+            "default": "img/200.png",
             "type": "image-url"
         },
 		 "imageUrlRight": {
-            "default": "http://placehold.it/200",
+            "default": "img/200.png",
             "type": "image-url"
         },
         "imageAltLeft": {
