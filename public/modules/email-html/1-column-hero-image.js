@@ -7,7 +7,7 @@
                 </tr>`,
     "properties": {
         "url": {
-            "default": "http://placehold.it/1360x600",
+            "default": "img/1360.png",
             "type": "image-url"
         },
         "alt": {

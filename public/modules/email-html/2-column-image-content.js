@@ -83,7 +83,7 @@
             }
         },
         "imageUrl": {
-            "default": "http://placehold.it/310",
+            "default": "img/310.png",
             "type": "image-url"
         },
         
