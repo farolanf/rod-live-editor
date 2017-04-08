@@ -22,6 +22,7 @@ function App() {
     showInstanceControls,
     hideInstanceControls,
     renderPreview,
+    _save,
     renderInstance(instance) {preview.renderInstance(instance)},
     set preview(val) {preview = val;},
   };
@@ -181,6 +182,10 @@ function App() {
   }
 
   function save() {
+    showConfirmModal('Save', 'Save the document?', 'Save', 'app._save()');
+  }
+
+  function _save() {
     const savingToast = toast('Saving...', 'info');
     const data = {
       id: query.id,
@@ -219,6 +224,14 @@ function App() {
       position: 'top-right',
       bgColor: colors[type || 'info'],
     });
+  }
+
+  function showConfirmModal(title, msg, actionTitle, onclick) {
+    const modal = $('#confirm-modal');
+    $('.modal-title', modal).text(title);
+    $('.confirm-msg', modal).text(msg);
+    $('.btn-primary', modal).text(actionTitle).attr('onclick', onclick);
+    modal.modal();
   }
 
   function parseQuery() {

@@ -45,7 +45,7 @@ html, body, #app, #editor, .editor-container, .preview {
 .module-view .module-search {
   position: sticky;
   top: 0;
-  z-index: 10000;
+  z-index: 1000;
 }
 .module-view .list-group-item {
   cursor: move;
@@ -135,4 +135,8 @@ html, body, #app, #editor, .editor-container, .preview {
 
 .popover {
   max-width: 100%;
+}
+
+.modal {
+  z-index: 2000;
 }
