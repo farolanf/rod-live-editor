@@ -21,4 +21,10 @@ Flight::route('/api/module/group/@name', function($name) {
   $modules = file_contents(array_values($entries), $dir);
   Flight::json($modules);
 });
+
+Flight::route('POST /api/save', function() {
+  $req = Flight::request();
+  $json = $req->data->content;
+  echo $json;
+});
 ?>
