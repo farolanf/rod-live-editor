@@ -90,7 +90,7 @@ function App() {
         return !$(con).is('.module-view *') && $(el).is('[data-id]');
       },
       end(e, el, con, src, sibling) {
-        if (+$(el).attr('data-id') === -1) {
+        if (+$(el).attr('data-id') === -1 && $(con).is('.instance.container')) {
           onCreateInstance(el, con, src, sibling);
         } else if ($(el).is('.instance') && $(con).is('.instance-container')) {
           onMoveInstance(el, con, src, sibling);
