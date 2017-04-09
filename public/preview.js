@@ -180,6 +180,6 @@ function Preview() {
   }
 
   function $$(selector) {
-    return $(iframeWindow.document).contents().find(selector);
+    return $(selector, iframeWindow.document);
   }
 }
