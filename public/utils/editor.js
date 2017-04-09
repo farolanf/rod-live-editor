@@ -177,11 +177,16 @@ Editor.getContainerPlaceholder = function(name, parentId, children) {
 }
 
 Editor.injectInstanceData = function(str, id, name) {
-  if (!/^\s*<[^]*>\s*$/.test(str)) {
-    str = `<span>${str}</span>`;
-  }
+  str = Editor.wrapText(str);
   return str.replace(/(?:<!DOCTYPE [^]*?>)?\s*(<.*?)>/i, 
     `$1 data-id="${id}" data-name="${name}">`);
+}
+
+Editor.wrapText = function(str) {
+  if (!/^\s*<[^]*>\s*$/.test(str)) {
+    return `<span>${str}</span>`;
+  }
+  return str;
 }
 
 if (typeof module !== 'undefined' && module.exports) {

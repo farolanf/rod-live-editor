@@ -114,7 +114,7 @@ function Renderer(modules, globalProperties) {
 
     function renderModule(instance, clean) {
         if (typeof instance != 'object') {
-            return instance;
+            return Editor.wrapText(instance);
         }
 
         var module = getModule(instance.name);
