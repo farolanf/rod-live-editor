@@ -20,6 +20,8 @@ function Content() {
 		content() { return content },
 		setContent,
 		loadContent,
+		addGlobalProperty,
+		deleteGlobalProperty,
 		subscribe,
 	});
 
@@ -37,6 +39,16 @@ function Content() {
 
 	function emit() {
 		ee.emit('content', content, globalProperties);
+	}
+
+	function addGlobalProperty(name, type) {
+    if (!globalProperties.hasOwnProperty(name)) {
+      globalProperties[name] = {type, value: ''};
+		}
+	}
+
+	function deleteGlobalProperty(name) {
+		delete globalProperties[name];
 	}
 
 	function subscribe(fn) {

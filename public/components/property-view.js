@@ -8,6 +8,7 @@ function PropertyView(editor, content) {
     setInstance,
     editGlobals,
     addGlobalProperty,
+    deleteGlobalProperty,
   };
 
   function setInstance(id) {
@@ -31,7 +32,7 @@ function PropertyView(editor, content) {
     _render(`Global Properties ${btn}`, props, function(prop, value) {
       props[prop].value = value;
       app.renderPreview();
-    });
+    }, true);
     $('.property-view .module-name .add-property-btn').on('click', addProperty);
     function addProperty() {
       const modal = $('#add-property-modal');
@@ -46,11 +47,13 @@ function PropertyView(editor, content) {
     const modal = $('#add-property-modal');
     const name = $('#add-property-modal__name', modal).val();
     const type = $('#add-property-modal__type', modal).val();
-    const props = content.globalProperties();
-    if (!props.hasOwnProperty(name)) {
-      props[name] = {type, value: ''};
-      editGlobals();
-    }
+    content.addGlobalProperty(name, type);
+    editGlobals();
+  }
+
+  function deleteGlobalProperty(name) {
+    content.deleteGlobalProperty(name);
+    editGlobals();
   }
 
   function render() {
@@ -61,14 +64,16 @@ function PropertyView(editor, content) {
     });
   }
 
-  function _render(name, props, onChange) {
+  function _render(name, props, onChange, canDelete) {
     let html = `<div class="list-group-item module-name">${name}</div>`;
     _.forOwn(props, function(prop, key) {
+      const delHtml = canDelete ? `<i class="fa fa-trash del-prop-btn" data-property="${key}"></i>` : '';
       const color = prop.value.replace('#', '');
       html += `
         <div class="list-group-item">
           <span class="name">${key}</span>
           <input class="form-control" value="${color}" data-name="${key}" data-type="${prop.type}">
+          ${delHtml}
         </div>`;
     });
     $('#editor .property-view .list-group').html(html);
@@ -83,6 +88,11 @@ function PropertyView(editor, content) {
         }
       } 
       onChange(prop, value);
+    });
+    $('.property-view .del-prop-btn').on('click', function() {
+      const name = $(this).data('property');
+      uiutils.showConfirmModal('Delete Global Property', `Delete global property '${name}'?`, 
+        'Delete', `propertyView.deleteGlobalProperty('${name}')`, 'danger');
     });
   }
 }
