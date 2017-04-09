@@ -11,7 +11,8 @@ function App() {
   const moduleView = new ModuleView(store, query.moduleGroup);
   const propertyView = window.propertyView = new PropertyView(editor, store.content);
   const instanceMap = new InstanceMap(store.content, propertyView);
-  let preview, dragond;
+  let preview = new Preview();
+  let dragond;
 
   store.content.subscribe(renderPreview);
   store.modules.subscribe(renderPreview);
@@ -23,8 +24,8 @@ function App() {
     hideInstanceControls,
     renderPreview,
     _save,
+    instanceCommentFilter,
     renderInstance(instance) {preview.renderInstance(instance)},
-    set preview(val) {preview = val;},
   };
 
   function init() {
@@ -35,6 +36,9 @@ function App() {
     initActions();
     if (query.id) {
       store.content.loadContent(query.id);  
+    }
+    else {
+      store.content.setContent([{name: 'document-html-email'}]);
     }
   }
 
@@ -87,7 +91,7 @@ function App() {
         return !$(con).is('.module-view *') && $(el).is('[data-id]');
       },
       end(e, el, con, src, sibling) {
-        if (+$(el).attr('data-id') === -1) {
+        if (+$(el).attr('data-id') === -1 && $(con).is('.instance-container')) {
           onCreateInstance(el, con, src, sibling);
         } else if ($(el).is('.instance') && $(con).is('.instance-container')) {
           onMoveInstance(el, con, src, sibling);
@@ -105,8 +109,20 @@ function App() {
     sibling = new InstanceElement(sibling);
     const instance = editor.createInstance(name, parentId, container, sibling.id);
     $(el).attr('data-id', instance.id);
+    fixContainerComments(el, instance.id);
     preview.initElement(el);
     preview.cleanContainer(container, parentId);
+  }
+
+  function fixContainerComments(el, parentId) {
+    $('*', el).contents().filter(instanceCommentFilter).each(function() {
+      this.nodeValue = this.nodeValue.replace(
+        /("parentId":\s*)\-?\d+/g, `$1${parentId}`);
+    });
+  }
+
+  function instanceCommentFilter() {
+    return this.nodeType === 8 && this.nodeValue.includes('instance-container');
   }
 
   function onMoveInstance(el, con, src, sibling) {
@@ -167,13 +183,9 @@ function App() {
         <link href="preview.css" rel="stylesheet">
       </head>
     `);
-    html = html.replace(/<\/body>/, `
-        <script src="libs/js/jquery-3.1.1.min.js"></script>
-        <script src="preview.js"></script>
-      </body>
-    `);
     $('.preview').attr('srcdoc', html).off('load').on('load', function() {
       dragond.addIframe('.preview');
+      preview.init(this.contentWindow);
     });
   }
 

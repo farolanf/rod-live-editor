@@ -18,15 +18,25 @@ function Content() {
 	return Object.assign(this, {
 		globalProperties() { return globalProperties },
 		content() { return content },
+		setContent,
 		loadContent,
 		subscribe,
 	});
 
+	function setContent(c) {
+		content = c;
+		emit();
+	}
+
 	function loadContent(id) {
 		$.getJSON(`/api/content/${id}`, function(data) {
 			eval(`content = ${JSON.parse(data.content)}`);
-			ee.emit('content', content, globalProperties);
+			emit();
 		});
+	}
+
+	function emit() {
+		ee.emit('content', content, globalProperties);
 	}
 
 	function subscribe(fn) {
