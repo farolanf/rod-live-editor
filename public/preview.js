@@ -124,9 +124,13 @@ function Preview() {
   }
 
   function deleteInstance(el) {
+    const con = $(el).closest('.instance-container');
+    const conel = new ContainerElement(con);
     const id = $(el).data('id');
     editor.removeInstance(id);
     $(el).remove();
+    conel.parentInstance.cleanContainers();
+    renderContainerChildren(conel.parentInstance, conel.name);
     app.hideInstanceControls();
   }
 
