@@ -1,5 +1,7 @@
 <?php
 
+require_once './node-render.php';
+
 function file_contents($files, $dir) {
   return array_map(function($file) use($dir) {
     return file_get_contents($dir.'/'.$file);
@@ -38,5 +40,23 @@ Flight::route('POST /api/save', function() {
   $moduleGroup = $req->data->moduleGroup;
   // TODO: save to db
   // save($id, $content, $moduleGroup);
+});
+
+/**
+ * /api/render
+ *
+ * Renders content and returns the rendered HTML.
+ * 
+ * POST data:
+ *   content - The content.
+ *   moduleGroup - Module group name.
+ *
+ * Response: The renderered html.
+*/
+Flight::route('POST /api/render', function() {
+  $req = Flight::request();
+  $content = $req->data->content;
+  $moduleGroup = $req->data->moduleGroup;
+  echo renderContent($content, $moduleGroup);
 });
 ?>
