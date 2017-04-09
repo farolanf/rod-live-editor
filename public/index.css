@@ -84,6 +84,12 @@ html, body, #app, #editor, .editor-container, .preview {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
+.property-view .module-name .btn-group {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
 .property-view .btn-toolbar .btn-default:not(:hover) {
   border-color: transparent;
 }

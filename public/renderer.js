@@ -146,7 +146,7 @@ function Renderer(modules, globalProperties) {
         // for (var property in module.properties)
         //   
         for(var key in globalProperties) {
-            output = output.replace(new RegExp('%' + key + '%', 'g'), globalProperties[key]); 
+            output = output.replace(new RegExp('%' + key + '%', 'g'), globalProperties[key].value); 
         }
 
         return clean ? output :
