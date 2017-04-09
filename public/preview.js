@@ -1,17 +1,11 @@
 'use strict';
 
-new Preview();
-
 function Preview() {
-  const editor = window.parent.editor;
-  const propertyView = window.parent.propertyView;
-  const app = window.parent.app;
-  const dragond = window.parent.dragond;
 
-  const SCROLL_SPEED = 1000; // pixels per second
+  let iframeWindow;
   let selectedElement;
 
-  app.preview = {
+  return Object.assign(this, {
     editInstanceContent() {editInstanceContent(selectedElement)},
     cloneInstance() {cloneInstance(selectedElement)},
     deleteInstance() {deleteInstance(selectedElement)},
@@ -19,22 +13,26 @@ function Preview() {
     renderContainerChildren,
     cleanContainer,
     initElement,
-  };
-
-  $(window).on('click', function(e) {
-    deselectInstance(selectedElement);
-    selectedElement = null;
-    app.hideInstanceControls();
-  }).on('scroll', function() {
-    if (selectedElement) {
-      app.showInstanceControls(selectedElement);
-    }
+    init,
   });
 
-  $(init);
+  function init(win) {
+    iframeWindow = win;
+    selectedElement = null;
+    initElement(iframeWindow.document.body);
+    events(iframeWindow);
+  }
 
-  function init() {
-    initElement('body');
+  function events(iframeWindow) {
+    $(iframeWindow).off('click scroll').on('click', function(e) {
+      deselectInstance(selectedElement);
+      selectedElement = null;
+      app.hideInstanceControls();
+    }).on('scroll', function() {
+      if (selectedElement) {
+        app.showInstanceControls(selectedElement);
+      }
+    });
   }
 
   function initElement(startElement) {
@@ -105,7 +103,7 @@ function Preview() {
   }
 
   function stopContentEditing() {
-    $('[contenteditable="true"]').attr('contenteditable', false);
+    $$('[contenteditable="true"]').attr('contenteditable', false);
   }
 
   function editInstanceContent(el) {
@@ -122,19 +120,23 @@ function Preview() {
     const id = $(el).data('id');
     editor.cloneInstance(id);
     app.renderPreview();
-    selectInstance($(`[data-id=${id}]`)[0]);
+    selectInstance($$(`[data-id=${id}]`)[0]);
   }
 
   function deleteInstance(el) {
+    const con = $(el).closest('.instance-container');
+    const conel = new ContainerElement(con);
     const id = $(el).data('id');
     editor.removeInstance(id);
     $(el).remove();
+    conel.parentInstance.cleanContainers();
+    renderContainerChildren(conel.parentInstance, conel.name);
     app.hideInstanceControls();
   }
 
   function renderInstance(instance) {
     const html = instance.render();
-    const prev = $(`[data-id="${instance.id}"]`);
+    const prev = $$(`[data-id="${instance.id}"]`);
     dragond.removeFoundContainers(prev[0]);
     replaceElement(prev, html);
   }
@@ -144,7 +146,7 @@ function Preview() {
       if (prev.find('head').length > 0) {
         const head = html.replace(/[^]*<head[^]*?>([^]*)<\/head>[^]*/, '$1');
         prev.find('head').replaceWith($('<head>').html(head));
-        $('head').append('<link href="preview.css" rel="stylesheet">');
+        $$('head').append('<link href="preview.css" rel="stylesheet">');
       } 
       if (prev.find('body').length > 0) {
         const prevBody = prev.find('body')[0];
@@ -153,10 +155,6 @@ function Preview() {
         const el = prev.find('body')[0];
         dragond.replaceBody(prevBody, el);
         initElement(el);
-        $('body').append(`
-          <script src="libs/js/jquery-3.1.1.min.js"></script>
-          <script src="preview.js"></script>
-        `);
       }
     } else {
       const el = $(html);
@@ -170,12 +168,16 @@ function Preview() {
 
   function renderContainerChildren(instance, name) {
     const el = $(instance.renderContainerChildren(name));
-    $(`[data-name="${name}"][data-parent-id="${instance.id}"]`).append(el);
+    $$(`[data-name="${name}"][data-parent-id="${instance.id}"]`).append(el);
     initElement(el);
   }
 
   function cleanContainer(name, parentId) {
-    $(`.instance-container[data-name="${name}"][data-parent-id="${parentId}"]`)
+    $$(`.instance-container[data-name="${name}"][data-parent-id="${parentId}"]`)
       .children().not('[data-id]').remove();
+  }
+
+  function $$(selector) {
+    return $(iframeWindow.document).contents().find(selector);
   }
 }
