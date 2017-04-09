@@ -13,7 +13,9 @@ function Content() {
 		"hiddenPreheader": {type: 'text', value: "test"},
 	};
 	
-	let content = [];
+	let content = [{
+		name: "document-html-email"
+	}];
 
 	return Object.assign(this, {
 		globalProperties() { return globalProperties },
