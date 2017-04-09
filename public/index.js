@@ -9,7 +9,7 @@ function App() {
   const query = parseQuery();
   const editor = window.editor = new Editor(store.content);
   const moduleView = new ModuleView(store, query.moduleGroup);
-  const propertyView = window.propertyView = PropertyView(editor);
+  const propertyView = window.propertyView = new PropertyView(editor, store.content);
   const instanceMap = new InstanceMap(store.content, propertyView);
   let preview, dragond;
 
@@ -128,6 +128,9 @@ function App() {
     Split(['.module-view', '.preview', '.property-view'], {
       sizes: [25, 50, 25],
       minSize: 0
+    });
+    $('.property-view .globals-btn').on('click', function() {
+      propertyView.editGlobals();
     });
   }
 
