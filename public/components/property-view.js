@@ -7,19 +7,18 @@ function PropertyView(editor, content) {
   return {
     setInstance,
     editGlobals,
+    addGlobalProperty,
   };
 
   function setInstance(id) {
-    if (id !== instanceId) {
-      instanceId = id;
-      render();
-    }
+    instanceId = id;
+    render();
   }
 
   function editGlobals() {
     const btn = `
       <div class="btn-group">
-        <button type="button" class="btn btn-sm btn-default">
+        <button type="button" class="btn btn-sm btn-default add-property-btn">
           <i class="fa fa-plus"></i>
         </button>
       </div>
@@ -29,9 +28,24 @@ function PropertyView(editor, content) {
       props[prop].value = value;
       app.renderPreview();
     });
-    $('.property-view .module-name .fa-plus').on('click', addProperty);
+    $('.property-view .module-name .add-property-btn').on('click', addProperty);
     function addProperty() {
-      alert('add');
+      const modal = $('#add-property-modal');
+      $('#add-property-modal__name', modal).val('');
+      $('#add-property-modal__type', modal).val('text');
+      $('.btn-primary', modal).attr('onclick', "propertyView.addGlobalProperty()");
+      modal.modal();
+    }
+  }
+
+  function addGlobalProperty() {
+    const modal = $('#add-property-modal');
+    const name = $('#add-property-modal__name', modal).val();
+    const type = $('#add-property-modal__type', modal).val();
+    const props = content.globalProperties();
+    if (!props.hasOwnProperty(name)) {
+      props[name] = {type, value: ''};
+      editGlobals();
     }
   }
 
