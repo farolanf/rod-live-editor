@@ -17,11 +17,22 @@ function PropertyView(editor, content) {
   }
 
   function editGlobals() {
+    const btn = `
+      <div class="btn-group">
+        <button type="button" class="btn btn-sm btn-default">
+          <i class="fa fa-plus"></i>
+        </button>
+      </div>
+    `;
     const props = content.globalProperties();
-    _render('Global Properties', props, function(prop, value) {
+    _render(`Global Properties ${btn}`, props, function(prop, value) {
       props[prop].value = value;
       app.renderPreview();
-    });    
+    });
+    $('.property-view .module-name .fa-plus').on('click', addProperty);
+    function addProperty() {
+      alert('add');
+    }
   }
 
   function render() {
