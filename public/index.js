@@ -36,6 +36,9 @@ function App() {
     if (query.id) {
       store.content.loadContent(query.id);  
     }
+    else {
+      store.content.setContent([{name: 'document-html-email'}]);
+    }
   }
 
   function initRoutes() {
