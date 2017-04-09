@@ -24,6 +24,7 @@ function App() {
     hideInstanceControls,
     renderPreview,
     _save,
+    instanceCommentFilter,
     renderInstance(instance) {preview.renderInstance(instance)},
   };
 
@@ -108,8 +109,20 @@ function App() {
     sibling = new InstanceElement(sibling);
     const instance = editor.createInstance(name, parentId, container, sibling.id);
     $(el).attr('data-id', instance.id);
+    fixContainerComments(el, instance.id);
     preview.initElement(el);
     preview.cleanContainer(container, parentId);
+  }
+
+  function fixContainerComments(el, parentId) {
+    $('*', el).contents().filter(instanceCommentFilter).each(function() {
+      this.nodeValue = this.nodeValue.replace(
+        /("parentId":\s*)\-?\d+/g, `$1${parentId}`);
+    });
+  }
+
+  function instanceCommentFilter() {
+    return this.nodeType === 8 && this.nodeValue.includes('instance-container');
   }
 
   function onMoveInstance(el, con, src, sibling) {

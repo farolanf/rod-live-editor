@@ -41,7 +41,7 @@ function Preview() {
   }
 
   function initContainers(startElement) {
-    const meta = $('*', startElement).contents().filter(instanceCommentFilter);
+    const meta = $('*', startElement).contents().filter(app.instanceCommentFilter);
     const containers = meta.parent();
     containers.addClass('instance-container');
     dragond.addContainers(containers);
@@ -50,10 +50,6 @@ function Preview() {
       const data = JSON.parse(json);
       $(this).attr('data-name', data.name).attr('data-parent-id', data.parentId);
     });
-  }
-
-  function instanceCommentFilter() {
-    return this.nodeType === 8 && this.nodeValue.includes('instance-container');
   }
 
   function initInstanceElements(startElement) {
