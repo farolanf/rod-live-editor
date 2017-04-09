@@ -41,7 +41,7 @@ function Preview() {
   }
 
   function initContainers(startElement) {
-    const meta = $('*', startElement).contents().filter(instanceCommentFilter);
+    const meta = $('*', startElement).contents().filter(app.instanceCommentFilter);
     const containers = meta.parent();
     containers.addClass('instance-container');
     dragond.addContainers(containers);
@@ -50,10 +50,7 @@ function Preview() {
       const data = JSON.parse(json);
       $(this).attr('data-name', data.name).attr('data-parent-id', data.parentId);
     });
-  }
-
-  function instanceCommentFilter() {
-    return this.nodeType === 8 && this.nodeValue.includes('instance-container');
+    meta.remove();
   }
 
   function initInstanceElements(startElement) {
@@ -167,9 +164,14 @@ function Preview() {
   }
 
   function renderContainerChildren(instance, name) {
-    const el = $(instance.renderContainerChildren(name));
-    $$(`[data-name="${name}"][data-parent-id="${instance.id}"]`).append(el);
-    initElement(el);
+    if (instance.getContainers()[name].isDefault) {
+      const el = $(instance.renderContainerChildren(name));
+      const con = $$(`[data-name="${name}"][data-parent-id="${instance.id}"]`);
+      con.append(el);
+      initElement(el);
+      const meta = $(con).contents().filter(app.instanceCommentFilter);
+      meta.remove();
+    }
   }
 
   function cleanContainer(name, parentId) {
