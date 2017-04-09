@@ -163,9 +163,11 @@ function Preview() {
   }
 
   function renderContainerChildren(instance, name) {
-    const el = $(instance.renderContainerChildren(name));
-    $$(`[data-name="${name}"][data-parent-id="${instance.id}"]`).append(el);
-    initElement(el);
+    if (instance.getContainers()[name].isDefault) {
+      const el = $(instance.renderContainerChildren(name));
+      $$(`[data-name="${name}"][data-parent-id="${instance.id}"]`).append(el);
+      initElement(el);
+    }
   }
 
   function cleanContainer(name, parentId) {
