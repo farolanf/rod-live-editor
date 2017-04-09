@@ -1,5 +1,6 @@
 'use strict';
 
+window.uiutils = new UIUtils();
 window.store = new Store();
 window.app = new App();
 
@@ -197,11 +198,11 @@ function App() {
   }
 
   function save() {
-    showConfirmModal('Save', 'Save the document?', 'Save', 'app._save()');
+    uiutils.showConfirmModal('Save', 'Save the document?', 'Save', 'app._save()');
   }
 
   function _save() {
-    const savingToast = toast('Saving...', 'info');
+    const savingToast = uiutils.toast('Saving...', 'info');
     const data = {
       id: query.id,
       content: JSON.stringify(store.content.content(), filterContent),
@@ -216,11 +217,11 @@ function App() {
     });
     function success() {
       savingToast.reset();
-      toast('Document saved.');
+      uiutils.toast('Document saved.');
     }
     function error(xhr, status) {
       savingToast.reset();
-      toast('Fail to save document.', 'error');
+      uiutils.toast('Fail to save document.', 'error');
       console.log(status, xhr, data);
     }
   }
@@ -228,26 +229,6 @@ function App() {
   function refresh() {
     initDrag();
     renderPreview();
-  }
-
-  function toast(msg, type) {
-    const colors = {
-      info: '#039be5',
-      error: '#ef5350',
-    };
-    return $.toast({
-      text: msg,
-      position: 'top-right',
-      bgColor: colors[type || 'info'],
-    });
-  }
-
-  function showConfirmModal(title, msg, actionTitle, onclick) {
-    const modal = $('#confirm-modal');
-    $('.modal-title', modal).text(title);
-    $('.confirm-msg', modal).text(msg);
-    $('.btn-primary', modal).text(actionTitle).attr('onclick', onclick);
-    modal.modal();
   }
 
   function parseQuery() {
