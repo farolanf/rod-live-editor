@@ -1,4 +1,10 @@
 
+/**
+ * Renders content.
+ * 
+ * usage: node node-render.js <content> <moduleGroup>
+ */
+
 const fs = require('fs');
 const Renderer = require('./renderer');
 
