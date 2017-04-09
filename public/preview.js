@@ -3,15 +3,10 @@
 new Preview();
 
 function Preview() {
-  const editor = window.parent.editor;
-  const propertyView = window.parent.propertyView;
-  const app = window.parent.app;
-  const dragond = window.parent.dragond;
 
-  const SCROLL_SPEED = 1000; // pixels per second
   let selectedElement;
 
-  app.preview = {
+  return Object.assign(this, {
     editInstanceContent() {editInstanceContent(selectedElement)},
     cloneInstance() {cloneInstance(selectedElement)},
     deleteInstance() {deleteInstance(selectedElement)},
@@ -19,22 +14,25 @@ function Preview() {
     renderContainerChildren,
     cleanContainer,
     initElement,
-  };
-
-  $(window).on('click', function(e) {
-    deselectInstance(selectedElement);
-    selectedElement = null;
-    app.hideInstanceControls();
-  }).on('scroll', function() {
-    if (selectedElement) {
-      app.showInstanceControls(selectedElement);
-    }
+    init,
   });
 
-  $(init);
+  function init(iframeWindow) {
+    selectedElement = null;
+    initElement(iframeWindow.document.body);
+    events(iframeWindow);
+  }
 
-  function init() {
-    initElement('body');
+  function events(iframeWindow) {
+    $(iframeWindow).off('click scroll').on('click', function(e) {
+      deselectInstance(selectedElement);
+      selectedElement = null;
+      app.hideInstanceControls();
+    }).on('scroll', function() {
+      if (selectedElement) {
+        app.showInstanceControls(selectedElement);
+      }
+    });
   }
 
   function initElement(startElement) {
@@ -153,10 +151,6 @@ function Preview() {
         const el = prev.find('body')[0];
         dragond.replaceBody(prevBody, el);
         initElement(el);
-        $('body').append(`
-          <script src="libs/js/jquery-3.1.1.min.js"></script>
-          <script src="preview.js"></script>
-        `);
       }
     } else {
       const el = $(html);

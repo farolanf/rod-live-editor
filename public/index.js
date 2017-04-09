@@ -11,7 +11,8 @@ function App() {
   const moduleView = new ModuleView(store, query.moduleGroup);
   const propertyView = window.propertyView = new PropertyView(editor, store.content);
   const instanceMap = new InstanceMap(store.content, propertyView);
-  let preview, dragond;
+  let preview = new Preview();
+  let dragond;
 
   store.content.subscribe(renderPreview);
   store.modules.subscribe(renderPreview);
@@ -24,7 +25,6 @@ function App() {
     renderPreview,
     _save,
     renderInstance(instance) {preview.renderInstance(instance)},
-    set preview(val) {preview = val;},
   };
 
   function init() {
@@ -167,13 +167,9 @@ function App() {
         <link href="preview.css" rel="stylesheet">
       </head>
     `);
-    html = html.replace(/<\/body>/, `
-        <script src="libs/js/jquery-3.1.1.min.js"></script>
-        <script src="preview.js"></script>
-      </body>
-    `);
     $('.preview').attr('srcdoc', html).off('load').on('load', function() {
       dragond.addIframe('.preview');
+      preview.init(this.contentWindow);
     });
   }
 
