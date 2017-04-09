@@ -13,11 +13,17 @@ function UIUtils() {
     });
   };
 
-  this.showConfirmModal = function(title, msg, actionTitle, onclick) {
+  this.showConfirmModal = function(title, msg, actionTitle, onclick, type) {
     const modal = $('#confirm-modal');
     $('.modal-title', modal).text(title);
     $('.confirm-msg', modal).text(msg);
-    $('.btn-primary', modal).text(actionTitle).attr('onclick', onclick);
+    $('[data-primary-btn]', modal).text(actionTitle).attr('onclick', onclick);
+    if (type === 'danger') {
+      $('[data-primary-btn]', modal).removeClass('btn-primary').addClass('btn-danger');
+    }
+    else {
+      $('[data-primary-btn]', modal).removeClass('btn-danger').addClass('btn-primary');
+    }
     modal.modal();
   };
 };
