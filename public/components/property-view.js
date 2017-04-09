@@ -11,11 +11,15 @@ function PropertyView(editor, content) {
   };
 
   function setInstance(id) {
-    instanceId = id;
-    render();
+    if (instanceId !== id) {
+      instanceId = id;
+      render();
+    }
   }
 
   function editGlobals() {
+    // reset instanceId so the same instance can be selected later
+    instanceId = null;
     const btn = `
       <div class="btn-group">
         <button type="button" class="btn btn-sm btn-default add-property-btn">
@@ -50,7 +54,7 @@ function PropertyView(editor, content) {
   }
 
   function render() {
-    const instance = Instance(instanceId);
+    const instance = new Instance(instanceId);
     _render(instance.name, instance.getProperties(), function(prop, value) {
       instance.setProperty(prop, value);
       app.renderInstance(instance);
@@ -73,9 +77,9 @@ function PropertyView(editor, content) {
       const prop = $(this).data('name');
       let value = this.value;
       if ($(this).data('type') === 'color') {
-        const hex = parseInt(this.value, 16);
+        const hex = parseInt(value, 16);
         if (!isNaN(hex)) {
-          value = `#${this.value}`;
+          value = `#${value}`;
         }
       } 
       onChange(prop, value);
