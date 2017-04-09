@@ -1,9 +1,8 @@
 'use strict';
 
-new Preview();
-
 function Preview() {
 
+  let iframeWindow;
   let selectedElement;
 
   return Object.assign(this, {
@@ -17,7 +16,8 @@ function Preview() {
     init,
   });
 
-  function init(iframeWindow) {
+  function init(win) {
+    iframeWindow = win;
     selectedElement = null;
     initElement(iframeWindow.document.body);
     events(iframeWindow);
@@ -103,7 +103,7 @@ function Preview() {
   }
 
   function stopContentEditing() {
-    $('[contenteditable="true"]').attr('contenteditable', false);
+    $$('[contenteditable="true"]').attr('contenteditable', false);
   }
 
   function editInstanceContent(el) {
@@ -120,7 +120,7 @@ function Preview() {
     const id = $(el).data('id');
     editor.cloneInstance(id);
     app.renderPreview();
-    selectInstance($(`[data-id=${id}]`)[0]);
+    selectInstance($$(`[data-id=${id}]`)[0]);
   }
 
   function deleteInstance(el) {
@@ -132,7 +132,7 @@ function Preview() {
 
   function renderInstance(instance) {
     const html = instance.render();
-    const prev = $(`[data-id="${instance.id}"]`);
+    const prev = $$(`[data-id="${instance.id}"]`);
     dragond.removeFoundContainers(prev[0]);
     replaceElement(prev, html);
   }
@@ -142,7 +142,7 @@ function Preview() {
       if (prev.find('head').length > 0) {
         const head = html.replace(/[^]*<head[^]*?>([^]*)<\/head>[^]*/, '$1');
         prev.find('head').replaceWith($('<head>').html(head));
-        $('head').append('<link href="preview.css" rel="stylesheet">');
+        $$('head').append('<link href="preview.css" rel="stylesheet">');
       } 
       if (prev.find('body').length > 0) {
         const prevBody = prev.find('body')[0];
@@ -164,12 +164,16 @@ function Preview() {
 
   function renderContainerChildren(instance, name) {
     const el = $(instance.renderContainerChildren(name));
-    $(`[data-name="${name}"][data-parent-id="${instance.id}"]`).append(el);
+    $$(`[data-name="${name}"][data-parent-id="${instance.id}"]`).append(el);
     initElement(el);
   }
 
   function cleanContainer(name, parentId) {
-    $(`.instance-container[data-name="${name}"][data-parent-id="${parentId}"]`)
+    $$(`.instance-container[data-name="${name}"][data-parent-id="${parentId}"]`)
       .children().not('[data-id]').remove();
+  }
+
+  function $$(selector) {
+    return $(iframeWindow.document).contents().find(selector);
   }
 }
