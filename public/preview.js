@@ -50,6 +50,7 @@ function Preview() {
       const data = JSON.parse(json);
       $(this).attr('data-name', data.name).attr('data-parent-id', data.parentId);
     });
+    meta.remove();
   }
 
   function initInstanceElements(startElement) {
@@ -165,8 +166,11 @@ function Preview() {
   function renderContainerChildren(instance, name) {
     if (instance.getContainers()[name].isDefault) {
       const el = $(instance.renderContainerChildren(name));
-      $$(`[data-name="${name}"][data-parent-id="${instance.id}"]`).append(el);
+      const con = $$(`[data-name="${name}"][data-parent-id="${instance.id}"]`);
+      con.append(el);
       initElement(el);
+      const meta = $(con).contents().filter(app.instanceCommentFilter);
+      meta.remove();
     }
   }
 
