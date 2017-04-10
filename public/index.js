@@ -178,7 +178,7 @@ function App() {
   }
 
   function renderPreview() {
-    if (_.isEmpty(store.modules.modules)) {
+    if (store.modules.isEmpty()) {
       return;
     }
     dragond.removeIframe('.preview');

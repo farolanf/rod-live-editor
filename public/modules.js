@@ -11,6 +11,7 @@ function Modules() {
     loadGroups,
     loadGroupModules,
     subscribe,
+    isEmpty,
   });
 
   function loadGroups(cb) {
@@ -46,5 +47,9 @@ function Modules() {
 
   function subscribe(fn) {
     ee.addListener('modules', fn);
+  }
+
+  function isEmpty() {
+    return _.isEmpty(modules);
   }
 }
