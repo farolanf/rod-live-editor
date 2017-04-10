@@ -41,11 +41,8 @@ function Dragond(initialContainers, options) {
   function start(e, el, src) {
     // options.shadow && dragShadow.create(el, e);
     originalSibling = $(el).next()[0];
-    // defer style to avoid capturing it on the drag image
-    setTimeout(function() {
-      $(el).addClass('dg-dragged');
-      dnd.$body.addClass('dg-dragging');
-    });
+    $(el).addClass('dg-dragged');
+    dnd.$body.addClass('dg-dragging');
     options.start && options.start.call(this, e, el, src);
   }
 
@@ -69,22 +66,18 @@ function Dragond(initialContainers, options) {
   }
 
   function enter(e, el, con, src) {
-    // defer style to avoid capturing it on the drag image
-    setTimeout(function() {
-      $(con).addClass('dg-dragover');
-      if (canPlace(el, con)) {
-        $(con).removeClass('dg-invalid');
-      }
-      else {
-        $(con).addClass('dg-invalid');
-        options.invalid && options.invalid.call(this, e, el, con, src);
-      }
-    });
+    $(con).addClass('dg-dragover');
+    if (canPlace(el, con)) {
+      $(con).removeClass('dg-invalid');
+    }
+    else {
+      $(con).addClass('dg-invalid');
+      options.invalid && options.invalid.call(this, e, el, con, src);
+    }
     options.enter && options.enter.call(this, e, el, con, src);
   }
 
   function leave(e, el, con, src) {
-    // console.log('leave');
     $(con).removeClass('dg-dragover dg-invalid');
     options.leave && options.leave.call(this, e, el, con, src);
   }
