@@ -178,6 +178,9 @@ function App() {
   }
 
   function renderPreview() {
+    if (_.isEmpty(store.modules.modules)) {
+      return;
+    }
     dragond.removeIframe('.preview');
     let html = store.createRenderer().render(store.content.content());
     html = html.replace(/<\/head>/, `
