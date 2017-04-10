@@ -123,7 +123,6 @@ function App() {
   function createFirstInstance(el) {
     const name = $(el).data('name');
     editor.createInstance(name);
-    hideEmptyContainer();
     renderPreview();
   } 
 
@@ -211,6 +210,9 @@ function App() {
     if (store.content.isEmpty()) {
       renderEmptyPreview();
       return;
+    }
+    else {
+      hideEmptyContainer();
     }
     if (store.modules.isEmpty()) {
       return;
