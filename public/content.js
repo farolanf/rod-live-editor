@@ -22,6 +22,7 @@ function Content() {
 		loadContent,
 		addGlobalProperty,
 		deleteGlobalProperty,
+		setGlobalProperty,
 		subscribe,
 		isEmpty,
 	});
@@ -50,6 +51,10 @@ function Content() {
 
 	function deleteGlobalProperty(name) {
 		delete globalProperties[name];
+	}
+
+	function setGlobalProperty(prop, value) {
+		globalProperties[prop].value = value;
 	}
 
 	function subscribe(fn) {
