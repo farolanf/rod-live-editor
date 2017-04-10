@@ -14,12 +14,12 @@ function Modules() {
   });
 
   function loadGroups(cb) {
-    $.getJSON('/api/module/group', cb);
+    $.getJSON(uri.path()+'api/module/group', cb);
   }
 
   function loadGroupModules(name, success, error) {
     $.ajax({
-      url: `/api/module/group/${name}`,
+      url: uri.path()+`api/module/group/${name}`,
       success: _success,
       error: _error,
     });

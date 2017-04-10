@@ -1,12 +1,12 @@
 'use strict';
 
+window.uri = URI(window.location.href);
 window.uiutils = new UIUtils();
 window.store = new Store();
 window.app = new App();
 
 function App() {
 
-  const uri = URI(window.location.href);
   const query = parseQuery();
   const editor = window.editor = new Editor(store.content);
   const moduleView = new ModuleView(store, query.moduleGroup);
@@ -209,7 +209,7 @@ function App() {
       moduleGroup: store.modules.group(),
     };
     $.ajax({
-      url: '/api/save',
+      url: uri.path()+'api/save',
       method: 'POST',
       data,
       success,

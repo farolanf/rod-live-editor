@@ -31,7 +31,7 @@ function Content() {
 	}
 
 	function loadContent(id) {
-		$.getJSON(`/api/content/${id}`, function(data) {
+		$.getJSON(uri.path()+`api/content/${id}`, function(data) {
 			eval(`content = ${JSON.parse(data.content)}`);
 			emit();
 		});
