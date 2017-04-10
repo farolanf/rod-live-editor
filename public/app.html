@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <base href="/public/">
     <meta charset="utf-8">
     <title>Live Editor</title>
     <link href="libs/css/normalize.min.css" rel="stylesheet">
@@ -9,6 +10,8 @@
     <link href="libs/jquery-ui-bundle/jquery-ui.min.css" rel="stylesheet">
     <link href="libs/jquery-toast-plugin/dist/jquery.toast.min.css" rel="stylesheet">
     <link href="libs/color-picker/jquery.colorpicker.css" rel="stylesheet">
+    <link href="libs/prism/prism.css" rel="stylesheet">
+    <link href="libs/CodeFlask.js/src/codeflask.css" rel="stylesheet">
     <link href="index.css" rel="stylesheet">
   <body>
     
@@ -42,8 +45,10 @@
             <input class="form-control module-search" placeholder="search module...">
             <div class="module-list"></div>
           </div>
-          <iframe class="preview">
-          </iframe>
+          <div class="preview-container">
+            <iframe class="preview"></iframe>
+            <div class="empty-container" style="display: none"></div>
+          </div>
           <div class="property-view">
             <div class="panel panel-default">
               <div class="btn-toolbar text-right">
@@ -85,7 +90,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal"></button>
+            <button type="button" class="btn btn-primary" data-primary-btn data-dismiss="modal"></button>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
@@ -121,6 +126,25 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
+    <div class="modal fade" tabindex="-1" role="dialog" id="text-editor-modal">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Text Editor</h4>
+          </div>
+          <div class="modal-body">
+            <div id="text-editor-modal__text-editor"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
     <script src="libs/js/jquery-3.1.1.min.js"></script>
     <script src="libs/jquery-toast-plugin/dist/jquery.toast.min.js"></script>
     <script src="libs/jquery-ui-bundle/jquery-ui.min.js"></script>
@@ -131,10 +155,13 @@
     <script src="libs/js/lodash.min.js"></script>
     <script src="libs/js/EventEmitter.min.js"></script>
     <script src="libs/js/URI.min.js"></script>
+    <script src="libs/prism/prism.js"></script>
+    <script src="libs/CodeFlask.js/src/codeflask.js"></script>
 
     <script src="utils/dom.js"></script>
     <script src="utils/dnd.js"></script>
     <script src="utils/editor.js"></script>
+    <script src="utils/ui.js"></script>
 
     <script src="modules.js"></script>
     <script src="content.js"></script>

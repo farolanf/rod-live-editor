@@ -1,21 +1,24 @@
 'use strict';
 
+window.events = new EventEmitter();
+window.uri = URI(window.location.href);
+window.uiutils = new UIUtils();
 window.store = new Store();
 window.app = new App();
 
 function App() {
 
-  const uri = URI(window.location.href);
   const query = parseQuery();
   const editor = window.editor = new Editor(store.content);
   const moduleView = new ModuleView(store, query.moduleGroup);
   const propertyView = window.propertyView = new PropertyView(editor, store.content);
-  const instanceMap = new InstanceMap(store.content, propertyView);
-  let preview = new Preview();
+  const preview = new Preview();
+  const instanceMap = new InstanceMap(store.content, propertyView, preview);
   let dragond;
 
   store.content.subscribe(renderPreview);
   store.modules.subscribe(renderPreview);
+  moduleView.subscribe(modulesViewChange);
 
   $(init);
 
@@ -29,6 +32,7 @@ function App() {
   };
 
   function init() {
+    initEvents();
     initRoutes();
     initDrag();
     initEditor();
@@ -37,8 +41,15 @@ function App() {
     if (query.id) {
       store.content.loadContent(query.id);  
     }
-    else {
-      store.content.setContent([{name: 'document-html-email'}]);
+  }
+
+  function initEvents() {
+    events.addListener('instance-deleted', instanceDeleted);
+  }
+
+  function instanceDeleted() {
+    if (store.content.isEmpty()) {
+      renderPreview();
     }
   }
 
@@ -78,7 +89,7 @@ function App() {
     if (dragond) {
       dragond.destroy();
     }
-    dragond = new Dragond(['.module-list', '.module-list .list-group'], {
+    dragond = new Dragond(['.module-list', '.module-list .list-group', '.empty-container'], {
       shadow: false,
       getElement(el, src) {
         if ($(src).is('.module-view *')) {
@@ -90,17 +101,34 @@ function App() {
       accepts(el, con, src) {
         return !$(con).is('.module-view *') && $(el).is('[data-id]');
       },
-      end(e, el, con, src, sibling) {
-        if (+$(el).attr('data-id') === -1 && $(con).is('.instance-container')) {
-          onCreateInstance(el, con, src, sibling);
-        } else if ($(el).is('.instance') && $(con).is('.instance-container')) {
-          onMoveInstance(el, con, src, sibling);
+      inserts(el, con, src) {
+        return !$(con).is('.empty-container');
+      },
+      enter(e, el, con) {
+        if ($(con).is('.empty-container') && !$(el).is('[data-root]')) {
+          $(con).removeClass('dg-dragover').addClass('dg-invalid');
+        }
+      },
+      end(e, el, con, src, parent, sibling) {
+        if ($(con).is('.empty-container')) {
+          $(el).is('[data-root]') && createFirstInstance(el);
+        }
+        else if (+$(el).attr('data-id') === -1 && $(parent).is('.instance-container')) {
+          onCreateInstance(el, parent, src, sibling);
+        } else if ($(el).is('.instance') && $(parent).is('.instance-container')) {
+          onMoveInstance(el, parent, src, sibling);
         }
       },
     });
 
     window.dragond = dragond;
   }
+
+  function createFirstInstance(el) {
+    const name = $(el).data('name');
+    editor.createInstance(name);
+    renderPreview();
+  } 
 
   function onCreateInstance(el, con, src, sibling) {
     const name = $(el).data('name');
@@ -141,7 +169,7 @@ function App() {
   }
 
   function initEditor() {
-    Split(['.module-view', '.preview', '.property-view'], {
+    Split(['.module-view', '.preview-container', '.property-view'], {
       sizes: [25, 50, 25],
       minSize: 0
     });
@@ -176,7 +204,23 @@ function App() {
     $('.instance-controls').addClass('hidden');
   }
 
+  function modulesViewChange() {
+    // a check is needed in case modules have been fetched before
+    // dragond is ready
+    dragond && dragond.initContainers();
+  }
+
   function renderPreview() {
+    if (store.content.isEmpty()) {
+      renderEmptyPreview();
+      return;
+    }
+    else {
+      hideEmptyContainer();
+    }
+    if (store.modules.isEmpty()) {
+      return;
+    }
     dragond.removeIframe('.preview');
     let html = store.createRenderer().render(store.content.content());
     html = html.replace(/<\/head>/, `
@@ -196,19 +240,27 @@ function App() {
     }
   }
 
+  function renderEmptyPreview() {
+    $('.empty-container').show();
+  }
+
+  function hideEmptyContainer() {
+    $('.empty-container').hide();
+  }
+
   function save() {
-    showConfirmModal('Save', 'Save the document?', 'Save', 'app._save()');
+    uiutils.showConfirmModal('Save', 'Save the document?', 'Save', 'app._save()');
   }
 
   function _save() {
-    const savingToast = toast('Saving...', 'info');
+    const savingToast = uiutils.toast('Saving...', 'info');
     const data = {
       id: query.id,
       content: JSON.stringify(store.content.content(), filterContent),
       moduleGroup: store.modules.group(),
     };
     $.ajax({
-      url: '/api/save',
+      url: uri.path()+'api/save',
       method: 'POST',
       data,
       success,
@@ -216,11 +268,11 @@ function App() {
     });
     function success() {
       savingToast.reset();
-      toast('Document saved.');
+      uiutils.toast('Document saved.');
     }
     function error(xhr, status) {
       savingToast.reset();
-      toast('Fail to save document.', 'error');
+      uiutils.toast('Fail to save document.', 'error');
       console.log(status, xhr, data);
     }
   }
@@ -228,26 +280,6 @@ function App() {
   function refresh() {
     initDrag();
     renderPreview();
-  }
-
-  function toast(msg, type) {
-    const colors = {
-      info: '#039be5',
-      error: '#ef5350',
-    };
-    return $.toast({
-      text: msg,
-      position: 'top-right',
-      bgColor: colors[type || 'info'],
-    });
-  }
-
-  function showConfirmModal(title, msg, actionTitle, onclick) {
-    const modal = $('#confirm-modal');
-    $('.modal-title', modal).text(title);
-    $('.confirm-msg', modal).text(msg);
-    $('.btn-primary', modal).text(actionTitle).attr('onclick', onclick);
-    modal.modal();
   }
 
   function parseQuery() {

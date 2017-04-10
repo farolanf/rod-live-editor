@@ -1,5 +1,7 @@
 
-function InstanceMap(content, propertyView) {
+function InstanceMap(content, propertyView, preview) {
+  let locked = false;
+
   const btn = $('.property-view .instance-map-btn');
   btn.popover({
     container: 'body',
@@ -8,32 +10,56 @@ function InstanceMap(content, propertyView) {
     html: true,
     title: 'Select instance to edit',
     content: function() {return getContent(content)},
+    template: getTemplate(),
   })
   .on('click', function(e) {
     e.stopPropagation();
     $(this).popover('toggle');
   })
   .on('inserted.bs.popover', function(e) {
-    $('.popover').on('click', function(e) {
+    const id = $(this).attr('aria-describedby');
+    const popover = $(`#${id}`);
+    $('.lock-btn', popover).off().on('click', toggleLocked.bind(this, id));
+    popover.off().on('click', function(e) {
       e.stopPropagation();
-    });
-    $('.popover').css({
+    }).css({
       height: '100%',
       overflow: 'hidden'
     }).find('.popover-content').css({
       height: 'calc(100% - 30px)',
       overflow: 'auto'
     });
-    $('.instance-map .instance-map__instance').on('click', function(e) {
+    $('.instance-map .instance-map__instance', popover).off().on('click', function(e) {
       e.stopPropagation();
       const id = $(this).data('id');
       propertyView.setInstance(id);
+      preview.selectInstanceById(id);
+      !locked && btn.popover('hide');
+      events.emit('instance-selected', id, 'instance-map');
     });
   });
 
   $(window).on('click', function() {
-    btn.popover('hide');
+    !locked && btn.popover('hide');
   });
+
+  function toggleLocked(id, e) {
+    e.stopPropagation();
+    locked = !locked;
+    $(`#${id} .lock-btn`).toggleClass('lock-btn--disabled', !locked);
+  }
+
+  function getTemplate() {
+    return `
+      <div class="popover" role="tooltip">
+        <div class="arrow"></div>
+        <h3 class="popover-title">
+        </h3>
+        <i class="fa fa-lock lock-btn lock-btn--disabled"></i>
+        <div class="popover-content"></div>
+      </div>
+    `; 
+  }
 
   function getContent(content) {
     const html = `

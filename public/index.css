@@ -56,10 +56,43 @@ html, body, #app, #editor, .editor-container, .preview {
   pointer-events: none;
 }
 
+.preview-container {
+  position: relative;
+  height: 100%;
+}
 .preview {
+  width: 100%;
   height: 100%;
   overflow: auto;
   border: none;
+}
+.empty-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  outline: 4px dashed #eee;
+  outline-offset: -4px;
+}
+.empty-container.dg-dragover {
+  outline: 4px dashed #aaa;
+  outline-offset: -4px;
+}
+.empty-container.dg-invalid {
+  outline: 4px solid #f88;
+  outline-offset: -4px;
+}
+.empty-container::before {
+  content: 'Drag a module here';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #555;
+}
+.empty-container.dg-dragover::before {
+  color: #ccc;
 }
 
 .instance-controls {
@@ -96,12 +129,28 @@ html, body, #app, #editor, .editor-container, .preview {
 .property-view .list-group .list-group-item {
   padding: 15px;
 }
-.property-view .list-group .list-group-item input {
+.property-view .list-group .list-group-item input,
+.property-view .list-group .list-group-item .del-prop-btn {
   position: absolute;
   top: 50%;
-  right: 14px;
+  right: 4px;
   transform: translateY(-50%);
+}
+.property-view .list-group .list-group-item input {
+  right: 20px;
   width: 40%;
+}
+.property-view .list-group .list-group-item .del-prop-btn {
+  cursor: pointer;
+}
+.property-view .list-group .list-group-item .del-prop-btn:hover {
+  opacity: 0.5;
+}
+.property-view .text-editor-btn {
+  cursor: pointer;
+}
+.property-view .text-editor-btn:hover {
+  opacity: 0.8;
 }
 
 .instance-map {
@@ -142,7 +191,20 @@ html, body, #app, #editor, .editor-container, .preview {
 .popover {
   max-width: 100%;
 }
+.popover .lock-btn {
+  position: absolute;
+  top: 9px;
+  right: 12px;
+  cursor: pointer;
+}
+.popover .lock-btn.lock-btn--disabled {
+  color: rgba(0, 0, 0, 0.2);
+}
 
 .modal {
   z-index: 2000;
+}
+
+#text-editor-modal__text-editor {
+  height: 300px;
 }

@@ -93,8 +93,13 @@ function Editor(content) {
 
   function createInstance(name, parentId, container, siblingId) {
     const instance = {name: name, id: newId()};
-    const parent = _findInstance(content.content(), parentId);
-    insertInstance(instance, parent, container, siblingId);
+    const parent = parentId ? _findInstance(content.content(), parentId) : null;
+    if (parent) {
+      insertInstance(instance, parent, container, siblingId);
+    }
+    else {
+      content.content().push(instance);
+    }
     return instance;
   }
 

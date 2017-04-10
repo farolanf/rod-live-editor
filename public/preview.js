@@ -14,16 +14,17 @@ function Preview() {
     cleanContainer,
     initElement,
     init,
+    selectInstanceById,
   });
 
   function init(win) {
     iframeWindow = win;
     selectedElement = null;
     initElement(iframeWindow.document.body);
-    events(iframeWindow);
+    initEvents(iframeWindow);
   }
 
-  function events(iframeWindow) {
+  function initEvents(iframeWindow) {
     $(iframeWindow).off('click scroll').on('click', function(e) {
       deselectInstance(selectedElement);
       selectedElement = null;
@@ -33,6 +34,13 @@ function Preview() {
         app.showInstanceControls(selectedElement);
       }
     });
+    events.addListener('instance-selected', instanceSelected);
+  }
+
+  function instanceSelected(id, src) {
+    if (src === 'instance-map') {
+      scrollToInstance(id);
+    }
   }
 
   function initElement(startElement) {
@@ -87,12 +95,26 @@ function Preview() {
     });
   }
 
+  function selectInstanceById(id) {
+    const el = $$(`[data-id="${id}"]`)[0];
+    selectInstance(el);
+  }
+
   function selectInstance(el) {
     selectedElement = el;
     $(el).addClass('active');
     app.showInstanceControls(el);
     const id = $(el).data('id');
     propertyView.setInstance(id);
+  }
+
+  function scrollToInstance(id) {
+    const el = $$(`[data-id="${id}"]`)[0];
+    scrollToElement(el);
+  }
+
+  function scrollToElement(el) {
+    $$('body').scrollTop($(el).offset().top);
   }
 
   function deselectInstance(el) {
@@ -126,9 +148,12 @@ function Preview() {
     const id = $(el).data('id');
     editor.removeInstance(id);
     $(el).remove();
-    conel.parentInstance.cleanContainers();
-    renderContainerChildren(conel.parentInstance, conel.name);
+    if (conel.parentInstance) {
+      conel.parentInstance.cleanContainers();
+      renderContainerChildren(conel.parentInstance, conel.name);
+    }
     app.hideInstanceControls();
+    events.emit('instance-deleted', id);
   }
 
   function renderInstance(instance) {

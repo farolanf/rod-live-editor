@@ -4,11 +4,24 @@ function PropertyView(editor, content) {
 
   let instanceId;
 
+  events.addListener('instance-deleted', instanceDeleted);
+
+  const flask = new CodeFlask();
+  flask.run('#text-editor-modal__text-editor', {language:'javascript'});
+
   return {
     setInstance,
     editGlobals,
     addGlobalProperty,
+    deleteGlobalProperty,
   };
+
+  function instanceDeleted(id) {
+    if (instanceId === id) {
+      instanceId = null;
+      $('.property-view .list-group').html('');
+    }
+  }
 
   function setInstance(id) {
     if (instanceId !== id) {
@@ -29,9 +42,8 @@ function PropertyView(editor, content) {
     `;
     const props = content.globalProperties();
     _render(`Global Properties ${btn}`, props, function(prop, value) {
-      props[prop].value = value;
-      app.renderPreview();
-    });
+      setGlobalProperty(prop, value);
+    }, true);
     $('.property-view .module-name .add-property-btn').on('click', addProperty);
     function addProperty() {
       const modal = $('#add-property-modal');
@@ -46,29 +58,35 @@ function PropertyView(editor, content) {
     const modal = $('#add-property-modal');
     const name = $('#add-property-modal__name', modal).val();
     const type = $('#add-property-modal__type', modal).val();
-    const props = content.globalProperties();
-    if (!props.hasOwnProperty(name)) {
-      props[name] = {type, value: ''};
-      editGlobals();
-    }
+    content.addGlobalProperty(name, type);
+    editGlobals();
+  }
+
+  function deleteGlobalProperty(name) {
+    content.deleteGlobalProperty(name);
+    editGlobals();
   }
 
   function render() {
     const instance = new Instance(instanceId);
     _render(instance.name, instance.getProperties(), function(prop, value) {
-      instance.setProperty(prop, value);
-      app.renderInstance(instance);
+      setInstanceProperty(prop, value);
     });
   }
 
-  function _render(name, props, onChange) {
+  function _render(name, props, onChange, canDelete) {
     let html = `<div class="list-group-item module-name">${name}</div>`;
     _.forOwn(props, function(prop, key) {
+      const delHtml = canDelete ? `<i class="fa fa-trash del-prop-btn" data-property="${key}"></i>` : '';
       const color = prop.value.replace('#', '');
+      const textCls = prop.type === 'text' ? 'text-editor-btn' : '';
+      const textBtn = prop.type === 'text' ? '<i class="fa fa-pencil"></i>' : '';
+      const dataGlobal = instanceId === null ? 'data-global="true"' : '';
       html += `
         <div class="list-group-item">
-          <span class="name">${key}</span>
-          <input class="form-control" value="${color}" data-name="${key}" data-type="${prop.type}">
+          <span class="name ${textCls}">${key} ${textBtn}</span>
+          <input class="form-control" value="${color}" ${dataGlobal} data-name="${key}" data-type="${prop.type}">
+          ${delHtml}
         </div>`;
     });
     $('#editor .property-view .list-group').html(html);
@@ -84,5 +102,49 @@ function PropertyView(editor, content) {
       } 
       onChange(prop, value);
     });
+    $('.property-view .del-prop-btn').on('click', function() {
+      const name = $(this).data('property');
+      uiutils.showConfirmModal('Delete Global Property', `Delete global property '${name}'?`, 
+        'Delete', `propertyView.deleteGlobalProperty('${name}')`, 'danger');
+    });
+    $('.property-view .text-editor-btn').on('click', onTextBtnClick);
+  }
+
+  function onTextBtnClick() {
+    const input = $(this).next();
+    const prop = input.data('name');
+    const isGlobal = !!input.data('global');
+    const value = isGlobal ? getGlobalProperty(prop) : getInstanceProperty(prop);
+    flask.update(value);
+    flask.onUpdate(function(value) {
+      if (isGlobal) {
+        setGlobalProperty(prop, value);
+      }
+      else {
+        setInstanceProperty(prop, value);
+      }
+      input.val(value);
+    });
+    $('#text-editor-modal').modal();
+  }
+
+  function getGlobalProperty(prop) {
+    return content.globalProperties()[prop].value;
+  }
+
+  function getInstanceProperty(prop) {
+    const instance = new Instance(instanceId);
+    return instance.getProperties()[prop].value;
+  }
+
+  function setGlobalProperty(prop, value) {
+    content.setGlobalProperty(prop, value);
+    app.renderPreview();
+  }
+
+  function setInstanceProperty(prop, value) {
+    const instance = new Instance(instanceId);
+    instance.setProperty(prop, value);
+    app.renderInstance(instance);
   }
 }

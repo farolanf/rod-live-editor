@@ -20,7 +20,11 @@ function Content() {
 		content() { return content },
 		setContent,
 		loadContent,
+		addGlobalProperty,
+		deleteGlobalProperty,
+		setGlobalProperty,
 		subscribe,
+		isEmpty,
 	});
 
 	function setContent(c) {
@@ -29,7 +33,7 @@ function Content() {
 	}
 
 	function loadContent(id) {
-		$.getJSON(`/api/content/${id}`, function(data) {
+		$.getJSON(uri.path()+`api/content/${id}`, function(data) {
 			eval(`content = ${JSON.parse(data.content)}`);
 			emit();
 		});
@@ -39,7 +43,25 @@ function Content() {
 		ee.emit('content', content, globalProperties);
 	}
 
+	function addGlobalProperty(name, type) {
+    if (!globalProperties.hasOwnProperty(name)) {
+      globalProperties[name] = {type, value: ''};
+		}
+	}
+
+	function deleteGlobalProperty(name) {
+		delete globalProperties[name];
+	}
+
+	function setGlobalProperty(prop, value) {
+		globalProperties[prop].value = value;
+	}
+
 	function subscribe(fn) {
 		ee.addListener('content', fn);
+	}
+
+	function isEmpty() {
+		return content.length <= 0;
 	}
 }

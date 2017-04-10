@@ -3,7 +3,7 @@
 function ContainerElement(el) {
   const name = $(el).data('name');
   const parentId = $(el).data('parent-id');
-  const parentInstance = new Instance(parentId);
+  const parentInstance = parentId ? new Instance(parentId) : null;
 
   return Object.assign(this, {
     name,
