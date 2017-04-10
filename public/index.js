@@ -11,8 +11,8 @@ function App() {
   const editor = window.editor = new Editor(store.content);
   const moduleView = new ModuleView(store, query.moduleGroup);
   const propertyView = window.propertyView = new PropertyView(editor, store.content);
-  const instanceMap = new InstanceMap(store.content, propertyView);
-  let preview = new Preview();
+  const preview = new Preview();
+  const instanceMap = new InstanceMap(store.content, propertyView, preview);
   let dragond;
 
   store.content.subscribe(renderPreview);

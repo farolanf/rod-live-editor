@@ -1,5 +1,5 @@
 
-function InstanceMap(content, propertyView) {
+function InstanceMap(content, propertyView, preview) {
   const btn = $('.property-view .instance-map-btn');
   btn.popover({
     container: 'body',
@@ -28,6 +28,7 @@ function InstanceMap(content, propertyView) {
       e.stopPropagation();
       const id = $(this).data('id');
       propertyView.setInstance(id);
+      preview.selectInstanceById(id);
     });
   });
 

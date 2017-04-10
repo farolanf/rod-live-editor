@@ -14,6 +14,7 @@ function Preview() {
     cleanContainer,
     initElement,
     init,
+    selectInstanceById,
   });
 
   function init(win) {
@@ -87,6 +88,11 @@ function Preview() {
     });
   }
 
+  function selectInstanceById(id) {
+    const el = $$(`[data-id="${id}"]`)[0];
+    selectInstance(el);
+  }
+
   function selectInstance(el) {
     selectedElement = el;
     $(el).addClass('active');
@@ -94,7 +100,7 @@ function Preview() {
     const id = $(el).data('id');
     propertyView.setInstance(id);
   }
-
+  
   function deselectInstance(el) {
     $(el).removeClass('active').attr('contenteditable', false);
   }
