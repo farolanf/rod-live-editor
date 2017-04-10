@@ -29,6 +29,7 @@ function InstanceMap(content, propertyView, preview) {
       const id = $(this).data('id');
       propertyView.setInstance(id);
       preview.selectInstanceById(id);
+      events.emit('instance-selected', id, 'instance-map');
     });
   });
 

@@ -34,6 +34,13 @@ function Preview() {
         app.showInstanceControls(selectedElement);
       }
     });
+    events.addListener('instance-selected', instanceSelected);
+  }
+
+  function instanceSelected(id, src) {
+    if (src === 'instance-map') {
+      scrollToInstance(id);
+    }
   }
 
   function initElement(startElement) {
@@ -100,7 +107,16 @@ function Preview() {
     const id = $(el).data('id');
     propertyView.setInstance(id);
   }
-  
+
+  function scrollToInstance(id) {
+    const el = $$(`[data-id="${id}"]`)[0];
+    scrollToElement(el);
+  }
+
+  function scrollToElement(el) {
+    $$('body').scrollTop($(el).offset().top);
+  }
+
   function deselectInstance(el) {
     $(el).removeClass('active').attr('contenteditable', false);
   }
