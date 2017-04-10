@@ -52,7 +52,8 @@ function App() {
         const html = renderer.render(store.content.content(), true);
         hideInstanceControls();
         $('#app > *').hide();
-        $('#app > iframe').attr('srcdoc', html).show();
+        $('#app > .preview-container').show()
+          .find('iframe').attr('srcdoc', html).show();
       }),
       new senna.Route('/json', function() {
         hideInstanceControls();
@@ -79,7 +80,7 @@ function App() {
     if (dragond) {
       dragond.destroy();
     }
-    dragond = new Dragond(['.module-list', '.module-list .list-group'], {
+    dragond = new Dragond(['.module-list', '.module-list .list-group', '.empty-container'], {
       shadow: false,
       getElement(el, src) {
         if ($(src).is('.module-view *')) {
@@ -142,7 +143,7 @@ function App() {
   }
 
   function initEditor() {
-    Split(['.module-view', '.preview', '.property-view'], {
+    Split(['.module-view', '.preview-container', '.property-view'], {
       sizes: [25, 50, 25],
       minSize: 0
     });
@@ -178,6 +179,10 @@ function App() {
   }
 
   function renderPreview() {
+    if (store.content.isEmpty()) {
+      renderEmptyPreview();
+      return;
+    }
     if (store.modules.isEmpty()) {
       return;
     }
@@ -198,6 +203,10 @@ function App() {
     if (con.parentInstance.getContainers()[con.name].isDefault) {
       preview.renderContainerChildren(con.parentInstance, con.name);
     }
+  }
+
+  function renderEmptyPreview() {
+
   }
 
   function save() {

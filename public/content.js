@@ -23,6 +23,7 @@ function Content() {
 		addGlobalProperty,
 		deleteGlobalProperty,
 		subscribe,
+		isEmpty,
 	});
 
 	function setContent(c) {
@@ -53,5 +54,9 @@ function Content() {
 
 	function subscribe(fn) {
 		ee.addListener('content', fn);
+	}
+
+	function isEmpty() {
+		return content.length <= 0;
 	}
 }
