@@ -62,8 +62,7 @@ function App() {
         const html = renderer.render(store.content.content(), true);
         hideInstanceControls();
         $('#app > *').hide();
-        $('#app > .preview-container').show()
-          .find('iframe').attr('srcdoc', html).show();
+        $('#app > iframe').attr('srcdoc', html).show();
       }),
       new senna.Route('/json', function() {
         hideInstanceControls();
