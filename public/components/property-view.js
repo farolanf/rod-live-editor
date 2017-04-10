@@ -6,6 +6,9 @@ function PropertyView(editor, content) {
 
   events.addListener('instance-deleted', instanceDeleted);
 
+  const flask = new CodeFlask();
+  flask.run('#text-editor-modal__text-editor', {language:'javascript'});
+
   return {
     setInstance,
     editGlobals,
@@ -39,8 +42,7 @@ function PropertyView(editor, content) {
     `;
     const props = content.globalProperties();
     _render(`Global Properties ${btn}`, props, function(prop, value) {
-      props[prop].value = value;
-      app.renderPreview();
+      setGlobalProperty(prop, value);
     }, true);
     $('.property-view .module-name .add-property-btn').on('click', addProperty);
     function addProperty() {
@@ -68,8 +70,7 @@ function PropertyView(editor, content) {
   function render() {
     const instance = new Instance(instanceId);
     _render(instance.name, instance.getProperties(), function(prop, value) {
-      instance.setProperty(prop, value);
-      app.renderInstance(instance);
+      setInstanceProperty(prop, value);
     });
   }
 
@@ -78,10 +79,13 @@ function PropertyView(editor, content) {
     _.forOwn(props, function(prop, key) {
       const delHtml = canDelete ? `<i class="fa fa-trash del-prop-btn" data-property="${key}"></i>` : '';
       const color = prop.value.replace('#', '');
+      const textCls = prop.type === 'text' ? 'text-editor-btn' : '';
+      const textBtn = prop.type === 'text' ? '<i class="fa fa-pencil"></i>' : '';
+      const dataGlobal = instanceId === null ? 'data-global="true"' : '';
       html += `
         <div class="list-group-item">
-          <span class="name">${key}</span>
-          <input class="form-control" value="${color}" data-name="${key}" data-type="${prop.type}">
+          <span class="name ${textCls}">${key} ${textBtn}</span>
+          <input class="form-control" value="${color}" ${dataGlobal} data-name="${key}" data-type="${prop.type}">
           ${delHtml}
         </div>`;
     });
@@ -103,5 +107,44 @@ function PropertyView(editor, content) {
       uiutils.showConfirmModal('Delete Global Property', `Delete global property '${name}'?`, 
         'Delete', `propertyView.deleteGlobalProperty('${name}')`, 'danger');
     });
+    $('.property-view .text-editor-btn').on('click', onTextBtnClick);
+  }
+
+  function onTextBtnClick() {
+    const input = $(this).next();
+    const prop = input.data('name');
+    const isGlobal = !!input.data('global');
+    const value = isGlobal ? getGlobalProperty(prop) : getInstanceProperty(prop);
+    flask.update(value);
+    flask.onUpdate(function(value) {
+      if (isGlobal) {
+        setGlobalProperty(prop, value);
+      }
+      else {
+        setInstanceProperty(prop, value);
+      }
+      input.val(value);
+    });
+    $('#text-editor-modal').modal();
+  }
+
+  function getGlobalProperty(prop) {
+    return content.globalProperties()[prop].value;
+  }
+
+  function getInstanceProperty(prop) {
+    const instance = new Instance(instanceId);
+    return instance.getProperties()[prop].value;
+  }
+
+  function setGlobalProperty(prop, value) {
+    content.setGlobalProperty(prop, value);
+    app.renderPreview();
+  }
+
+  function setInstanceProperty(prop, value) {
+    const instance = new Instance(instanceId);
+    instance.setProperty(prop, value);
+    app.renderInstance(instance);
   }
 }

@@ -146,6 +146,12 @@ html, body, #app, #editor, .editor-container, .preview {
 .property-view .list-group .list-group-item .del-prop-btn:hover {
   opacity: 0.5;
 }
+.property-view .text-editor-btn {
+  cursor: pointer;
+}
+.property-view .text-editor-btn:hover {
+  opacity: 0.8;
+}
 
 .instance-map {
   width: 300px;
@@ -197,4 +203,8 @@ html, body, #app, #editor, .editor-container, .preview {
 
 .modal {
   z-index: 2000;
+}
+
+#text-editor-modal__text-editor {
+  height: 300px;
 }
