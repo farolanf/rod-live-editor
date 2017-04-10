@@ -99,7 +99,7 @@ function ModuleView(store, initialGroup) {
     let html = renderer.renderModule(content);
     // workaround for html document
     if (/<html[^]*>/.test(html)) {
-      html = `<span data-id data-name="${name}">HTML Document</span>`;  
+      html = `<span data-id data-name="${name}" data-root>HTML Document</span>`;  
     }
     return $(html)[0];
   }

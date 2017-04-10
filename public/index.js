@@ -100,6 +100,9 @@ function App() {
         return el;
       },
       accepts(el, con, src) {
+        if ($(con).is('.empty-container')) {
+          return $(el).is('[data-root]');
+        }
         return !$(con).is('.module-view *') && $(el).is('[data-id]');
       },
       inserts(el, con, src) {
