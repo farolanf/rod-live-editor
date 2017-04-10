@@ -181,6 +181,15 @@ html, body, #app, #editor, .editor-container, .preview {
 .popover {
   max-width: 100%;
 }
+.popover .lock-btn {
+  position: absolute;
+  top: 9px;
+  right: 12px;
+  cursor: pointer;
+}
+.popover .lock-btn.lock-btn--disabled {
+  color: rgba(0, 0, 0, 0.2);
+}
 
 .modal {
   z-index: 2000;
