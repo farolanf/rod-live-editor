@@ -132,8 +132,10 @@ function Preview() {
     const id = $(el).data('id');
     editor.removeInstance(id);
     $(el).remove();
-    conel.parentInstance.cleanContainers();
-    renderContainerChildren(conel.parentInstance, conel.name);
+    if (conel.parentInstance) {
+      conel.parentInstance.cleanContainers();
+      renderContainerChildren(conel.parentInstance, conel.name);
+    }
     app.hideInstanceControls();
   }
 
