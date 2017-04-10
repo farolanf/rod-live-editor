@@ -100,17 +100,19 @@ function App() {
         return el;
       },
       accepts(el, con, src) {
-        if ($(con).is('.empty-container')) {
-          return $(el).is('[data-root]');
-        }
         return !$(con).is('.module-view *') && $(el).is('[data-id]');
       },
       inserts(el, con, src) {
         return !$(con).is('.empty-container');
       },
+      enter(e, el, con) {
+        if ($(con).is('.empty-container') && !$(el).is('[data-root]')) {
+          $(con).removeClass('dg-dragover').addClass('dg-invalid');
+        }
+      },
       end(e, el, con, src, parent, sibling) {
         if ($(con).is('.empty-container')) {
-          createFirstInstance(el);
+          $(el).is('[data-root]') && createFirstInstance(el);
         }
         else if (+$(el).attr('data-id') === -1 && $(parent).is('.instance-container')) {
           onCreateInstance(el, parent, src, sibling);

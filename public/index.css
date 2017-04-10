@@ -76,8 +76,12 @@ html, body, #app, #editor, .editor-container, .preview {
   outline-offset: -4px;
 }
 .empty-container.dg-dragover {
-  outline: 2px dashed #888;
-  outline-offset: -2px;
+  outline: 4px dashed #aaa;
+  outline-offset: -4px;
+}
+.empty-container.dg-invalid {
+  outline: 4px solid #f88;
+  outline-offset: -4px;
 }
 .empty-container::before {
   content: 'Drag a module here';
@@ -88,7 +92,7 @@ html, body, #app, #editor, .editor-container, .preview {
   color: #555;
 }
 .empty-container.dg-dragover::before {
-  color: #888;
+  color: #ccc;
 }
 
 .instance-controls {
