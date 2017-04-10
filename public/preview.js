@@ -21,10 +21,10 @@ function Preview() {
     iframeWindow = win;
     selectedElement = null;
     initElement(iframeWindow.document.body);
-    events(iframeWindow);
+    initEvents(iframeWindow);
   }
 
-  function events(iframeWindow) {
+  function initEvents(iframeWindow) {
     $(iframeWindow).off('click scroll').on('click', function(e) {
       deselectInstance(selectedElement);
       selectedElement = null;
@@ -137,6 +137,7 @@ function Preview() {
       renderContainerChildren(conel.parentInstance, conel.name);
     }
     app.hideInstanceControls();
+    events.emit('instance-deleted', id);
   }
 
   function renderInstance(instance) {

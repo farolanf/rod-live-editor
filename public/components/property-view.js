@@ -4,12 +4,21 @@ function PropertyView(editor, content) {
 
   let instanceId;
 
+  events.addListener('instance-deleted', instanceDeleted);
+
   return {
     setInstance,
     editGlobals,
     addGlobalProperty,
     deleteGlobalProperty,
   };
+
+  function instanceDeleted(id) {
+    if (instanceId === id) {
+      instanceId = null;
+      $('.property-view .list-group').html('');
+    }
+  }
 
   function setInstance(id) {
     if (instanceId !== id) {

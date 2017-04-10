@@ -1,5 +1,6 @@
 'use strict';
 
+window.events = new EventEmitter();
 window.uri = URI(window.location.href);
 window.uiutils = new UIUtils();
 window.store = new Store();
@@ -17,6 +18,7 @@ function App() {
 
   store.content.subscribe(renderPreview);
   store.modules.subscribe(renderPreview);
+  moduleView.subscribe(modulesViewChange);
 
   $(init);
 
@@ -30,6 +32,7 @@ function App() {
   };
 
   function init() {
+    initEvents();
     initRoutes();
     initDrag();
     initEditor();
@@ -38,8 +41,15 @@ function App() {
     if (query.id) {
       store.content.loadContent(query.id);  
     }
-    else {
-      store.content.setContent([{name: 'document-html-email'}]);
+  }
+
+  function initEvents() {
+    events.addListener('instance-deleted', instanceDeleted);
+  }
+
+  function instanceDeleted() {
+    if (store.content.isEmpty()) {
+      renderPreview();
     }
   }
 
@@ -92,17 +102,30 @@ function App() {
       accepts(el, con, src) {
         return !$(con).is('.module-view *') && $(el).is('[data-id]');
       },
-      end(e, el, con, src, sibling) {
-        if (+$(el).attr('data-id') === -1 && $(con).is('.instance-container')) {
-          onCreateInstance(el, con, src, sibling);
-        } else if ($(el).is('.instance') && $(con).is('.instance-container')) {
-          onMoveInstance(el, con, src, sibling);
+      inserts(el, con, src) {
+        return !$(con).is('.empty-container');
+      },
+      end(e, el, con, src, parent, sibling) {
+        if ($(con).is('.empty-container')) {
+          createFirstInstance(el);
+        }
+        else if (+$(el).attr('data-id') === -1 && $(parent).is('.instance-container')) {
+          onCreateInstance(el, parent, src, sibling);
+        } else if ($(el).is('.instance') && $(parent).is('.instance-container')) {
+          onMoveInstance(el, parent, src, sibling);
         }
       },
     });
 
     window.dragond = dragond;
   }
+
+  function createFirstInstance(el) {
+    const name = $(el).data('name');
+    editor.createInstance(name);
+    hideEmptyContainer();
+    renderPreview();
+  } 
 
   function onCreateInstance(el, con, src, sibling) {
     const name = $(el).data('name');
@@ -178,6 +201,12 @@ function App() {
     $('.instance-controls').addClass('hidden');
   }
 
+  function modulesViewChange() {
+    // a check is needed in case modules have been fetched before
+    // dragond is ready
+    dragond && dragond.initContainers();
+  }
+
   function renderPreview() {
     if (store.content.isEmpty()) {
       renderEmptyPreview();
@@ -206,7 +235,11 @@ function App() {
   }
 
   function renderEmptyPreview() {
+    $('.empty-container').show();
+  }
 
+  function hideEmptyContainer() {
+    $('.empty-container').hide();
   }
 
   function save() {
