@@ -323,6 +323,7 @@ function Dragond(initialContainers, options) {
       addIframe,
       removeIframe,
       addContainers,
+      initContainers,
       removeFoundContainers,
       replaceBody,
       destroy,
