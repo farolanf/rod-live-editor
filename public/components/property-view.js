@@ -7,7 +7,7 @@ function PropertyView(editor, content) {
   events.addListener('instance-deleted', instanceDeleted);
 
   const flask = new CodeFlask();
-  flask.run('#text-editor-modal__text-editor', {language:'javascript'});
+  flask.run('#text-editor-modal__text-editor', {language:'html'});
 
   return {
     setInstance,
