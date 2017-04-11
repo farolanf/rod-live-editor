@@ -206,5 +206,6 @@ html, body, #app, #editor, .editor-container, .preview {
 }
 
 #text-editor-modal__text-editor {
+  position: relative;
   height: 300px;
 }

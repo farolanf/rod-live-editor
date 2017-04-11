@@ -6,8 +6,10 @@ function PropertyView(editor, content) {
 
   events.addListener('instance-deleted', instanceDeleted);
 
-  const flask = new CodeFlask();
-  flask.run('#text-editor-modal__text-editor', {language:'html'});
+  const acedit = ace.edit('text-editor-modal__text-editor');
+  acedit.setFontSize(14);
+  acedit.getSession().setMode('ace/mode/html');
+  acedit.getSession().setUseWrapMode(true);
 
   return {
     setInstance,
@@ -115,17 +117,17 @@ function PropertyView(editor, content) {
     const prop = input.data('name');
     const isGlobal = !!input.data('global');
     const value = isGlobal ? getGlobalProperty(prop) : getInstanceProperty(prop);
-    flask.update(value);
-    flask.onUpdate(function(value) {
+    acedit.setValue(value);
+    $('#text-editor-modal').modal().off('hide.bs.modal').on('hide.bs.modal', function() {
+      const newValue = acedit.getValue();
       if (isGlobal) {
-        setGlobalProperty(prop, value);
+        setGlobalProperty(prop, newValue);
       }
       else {
-        setInstanceProperty(prop, value);
+        setInstanceProperty(prop, newValue);
       }
-      input.val(value);
-    });
-    $('#text-editor-modal').modal();
+      input.val(newValue);
+    });;
   }
 
   function getGlobalProperty(prop) {
