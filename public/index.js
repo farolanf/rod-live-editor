@@ -4,14 +4,14 @@ window.events = new EventEmitter();
 window.uri = URI(window.location.href);
 window.uiutils = new UIUtils();
 window.store = new Store();
+window.editor = new Editor(store.content);
+window.propertyView = new PropertyView(editor, store.content);
 window.app = new App();
 
 function App() {
 
   const query = parseQuery();
-  const editor = window.editor = new Editor(store.content);
   const moduleView = new ModuleView(store, query.moduleGroup);
-  const propertyView = window.propertyView = new PropertyView(editor, store.content);
   const preview = new Preview();
   const instanceMap = new InstanceMap(store.content, propertyView, preview);
   let dragond;
