@@ -3,9 +3,8 @@ require_once './libs/flight/flight/Flight.php';
 require_once './api.php';
 
 Flight::route('/', function() {
-  $q = Flight::request()->query;
-  $id = $q->id;
-  $moduleGroup = $q->moduleGroup;
+  // id and moduleGroup params will be handled 
+  // on the client with rest api
   include 'app.html';
 });
 
