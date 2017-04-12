@@ -267,7 +267,6 @@ function App() {
       error,
     });
     function success(data) {
-      console.log(data);
       savingToast.reset();
       uiutils.toast('Document saved.');
     }
