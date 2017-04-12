@@ -14,7 +14,7 @@ const moduleGroup = process.argv[3];
 const modules = loadModules(moduleGroup);
 
 const renderer = new Renderer(modules, content.globalProperties);
-console.log(renderer.render(content.data));
+console.log(renderer.render(content.data, true));
 
 function loadModules(group) {
   const modules = {};
