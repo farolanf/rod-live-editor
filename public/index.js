@@ -256,7 +256,7 @@ function App() {
     const savingToast = uiutils.toast('Saving...', 'info');
     const data = {
       id: query.id,
-      content: JSON.stringify(store.content.all(), filterContent),
+      content: filteredContent(),
       moduleGroup: store.modules.group(),
     };
     $.ajax({
@@ -266,7 +266,7 @@ function App() {
       success,
       error,
     });
-    function success() {
+    function success(data) {
       savingToast.reset();
       uiutils.toast('Document saved.');
     }
@@ -274,6 +274,9 @@ function App() {
       savingToast.reset();
       uiutils.toast('Fail to save document.', 'error');
       console.log(status, xhr, data);
+    }
+    function filteredContent() {
+      return JSON.parse(JSON.stringify(store.content.all(), filterContent));
     }
   }
 
