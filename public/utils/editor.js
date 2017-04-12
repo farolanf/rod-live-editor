@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * Handles instance manipulation.
+ */
 function Editor(content) {
 
   let newInstanceId = 1;
@@ -173,6 +176,13 @@ function Editor(content) {
   }
 };
 
+/**
+ * Renders container meta along with its children.
+ * 
+ * @param {string} name - The container name.
+ * @param {string} parentId - The instance id.
+ * @param {string} children - The children HTML.
+ */
 Editor.getContainerPlaceholder = function(name, parentId, children) {
   const containerJson = JSON.stringify({
     name: name,
@@ -181,12 +191,22 @@ Editor.getContainerPlaceholder = function(name, parentId, children) {
   return `<!-- instance-container ${containerJson} --> ${children}`;
 }
 
+/**
+ * Inject instance data to the rendererd HTML.
+ * 
+ * @param {string} str - The HTML to be injected.
+ * @param {string} id - The instance id.
+ * @param {string} name - The instance name.
+ */
 Editor.injectInstanceData = function(str, id, name) {
   str = Editor.wrapText(str);
   return str.replace(/(?:<!DOCTYPE [^]*?>)?\s*(<.*?)>/i, 
     `$1 data-id="${id}" data-name="${name}">`);
 }
 
+/**
+ * Turn a text to an element for later manipulation.
+ */
 Editor.wrapText = function(str) {
   if (!/^\s*<[^]*>\s*$/.test(str)) {
     return `<span>${str}</span>`;

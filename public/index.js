@@ -1,5 +1,6 @@
 'use strict';
 
+// init globals
 window.events = new EventEmitter();
 window.uri = URI(window.location.href);
 window.uiutils = new UIUtils();
@@ -10,7 +11,9 @@ window.app = new App();
 
 function App() {
 
+  // get the query params
   const query = parseQuery();
+
   const moduleView = new ModuleView(store, query.moduleGroup);
   const preview = new Preview();
   const instanceMap = new InstanceMap(store.content, propertyView, preview);
@@ -47,15 +50,22 @@ function App() {
     events.addListener('instance-deleted', instanceDeleted);
   }
 
+  // response to instance-deleted event
   function instanceDeleted() {
     if (store.content.isEmpty()) {
       renderPreview();
     }
   }
 
+  /**
+   * Create single page app with senna.
+   * 
+   * Handle route request by showing just the relevant element.
+   */
   function initRoutes() {
     const app = new senna.App();
     app.addRoutes([
+      // handle /preview
       new senna.Route(uri.path()+'preview', function() {
         const renderer = store.createRenderer();
         const html = renderer.render(store.content.content(), true);
@@ -63,21 +73,22 @@ function App() {
         $('#app > *').hide();
         $('#app > iframe').attr('srcdoc', html).show();
       }),
+      // handle /json
       new senna.Route(uri.path()+'json', function() {
         hideInstanceControls();
         $('#app > *').hide();
         const json = JSON.stringify(store.content.all(), filterContent, 2);
         $('#app > #content-json').html(json).show();
       }),
+      // catch all routes for current origin
       new senna.Route(/.*/, function() {
         $('#app > *').hide();
         $('#editor').show();
       }),
     ]);
-    const url = window.location.pathname + window.location.search;
-    app.navigate(url);
   }
 
+  // filter parent property to avoid circular reference
   function filterContent(key, value) {
     if (key === 'parent') {
       return;
@@ -89,27 +100,34 @@ function App() {
     if (dragond) {
       dragond.destroy();
     }
+    // init dragond with specified containers
     dragond = new Dragond(['.module-list', '.module-list .list-group', '.empty-container'], {
       shadow: false,
       getElement(el, src) {
         if ($(src).is('.module-view *')) {
+          // get the element that will be placed
           const newEl = moduleView.getElement(el);
           return newEl;
         }
         return el;
       },
+      // prevent drop to .module-view
       accepts(el, con, src) {
         return !$(con).is('.module-view *') && $(el).is('[data-id]');
       },
+      // prevent insertion to .empty-container
       inserts(el, con, src) {
         return !$(con).is('.empty-container');
       },
+      // show invalid feedback when dragging a non document element
+      // into .empty-container
       enter(e, el, con) {
         if ($(con).is('.empty-container') && !$(el).is('[data-root]')) {
           $(con).removeClass('dg-dragover').addClass('dg-invalid');
         }
       },
       end(e, el, con, src, parent, sibling) {
+        // create the first instance when dropping to .empty-container
         if ($(con).is('.empty-container')) {
           $(el).is('[data-root]') && createFirstInstance(el);
         }
@@ -142,6 +160,7 @@ function App() {
     preview.cleanContainer(container, parentId);
   }
 
+  // update parentId on container comments
   function fixContainerComments(el, parentId) {
     $('*', el).contents().filter(instanceCommentFilter).each(function() {
       this.nodeValue = this.nodeValue.replace(
@@ -149,6 +168,7 @@ function App() {
     });
   }
 
+  // filter container comment nodes
   function instanceCommentFilter() {
     return this.nodeType === 8 && this.nodeValue.includes('instance-container');
   }
@@ -169,6 +189,7 @@ function App() {
   }
 
   function initEditor() {
+    // create split panes
     Split(['.module-view', '.preview-container', '.property-view'], {
       sizes: [25, 50, 25],
       minSize: 0
@@ -196,6 +217,7 @@ function App() {
   function showInstanceControls(el) {
     const rect = el.getBoundingClientRect();
     const pos = domutils.topClientPos(rect.right, rect.top, el.ownerDocument.defaultView);
+    // place on the top right corner
     $('.instance-controls').css('left', pos.x +'px')
       .css('top', pos.y+'px').removeClass('hidden');
   }
@@ -223,6 +245,7 @@ function App() {
     }
     dragond.removeIframe('.preview');
     let html = store.createRenderer().render(store.content.content());
+    // inject css on the preview iframe
     html = html.replace(/<\/head>/, `
         <link href="preview.css" rel="stylesheet">
       </head>
@@ -233,7 +256,14 @@ function App() {
     });
   }
 
+  /**
+   * Render the default element for a container.
+   * 
+   * When the container becomes empty the default value needs
+   * to be rendered again.
+   */
   function renderContainerChildren(con) {
+    // remove container property with empty array
     con.parentInstance.cleanContainers();
     if (con.parentInstance.getContainers()[con.name].isDefault) {
       preview.renderContainerChildren(con.parentInstance, con.name);
@@ -275,6 +305,7 @@ function App() {
       uiutils.toast('Fail to save document.', 'error');
       console.log(status, xhr, data);
     }
+    // filter properties which cause circular object reference
     function filteredContent() {
       return JSON.parse(JSON.stringify(store.content.all(), filterContent));
     }

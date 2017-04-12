@@ -1,4 +1,10 @@
 RewriteEngine On
+
+# if requested file doesn't exist
 RewriteCond %{REQUEST_FILENAME} !-f
+
+# and requested folder doesn't exist
 RewriteCond %{REQUEST_FILENAME} !-d
+
+# then response with index.php
 RewriteRule ^(.*)$ index.php [QSA,L]

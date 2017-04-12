@@ -1,7 +1,9 @@
 'use strict';
 
 const domutils = {
-  // convert to the root client coordinate
+  /**
+   * Convert coordinate to the root client coordinate.
+   */
   topClientPos(x, y, win) {
     const top = win.top;
     while (win !== top) {
@@ -15,6 +17,9 @@ const domutils = {
     return {x, y};
   },
 
+  /**
+   * Check if current cursor is over the element.
+   */
   overElement(e, el) {
     const x = e.clientX;
     const y = e.clientY;

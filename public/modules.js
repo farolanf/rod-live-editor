@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * Manages the modules store and handles modules REST API.
+ */
 function Modules() {
   const ee = new EventEmitter();
   let modules = {};

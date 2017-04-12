@@ -1,4 +1,7 @@
 
+/**
+ * Keeps data in one place.
+ */
 function Store() {
 
   const modules = new Modules();
@@ -10,6 +13,9 @@ function Store() {
     createRenderer,
   });
 
+  /**
+   * Create renderer using current state.
+   */
   function createRenderer() {
     return new Renderer(modules.modules(), content.globalProperties());
   }

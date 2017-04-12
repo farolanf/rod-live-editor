@@ -1,5 +1,11 @@
 'use strict';
 
+/**
+ * Handles property view.
+ * 
+ * @param {object} editor - The editor object.
+ * @param {object} content - The content store.
+ */
 function PropertyView(editor, content) {
 
   let instanceId;
@@ -18,6 +24,11 @@ function PropertyView(editor, content) {
     deleteGlobalProperty,
   };
 
+  /**
+   * Clear the view when the current edited instance is deleted.
+   * 
+   * @param {string} id - The id of the deleted instance.
+   */
   function instanceDeleted(id) {
     if (instanceId === id) {
       instanceId = null;
@@ -25,6 +36,11 @@ function PropertyView(editor, content) {
     }
   }
 
+  /**
+   * Set the instance to be edited.
+   * 
+   * @param {string} id - The id of instance to be edited.
+   */
   function setInstance(id) {
     if (instanceId !== id) {
       instanceId = id;
@@ -32,9 +48,13 @@ function PropertyView(editor, content) {
     }
   }
 
+  /**
+   * Renders view for editing global properties.
+   */
   function editGlobals() {
     // reset instanceId so the same instance can be selected later
     instanceId = null;
+    // render add global property button
     const btn = `
       <div class="btn-group">
         <button type="button" class="btn btn-sm btn-default add-property-btn">
@@ -69,6 +89,9 @@ function PropertyView(editor, content) {
     editGlobals();
   }
 
+  /**
+   * Renders controls for editing the instance.
+   */
   function render() {
     const instance = new Instance(instanceId);
     _render(instance.name, instance.getProperties(), function(prop, value) {
@@ -76,6 +99,14 @@ function PropertyView(editor, content) {
     });
   }
 
+  /**
+   * The general rendering code.
+   * 
+   * @param {string} name - The display name of edited entity.
+   * @param {object} props - The object whose properties are to be edited.
+   * @param {function} onChange - On change handler.
+   * @param {boolean} canDelete - Display delete button when true.
+   */
   function _render(name, props, onChange, canDelete) {
     let html = `<div class="list-group-item module-name">${name}</div>`;
     _.forOwn(props, function(prop, key) {
@@ -96,6 +127,7 @@ function PropertyView(editor, content) {
     $('.property-view input').on('change', function(e) {
       const prop = $(this).data('name');
       let value = this.value;
+      // add # in front of a hex number
       if ($(this).data('type') === 'color') {
         const hex = parseInt(value, 16);
         if (!isNaN(hex)) {
@@ -112,6 +144,9 @@ function PropertyView(editor, content) {
     $('.property-view .text-editor-btn').on('click', onTextBtnClick);
   }
 
+  /**
+   * Show text editor.
+   */
   function onTextBtnClick() {
     const input = $(this).next();
     const prop = input.data('name');

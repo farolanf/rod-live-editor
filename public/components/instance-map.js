@@ -1,5 +1,14 @@
 
+/**
+ * Create instance map to ease instance selection.
+ * 
+ * @param {object} content - The content store.
+ * @param {object} propertyView - The property view.
+ * @param {object} preview - The preview object.
+ */
 function InstanceMap(content, propertyView, preview) {
+
+  // if true keep instance map opened after a selection
   let locked = false;
 
   const btn = $('.property-view .instance-map-btn');
@@ -16,6 +25,7 @@ function InstanceMap(content, propertyView, preview) {
     e.stopPropagation();
     $(this).popover('toggle');
   })
+  // init popover when it has been inserted to the dom
   .on('inserted.bs.popover', function(e) {
     const id = $(this).attr('aria-describedby');
     const popover = $(`#${id}`);
@@ -29,6 +39,7 @@ function InstanceMap(content, propertyView, preview) {
       height: 'calc(100% - 30px)',
       overflow: 'auto'
     });
+    // handles instance click
     $('.instance-map .instance-map__instance', popover).off().on('click', function(e) {
       e.stopPropagation();
       const id = $(this).data('id');
@@ -49,6 +60,9 @@ function InstanceMap(content, propertyView, preview) {
     $(`#${id} .lock-btn`).toggleClass('lock-btn--disabled', !locked);
   }
 
+  /**
+   * Get the popover template.
+   */
   function getTemplate() {
     return `
       <div class="popover" role="tooltip">
@@ -61,6 +75,9 @@ function InstanceMap(content, propertyView, preview) {
     `; 
   }
 
+  /**
+   * Get the popover content.
+   */
   function getContent(content) {
     const html = `
       <div class="instance-map">

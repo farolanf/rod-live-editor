@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * Handles the preview pane.
+ */
 function Preview() {
 
   let iframeWindow;
@@ -30,6 +33,7 @@ function Preview() {
       selectedElement = null;
       app.hideInstanceControls();
     }).on('scroll', function() {
+      // move the controls to the new element position
       if (selectedElement) {
         app.showInstanceControls(selectedElement);
       }
@@ -37,6 +41,11 @@ function Preview() {
     events.addListener('instance-selected', instanceSelected);
   }
 
+  /**
+   * Handles instance-selected event.
+   * 
+   * Only handles if it's from instance-map.
+   */
   function instanceSelected(id, src) {
     if (src === 'instance-map') {
       scrollToInstance(id);
@@ -48,11 +57,23 @@ function Preview() {
     initInstanceElements(startElement);
   }
 
+  /**
+   * Init container elements.
+   * 
+   * Make an element containing container-comment a container.
+   * The container-comment contains meta data for a container,
+   * it's created by the renderer.
+   * 
+   * @param {element} startElement - The element to begin searching.
+   */
   function initContainers(startElement) {
     const meta = $('*', startElement).contents().filter(app.instanceCommentFilter);
+    // containers are the comment's parent
     const containers = meta.parent();
     containers.addClass('instance-container');
+    // register the containers to dragond
     dragond.addContainers(containers);
+    // parse the meta in comment and assign the data to container attributes
     containers.each(function(i) {
       const json = meta[i].nodeValue.replace('instance-container', '');
       const data = JSON.parse(json);
@@ -61,6 +82,9 @@ function Preview() {
     meta.remove();
   }
 
+  /**
+   * Make the children of a container as intances.
+   */
   function initInstanceElements(startElement) {
     const childrenSelector = '.instance-container > [data-id]:not(br)';
     if ($(startElement).is('[data-id]')) {
@@ -71,6 +95,9 @@ function Preview() {
     });
   }
 
+  /**
+   * Init an instance element.
+   */
   function initInstanceElement(el) {
     $(el).addClass('instance').on('click', function(e) {
       e.stopPropagation();
@@ -86,6 +113,8 @@ function Preview() {
       e.stopPropagation();
       editInstanceContent(this);
     })
+    // use mouseover and mouseout for hover styling instead of css :hover
+    // to avoid styling parent instance elements
     .on('mouseover', function(e) {
       e.stopPropagation();
       $(this).addClass('hover');
@@ -100,6 +129,14 @@ function Preview() {
     selectInstance(el);
   }
 
+  /**
+   * Make the element as the selected instance.
+   * 
+   * Style the element, place the instance controls next to it,
+   * and init the property view to show its properties.
+   * 
+   * @param {element} el - The element.
+   */
   function selectInstance(el) {
     selectedElement = el;
     $(el).addClass('active');
@@ -108,6 +145,9 @@ function Preview() {
     propertyView.setInstance(id);
   }
 
+  /**
+   * Scroll to make the selected instance visible.
+   */
   function scrollToInstance(id) {
     const el = $$(`[data-id="${id}"]`)[0];
     scrollToElement(el);
@@ -132,6 +172,13 @@ function Preview() {
     });
   }
 
+  /**
+   * Clone an instance element.
+   * 
+   * The clone will be placed as it next sibling.
+   * 
+   * @param {element} el - The element.
+   */
   function cloneInstance(el) {
     const clone = $(el).clone().insertAfter(el);
     initElement(clone);
@@ -148,6 +195,8 @@ function Preview() {
     const id = $(el).data('id');
     editor.removeInstance(id);
     $(el).remove();
+    // clean the container this instance belong, if it's become
+    // empty then it should render the default value
     if (conel.parentInstance) {
       conel.parentInstance.cleanContainers();
       renderContainerChildren(conel.parentInstance, conel.name);
@@ -156,6 +205,14 @@ function Preview() {
     events.emit('instance-deleted', id);
   }
 
+  /**
+   * Render an instance.
+   * 
+   * This will replace the instance element currently showing
+   * on the preview.
+   * 
+   * @param {object} instance - The instance object.
+   */
   function renderInstance(instance) {
     const html = instance.render();
     const prev = $$(`[data-id="${instance.id}"]`);
@@ -163,22 +220,37 @@ function Preview() {
     replaceElement(prev, html);
   }
 
+  /**
+   * Replace element content to the given html.
+   * 
+   * If the element is a root html instance then preview.css needs
+   * to be injected again.
+   * 
+   * @param {jquery element} prev - The element.
+   * @param {string} html - The new HTML code.
+   */
   function replaceElement(prev, html) {
     if (prev.find('head, body').length > 0) {
       if (prev.find('head').length > 0) {
+        // replace only the content of the head to avoid issue on
+        // replacing the whole head element
         const head = html.replace(/[^]*<head[^]*?>([^]*)<\/head>[^]*/, '$1');
         prev.find('head').replaceWith($('<head>').html(head));
         $$('head').append('<link href="preview.css" rel="stylesheet">');
       } 
       if (prev.find('body').length > 0) {
+        // replace only the content of the body to avoid issue on
+        // replacing the whole body element
         const prevBody = prev.find('body')[0];
         const body = html.replace(/[^]*<body[^]*?>([^]*)<\/body>[^]*/, '$1');
         prev.find('body').replaceWith($('<body>').html(body));
+        // TODO: replace body attributes
         const el = prev.find('body')[0];
         dragond.replaceBody(prevBody, el);
         initElement(el);
       }
     } else {
+      // just replace the whole element for non html element
       const el = $(html);
       prev.replaceWith(el);
       initElement(el);
@@ -188,7 +260,14 @@ function Preview() {
     }
   }
 
+  /**
+   * Render the default value of a container without meta.
+   * 
+   * @param {object} instance - The instance object.
+   * @param {string} name - The container name.
+   */
   function renderContainerChildren(instance, name) {
+    // only render if it's empty
     if (instance.getContainers()[name].isDefault) {
       const el = $(instance.renderContainerChildren(name));
       const con = $$(`[data-name="${name}"][data-parent-id="${instance.id}"]`);
@@ -199,11 +278,17 @@ function Preview() {
     }
   }
 
+  /**
+   * Remove default value element from a container element.
+   */
   function cleanContainer(name, parentId) {
     $$(`.instance-container[data-name="${name}"][data-parent-id="${parentId}"]`)
       .children().not('[data-id]').remove();
   }
 
+  /**
+   * Shortcut for jQuery that operates on current iframe.
+   */
   function $$(selector) {
     return $(selector, iframeWindow.document);
   }

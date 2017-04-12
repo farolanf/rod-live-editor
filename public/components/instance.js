@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * Instance helpers.
+ */
 function Instance(instance) {
   if (!(this instanceof Instance)) {
     return new Instance(instance);

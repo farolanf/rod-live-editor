@@ -15,7 +15,7 @@ function file_contents($files, $dir) {
 }
 
 /**
- * Get sub folders of modules.
+ * Get sub folders of modules/.
  *
  * @return json The array of sub folders.
 */
@@ -52,10 +52,13 @@ Flight::route('/api/module/group/@name', function($name) {
  * @return json The content as json.
 */
 Flight::route('/api/content/@id', function($id) {
-  // TODO: load content with id:$id from database
-  // load sample content
+  // TODO: load content specified by id from database
+  
+  // {SAMPLE-- load sample content. Replace this sample with real code
   $file = join('/', [__DIR__, 'db', 'content.js']);
   $content = file_get_contents($file);
+  // SAMPLE}
+
   Flight::json($content);
 });
 
@@ -82,9 +85,9 @@ Flight::route('POST /api/save', function() {
 /**
  * Render a content with specified module group.
  * 
- * @param json content The content to be rendered.
- * @param string moduleGroup Module group to be used.
- * @return string The renderered html.
+ * @param   json content The content to be rendered.
+ * @param   string moduleGroup Module group to be used.
+ * @return  string The renderered html.
 */
 Flight::route('POST /api/render', function() {
   $req = Flight::request();
