@@ -4,20 +4,15 @@ function Content() {
 
 	const ee = new EventEmitter();
 
-	let globalProperties = {
-		"color1": {type: 'color', value: "#eeeeee"},
-		"color2": {type: 'color', value: "green"},
-		"backgroundColorBody": {type: 'color', value: "white"},
-		"backgroundColorFooter": {type: 'color', value: "blue"},
-		"backgroundColor": {type: 'color', value: "#fff"},
-		"hiddenPreheader": {type: 'text', value: "test"},
+	let content = {
+		globalProperties: {},
+		data: [],
 	};
-	
-	let content = [];
 
 	return Object.assign(this, {
-		globalProperties() { return globalProperties },
-		content() { return content },
+		globalProperties() {return content.globalProperties},
+		content() {return content.data},
+		all() {return content},
 		setContent,
 		loadContent,
 		addGlobalProperty,
@@ -28,33 +23,33 @@ function Content() {
 	});
 
 	function setContent(c) {
-		content = c;
+		content.data = c;
 		emit();
 	}
 
 	function loadContent(id) {
 		$.getJSON(uri.path()+`api/content/${id}`, function(data) {
-			eval(`content = ${JSON.parse(data.content)}`);
+			eval(`content = ${data}`);
 			emit();
 		});
 	}
 
 	function emit() {
-		ee.emit('content', content, globalProperties);
+		ee.emit('content', content.data, content.globalProperties);
 	}
 
 	function addGlobalProperty(name, type) {
-    if (!globalProperties.hasOwnProperty(name)) {
-      globalProperties[name] = {type, value: ''};
+    if (!content.globalProperties.hasOwnProperty(name)) {
+      content.globalProperties[name] = {type, value: ''};
 		}
 	}
 
 	function deleteGlobalProperty(name) {
-		delete globalProperties[name];
+		delete content.globalProperties[name];
 	}
 
 	function setGlobalProperty(prop, value) {
-		globalProperties[prop].value = value;
+		content.globalProperties[prop].value = value;
 	}
 
 	function subscribe(fn) {
@@ -62,6 +57,6 @@ function Content() {
 	}
 
 	function isEmpty() {
-		return content.length <= 0;
+		return content.data.length <= 0;
 	}
 }

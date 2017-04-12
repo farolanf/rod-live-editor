@@ -56,8 +56,7 @@ Flight::route('/api/content/@id', function($id) {
   // load sample content
   $file = join('/', [__DIR__, 'db', 'content.js']);
   $content = file_get_contents($file);
-  $data = array('content' => json_encode($content));
-  Flight::json($data);
+  Flight::json($content);
 });
 
 /**

@@ -54,20 +54,20 @@ function App() {
   }
 
   function initRoutes() {
-    const url = window.location.pathname + window.location.search;
+    const url = window.location.search;
     const app = new senna.App();
     app.addRoutes([
-      new senna.Route('/preview', function() {
+      new senna.Route(uri.path()+'preview', function() {
         const renderer = store.createRenderer();
         const html = renderer.render(store.content.content(), true);
         hideInstanceControls();
         $('#app > *').hide();
         $('#app > iframe').attr('srcdoc', html).show();
       }),
-      new senna.Route('/json', function() {
+      new senna.Route(uri.path()+'json', function() {
         hideInstanceControls();
         $('#app > *').hide();
-        const json = JSON.stringify(store.content.content(), filterContent, 2);
+        const json = JSON.stringify(store.content.all(), filterContent, 2);
         $('#app > #content-json').html(json).show();
       }),
       new senna.Route(url, function() {
@@ -75,6 +75,7 @@ function App() {
         $('#editor').show();
       }),
     ]);
+    console.log('url', url);
     app.navigate(url);
   }
 
@@ -256,7 +257,7 @@ function App() {
     const savingToast = uiutils.toast('Saving...', 'info');
     const data = {
       id: query.id,
-      content: JSON.stringify(store.content.content(), filterContent),
+      content: JSON.stringify(store.content.all(), filterContent),
       moduleGroup: store.modules.group(),
     };
     $.ajax({
