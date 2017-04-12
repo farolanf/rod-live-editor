@@ -12,10 +12,9 @@ const content = JSON.parse(process.argv[2]);
 const moduleGroup = process.argv[3];
 
 const modules = loadModules(moduleGroup);
-const globals = loadGlobals();
 
-const renderer = new Renderer(modules, globals);
-console.log(renderer.render(content));
+const renderer = new Renderer(modules, content.globalProperties);
+console.log(renderer.render(content.data));
 
 function loadModules(group) {
   const modules = {};
@@ -27,11 +26,4 @@ function loadModules(group) {
     modules[mod.name] = mod;
   });
   return modules;
-}
-
-function loadGlobals() {
-  let globals;
-  const str = fs.readFileSync('./db/globals.js');
-  eval(`globals = ${str}`);
-  return globals;
 }
