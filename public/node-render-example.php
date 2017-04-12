@@ -6,6 +6,7 @@ $content = <<<EOS
   "globalProperties": {
 		"color1": {"type": "color", "value": "#eeeeee"},
 		"color2": {"type": "color", "value": "green"},
+		"color3": {"type": "color", "value": "red"},
 		"backgroundColorBody": {"type": "color","value": "white"},
 		"backgroundColorFooter": {"type": "color","value": "blue"},
 		"backgroundColor": {"type": "color","value": "#fff"},
@@ -13,7 +14,8 @@ $content = <<<EOS
   },
   "data": [
     {
-      "name": "document-html-email"
+      "name": "document-html-email",
+      "backgroundColorHeader": "%color3%"
     },
     {
       "name": "block-text",
@@ -25,5 +27,5 @@ EOS;
 
 $moduleGroup = 'email-html';
 
-echo renderContent($content, $moduleGroup)."\n";
+echo renderContent(json_decode($content), $moduleGroup)."\n";
 ?>
