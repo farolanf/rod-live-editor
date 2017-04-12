@@ -86,6 +86,8 @@ function App() {
         $('#editor').show();
       }),
     ]);
+    const url = window.location.pathname + window.location.search;
+    app.navigate(url);
   }
 
   // filter parent property to avoid circular reference
