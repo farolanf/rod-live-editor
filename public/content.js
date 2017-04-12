@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * Manages the content store and handles content REST API.
+ */
 function Content() {
 
 	const ee = new EventEmitter();

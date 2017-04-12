@@ -27,5 +27,6 @@ EOS;
 
 $moduleGroup = 'email-html';
 
+// renderContent expects content array
 echo renderContent(json_decode($content), $moduleGroup)."\n";
 ?>

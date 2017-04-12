@@ -4,6 +4,12 @@ if (typeof require !== 'undefined') {
     var Editor = require('./utils/editor');
 }
 
+/**
+ * Renders content using specified modules and global properties.
+ * 
+ * @param {object} modules - The modules object.
+ * @param {object} globalProperties - The global properties object.
+ */
 function Renderer(modules, globalProperties) {
 
     return {
@@ -101,6 +107,13 @@ function Renderer(modules, globalProperties) {
         return modules[name];
     }
 
+    /**
+     * Renders the content.
+     * 
+     * @param {array} content - The content.
+     * @param {boolean} clean - Render without meta if true.
+     * @return {string} - The rendered HTML.
+     */
     function render(content, clean) {
         if (Array.isArray(content)) {
             var output = '';
@@ -112,6 +125,13 @@ function Renderer(modules, globalProperties) {
         return renderModule(content, clean);
     }
 
+    /**
+     * Render an instance.
+     * 
+     * @param {object} instance - The instance object.
+     * @param {boolean} clean - Render without meta if true.
+     * @return {string} - The rendered HTML.
+     */
     function renderModule(instance, clean) {
         if (typeof instance != 'object') {
             return Editor.wrapText(instance);
@@ -142,9 +162,7 @@ function Renderer(modules, globalProperties) {
             output = output.replace(new RegExp('%' + property + '%', 'g'), 
                 getPropertyValue(property, instance, module, customReplace, clean));
 
-        //Replace Global Variables
-        // for (var property in module.properties)
-        //   
+        //Replace Global Variables with their values
         for(var key in globalProperties) {
             output = output.replace(new RegExp('%' + key + '%', 'g'), globalProperties[key].value); 
         }
@@ -153,6 +171,16 @@ function Renderer(modules, globalProperties) {
             Editor.injectInstanceData(output, instance.id, instance.name);
     }
 
+    /**
+     * Renders property value.
+     * 
+     * @param {string} property - The property name.
+     * @param {object} instance - The instance object.
+     * @param {object} module - The module object.
+     * @param {boolean} customReplace - Use custom replace.
+     * @param {boolean} clean - Render without meta if true.
+     * @return {string} - The rendered output.
+     */
     function getPropertyValue(property, instance, module, customReplace, clean) {
         var value = '';
         var moduleProperty = module.properties ? module.properties[property] : null;
@@ -222,6 +250,12 @@ function Renderer(modules, globalProperties) {
             : value;
     }
 
+    /**
+     * Renders container meta.
+     * 
+     * @param {string} name - The container name.
+     * @param {string} id - The parent id.
+     */
     function renderContainer(name, id, value) {
         return Editor.getContainerPlaceholder(name, id, render(value));
     }
