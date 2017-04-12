@@ -1,18 +1,19 @@
 'use strict';
 
 const assert = require('assert');
-const _ = require('../libs/lodash.min');
-const Editor = require('../utils/editor');
+const _ = require('../public/libs/js/lodash.min');
+const Content = require('../public/content');
+const Editor = require('../public/utils/editor');
 
 global._ = _;
 
 describe('editor', function() {
 
+  const content = new Content();
   let editor;
-  let content;
 
   beforeEach(function() {
-    content = [
+    const data = [
       {id: 1, name: '1'},
       {id: 2, name: '2'},
       {
@@ -24,7 +25,8 @@ describe('editor', function() {
       },
       {id: 5, name: '5'},
     ];
-    editor = Editor(content);
+    editor = new Editor(content);
+    content.setContent(data);
   });
 
   it('should find instance', function() {
@@ -69,7 +71,7 @@ describe('editor', function() {
     ];
     expected[3].content[0].parent = expected[3];
     editor.moveInstance(4, 5, 'content');
-    assert.deepEqual(content, expected);
+    assert.deepEqual(content.content(), expected);
   });
 
   it('should regenerate ids', function() {
@@ -87,7 +89,7 @@ describe('editor', function() {
         {id: 4, name: '2'}
       ]
     };
-    editor = Editor();
+    editor = new Editor(content);
     editor.newInstanceId = 3;
     editor.regenerateId(instance);
     assert.deepEqual(instance, expected);
@@ -115,6 +117,6 @@ describe('editor', function() {
     expected[2].body[1].parent = expected[2];
     
     editor.cloneInstance(4);
-    assert.deepEqual(content, expected);
+    assert.deepEqual(content.content(), expected);
   });
 });
