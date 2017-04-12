@@ -54,7 +54,6 @@ function App() {
   }
 
   function initRoutes() {
-    const url = window.location.search;
     const app = new senna.App();
     app.addRoutes([
       new senna.Route(uri.path()+'preview', function() {
@@ -70,12 +69,12 @@ function App() {
         const json = JSON.stringify(store.content.all(), filterContent, 2);
         $('#app > #content-json').html(json).show();
       }),
-      new senna.Route(url, function() {
+      new senna.Route(/.*/, function() {
         $('#app > *').hide();
         $('#editor').show();
       }),
     ]);
-    console.log('url', url);
+    const url = window.location.pathname + window.location.search;
     app.navigate(url);
   }
 

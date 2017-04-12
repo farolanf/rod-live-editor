@@ -23,6 +23,9 @@ html, body, #app, #editor, .editor-container, .preview {
   z-index: 1000;
   margin-bottom: 0;
 }
+.navbar a {
+  cursor: pointer;
+}
 
 .gutter {
   background-color: #ddd;
