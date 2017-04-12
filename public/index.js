@@ -4,14 +4,14 @@ window.events = new EventEmitter();
 window.uri = URI(window.location.href);
 window.uiutils = new UIUtils();
 window.store = new Store();
+window.editor = new Editor(store.content);
+window.propertyView = new PropertyView(editor, store.content);
 window.app = new App();
 
 function App() {
 
   const query = parseQuery();
-  const editor = window.editor = new Editor(store.content);
   const moduleView = new ModuleView(store, query.moduleGroup);
-  const propertyView = window.propertyView = new PropertyView(editor, store.content);
   const preview = new Preview();
   const instanceMap = new InstanceMap(store.content, propertyView, preview);
   let dragond;
@@ -54,27 +54,27 @@ function App() {
   }
 
   function initRoutes() {
-    const url = window.location.pathname + window.location.search;
     const app = new senna.App();
     app.addRoutes([
-      new senna.Route('/preview', function() {
+      new senna.Route(uri.path()+'preview', function() {
         const renderer = store.createRenderer();
         const html = renderer.render(store.content.content(), true);
         hideInstanceControls();
         $('#app > *').hide();
         $('#app > iframe').attr('srcdoc', html).show();
       }),
-      new senna.Route('/json', function() {
+      new senna.Route(uri.path()+'json', function() {
         hideInstanceControls();
         $('#app > *').hide();
-        const json = JSON.stringify(store.content.content(), filterContent, 2);
+        const json = JSON.stringify(store.content.all(), filterContent, 2);
         $('#app > #content-json').html(json).show();
       }),
-      new senna.Route(url, function() {
+      new senna.Route(/.*/, function() {
         $('#app > *').hide();
         $('#editor').show();
       }),
     ]);
+    const url = window.location.pathname + window.location.search;
     app.navigate(url);
   }
 
@@ -256,7 +256,7 @@ function App() {
     const savingToast = uiutils.toast('Saving...', 'info');
     const data = {
       id: query.id,
-      content: JSON.stringify(store.content.content(), filterContent),
+      content: JSON.stringify(store.content.all(), filterContent),
       moduleGroup: store.modules.group(),
     };
     $.ajax({
