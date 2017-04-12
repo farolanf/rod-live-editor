@@ -24,6 +24,10 @@ body * {
   outline: 2px dashed #aaa;
   outline-offset: -2px;
 }
+.dg-dragging .instance-container > * {
+  outline: 1px solid #dad;
+  outline-offset: -1px;
+}
 .dg-dragover {
   outline: 2px solid blue !important;
   outline-offset: -2px;
