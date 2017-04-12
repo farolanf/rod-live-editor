@@ -1,5 +1,10 @@
 'use strict';
 
+
+if (typeof require !== 'undefined') {
+	var EventEmitter = require('../public/libs/js/EventEmitter.min.js');
+}
+
 /**
  * Manages the content store and handles content REST API.
  */
@@ -62,4 +67,8 @@ function Content() {
 	function isEmpty() {
 		return content.data.length <= 0;
 	}
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = Content;
 }
