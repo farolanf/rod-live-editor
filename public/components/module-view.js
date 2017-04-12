@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Create module view.
+ * Handles module view.
  * 
  * @param {object} store - The store.
  * @param {string} initialGroup - The initial module group to be used.
