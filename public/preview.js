@@ -3,10 +3,12 @@
 /**
  * Handles the preview pane.
  */
-function Preview() {
+function Preview(propertyView) {
 
   let iframeWindow;
   let selectedElement;
+
+  events.addListener('instance-changed', renderInstance);
 
   return Object.assign(this, {
     editInstanceContent() {editInstanceContent(selectedElement)},
@@ -18,6 +20,7 @@ function Preview() {
     initElement,
     init,
     selectInstanceById,
+    scrollToInstance,
   });
 
   function init(win) {
@@ -38,18 +41,6 @@ function Preview() {
         app.showInstanceControls(selectedElement);
       }
     });
-    events.addListener('instance-selected', instanceSelected);
-  }
-
-  /**
-   * Handles instance-selected event.
-   * 
-   * Only handles if it's from instance-map.
-   */
-  function instanceSelected(id, src) {
-    if (src === 'instance-map') {
-      scrollToInstance(id);
-    }
   }
 
   function initElement(startElement) {
@@ -67,7 +58,7 @@ function Preview() {
    * @param {element} startElement - The element to begin searching.
    */
   function initContainers(startElement) {
-    const meta = $('*', startElement).contents().filter(app.instanceCommentFilter);
+    const meta = $('*', startElement).contents().filter(domutils.instanceCommentFilter);
     // containers are the comment's parent
     const containers = meta.parent();
     containers.addClass('instance-container');
@@ -185,7 +176,6 @@ function Preview() {
     deselectInstance(clone);
     const id = $(el).data('id');
     editor.cloneInstance(id);
-    app.renderPreview();
     selectInstance($$(`[data-id=${id}]`)[0]);
   }
 
@@ -273,7 +263,7 @@ function Preview() {
       const con = $$(`[data-name="${name}"][data-parent-id="${instance.id}"]`);
       con.append(el);
       initElement(el);
-      const meta = $(con).contents().filter(app.instanceCommentFilter);
+      const meta = $(con).contents().filter(domutils.instanceCommentFilter);
       meta.remove();
     }
   }

@@ -45,15 +45,25 @@ function InstanceMap(content, propertyView, preview) {
       const id = $(this).data('id');
       propertyView.setInstance(id);
       preview.selectInstanceById(id);
+      preview.scrollToInstance(id);
       !locked && btn.popover('hide');
-      events.emit('instance-selected', id, 'instance-map');
     });
   });
 
+  // hide popover when clicked outside of it
   $(window).on('click', function() {
+    // hide if not locked
     !locked && btn.popover('hide');
   });
 
+  /**
+   * Handles the lock-btn click event.
+   * 
+   * Toggles the lock state of the popover.
+   * 
+   * @param {string} id - The popover id.
+   * @param {event} e - The click event.
+   */
   function toggleLocked(id, e) {
     e.stopPropagation();
     locked = !locked;
@@ -62,6 +72,8 @@ function InstanceMap(content, propertyView, preview) {
 
   /**
    * Get the popover template.
+   * 
+   * @return {string} - The popover template.
    */
   function getTemplate() {
     return `
@@ -77,6 +89,9 @@ function InstanceMap(content, propertyView, preview) {
 
   /**
    * Get the popover content.
+   * 
+   * @param {object} content - The content store.
+   * @return {string} - The rendered HTML.
    */
   function getContent(content) {
     const html = `
@@ -87,6 +102,12 @@ function InstanceMap(content, propertyView, preview) {
     return html;
   }
 
+  /**
+   * Renders a simple presentation of the content.
+   * 
+   * @param {object} content - The content.
+   * @return {string} - The rendered HTML.
+   */
   function render(content) {
     if (Array.isArray(content)) {
       return content.reduce(function(output, instance) {
@@ -96,6 +117,12 @@ function InstanceMap(content, propertyView, preview) {
     return renderInstance(content);
   }
 
+  /**
+   * Renders a simple presentation of an instance.
+   * 
+   * @param {object} instance - The instance.
+   * @return {string} - The rendered HTML.
+   */
   function renderInstance(instance) {
     const html = `
       <div class="instance-map__instance" data-id="${instance.id}">
@@ -106,6 +133,12 @@ function InstanceMap(content, propertyView, preview) {
     return html;
   }
 
+  /**
+   * Renders a simple presentation of containers of an instance.
+   * 
+   * @param {object} instance - The instance who owns the containers.
+   * @return {string} - The rendered HTML.
+   */
   function renderContainers(instance) {
     const inst = new Instance(instance);
     const containers = inst.getContainers();

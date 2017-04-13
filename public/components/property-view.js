@@ -28,6 +28,7 @@ function PropertyView(editor, content) {
    * Clear the view when the current edited instance is deleted.
    * 
    * @param {string} id - The id of the deleted instance.
+   * @private
    */
   function instanceDeleted(id) {
     if (instanceId === id) {
@@ -40,6 +41,7 @@ function PropertyView(editor, content) {
    * Set the instance to be edited.
    * 
    * @param {string} id - The id of instance to be edited.
+   * @public
    */
   function setInstance(id) {
     if (instanceId !== id) {
@@ -50,6 +52,8 @@ function PropertyView(editor, content) {
 
   /**
    * Renders view for editing global properties.
+   * 
+   * @public
    */
   function editGlobals() {
     // reset instanceId so the same instance can be selected later
@@ -76,6 +80,11 @@ function PropertyView(editor, content) {
     }
   }
 
+  /**
+   * Add a global property. Called by add property modal.
+   * 
+   * @private
+   */
   function addGlobalProperty() {
     const modal = $('#add-property-modal');
     const name = $('#add-property-modal__name', modal).val();
@@ -84,6 +93,12 @@ function PropertyView(editor, content) {
     editGlobals();
   }
 
+  /**
+   * Delete a global property. Called by confirmation modal.
+   * 
+   * @param {string} name - The global property name.
+   * @private
+   */
   function deleteGlobalProperty(name) {
     content.deleteGlobalProperty(name);
     editGlobals();
@@ -91,6 +106,8 @@ function PropertyView(editor, content) {
 
   /**
    * Renders controls for editing the instance.
+   * 
+   * @private
    */
   function render() {
     const instance = new Instance(instanceId);
@@ -106,6 +123,7 @@ function PropertyView(editor, content) {
    * @param {object} props - The object whose properties are to be edited.
    * @param {function} onChange - On change handler.
    * @param {boolean} canDelete - Display delete button when true.
+   * @private
    */
   function _render(name, props, onChange, canDelete) {
     let html = `<div class="list-group-item module-name">${name}</div>`;
@@ -146,6 +164,8 @@ function PropertyView(editor, content) {
 
   /**
    * Show text editor.
+   * 
+   * @private
    */
   function onTextBtnClick() {
     const input = $(this).next();
@@ -165,23 +185,51 @@ function PropertyView(editor, content) {
     });;
   }
 
+  /**
+   * Get global property value.
+   * 
+   * @param {string} prop - The global property name.
+   * @return {string} - The global property value.
+   * @private
+   */
   function getGlobalProperty(prop) {
     return content.globalProperties()[prop].value;
   }
 
+  /**
+   * Get instance property value.
+   * 
+   * @param {string} prop - The property name.
+   * @return {string} - The property value.
+   * @private
+   */
   function getInstanceProperty(prop) {
     const instance = new Instance(instanceId);
     return instance.getProperties()[prop].value;
   }
 
+  /**
+   * Set global property to a new value.
+   * 
+   * @param {string} prop - The global property name.
+   * @param {string} value - The new global property value.
+   * @private
+   */
   function setGlobalProperty(prop, value) {
     content.setGlobalProperty(prop, value);
-    app.renderPreview();
+    events.emit('global-property-changed');
   }
 
+  /**
+   * Set instance property to a new value.
+   * 
+   * @param {string} prop - The property name.
+   * @param {string} value - The new property value.
+   * @private
+   */
   function setInstanceProperty(prop, value) {
     const instance = new Instance(instanceId);
     instance.setProperty(prop, value);
-    app.renderInstance(instance);
+    events.emit('instance-changed', instance);
   }
 }
