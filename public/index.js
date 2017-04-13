@@ -4,11 +4,19 @@
 window.events = new EventEmitter();
 window.uri = URI(window.location.href);
 window.uiutils = new UIUtils();
+
+// store stores data in one place for easy access
 window.store = new Store();
+
+// editor only need a content store so no need to pass the whole store
 window.editor = new Editor(store.content);
+
 window.propertyView = new PropertyView(editor, store.content);
 window.app = new App();
 
+/**
+ * Main application logic.
+ */
 function App() {
 
   // get the query params
@@ -19,8 +27,19 @@ function App() {
   const instanceMap = new InstanceMap(store.content, propertyView, preview);
   let dragond;
 
+  /** subscribe() registers a function for events.
+   *  The emitter (like content and modules) will call emit 
+   *  which calls all registered subscribers (like renderPreview)
+   *  when internal events occured (like content change and module group change).
+  */
+
+  // calls renderPreview when content changed
   store.content.subscribe(renderPreview);
+  
+  // calls renderPreview when modules changed
   store.modules.subscribe(renderPreview);
+
+  // calls modulesViewChange when user changed module group 
   moduleView.subscribe(modulesViewChange);
 
   $(init);
