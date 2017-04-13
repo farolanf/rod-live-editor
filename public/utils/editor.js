@@ -178,7 +178,9 @@ function Editor(content) {
 };
 
 /**
- * Renders container meta along with its children.
+ * Renders container meta data followed by its children.
+ * 
+ * A container meta data is a DOM comment containing data about the container.
  * 
  * @param {string} name - The container name.
  * @param {string} parentId - The instance id.
@@ -206,10 +208,14 @@ Editor.injectInstanceData = function(str, id, name) {
 }
 
 /**
- * Turn a text to an element for later manipulation.
+ * Wrap a text for later manipulation.
+ * 
+ * @param {string} str - The text.
  */
 Editor.wrapText = function(str) {
+  // check if it's a text and not an element
   if (!/^\s*<[^]*>\s*$/.test(str)) {
+    // wraps the text 
     return `<span>${str}</span>`;
   }
   return str;

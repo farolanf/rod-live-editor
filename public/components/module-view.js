@@ -16,11 +16,21 @@ function ModuleView(store, initialGroup) {
     getElement,
   });
 
+  /**
+   * Main initialization.
+   * 
+   * @private
+   */
   function init() {
     initSearch();
     fillGroups();
   }
 
+  /**
+   * Initialize search box.
+   * 
+   * @private
+   */
   function initSearch() {
     $('.module-view .module-search').on('keyup', function(e) {
       if (e.key === 'Escape') {
@@ -30,13 +40,24 @@ function ModuleView(store, initialGroup) {
     });
   }
 
+  /**
+   * Show modules that matched the specified string.
+   * 
+   * @private
+   */
   function filterModules(str) {
     $('.module-view .list-group-item').each(function() {
+      // match if string contained in module name
       const match = !str || $(this).is(`[data-name*="${str}"]`);
       $(this).toggleClass('hidden', !match);
     });
   }
 
+  /**
+   * Fill the module group choices.
+   * 
+   * @private
+   */
   function fillGroups() {
     modules.loadGroups(function(groups) {
       groups.forEach(function(group) {
@@ -54,12 +75,24 @@ function ModuleView(store, initialGroup) {
     });
   }
 
+  /**
+   * Load modules from the specified group.
+   * 
+   * @param {string} name - The module group name.
+   * @private
+   */
   function fillModules(name) {
     modules.loadGroupModules(name, function(data) {
       fillModuleList(data);
     });
   }
 
+  /**
+   * Fill the list with modules from the specified group.
+   * 
+   * @param {object} modules - The modules object.
+   * @private
+   */
   function fillModuleList(modules) {
     const $list = $('<div class="list-group">');
     _.forOwn(modules, function(val, key) {
@@ -81,6 +114,14 @@ function ModuleView(store, initialGroup) {
     events.emit('module-list-changed');
   }
 
+  /**
+   * Get the module preview.
+   * 
+   * @param {string} name - The module name.
+   * @param {boolean} large - Get the large preview if true.
+   * @return {string} - The preview HTML.
+   * @private
+   */
   function getPreview(name, large) {
     const renderer = store.createRenderer();
     const style = large ? 'style="width: 800px; height: 600px"' : '';
@@ -96,13 +137,23 @@ function ModuleView(store, initialGroup) {
     return $iframe;
   }
 
+  /**
+   * Get the real module element that will be placed on the preview pane.
+   * 
+   * @param {element} el - The dragged module preview element.
+   * @return {element} - The element to be placed.
+   * @public
+   */
   function getElement(el) {
     const renderer = store.createRenderer();
+    // extract data from the preview element
     const name = $(el).data('name');
     const content = {name: name, id: -1};
     let html = renderer.renderModule(content);
-    // workaround for html document
+    // check if it's an HTML element
     if (/<html[^<]*>/.test(html)) {
+      // a html element can't be dragged around so use a placeholder
+      // this later will be replaced when it's dropped
       html = `<span data-id data-name="${name}" data-root>HTML Document</span>`;  
     }
     return $(html)[0];

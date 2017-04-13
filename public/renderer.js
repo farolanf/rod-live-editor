@@ -1,5 +1,6 @@
 'use strict';
 
+// load dependencies on test environment
 if (typeof require !== 'undefined') {
     var Editor = require('./utils/editor');
 }
@@ -19,6 +20,12 @@ function Renderer(modules, globalProperties) {
         getPropertyValue,
     };
 
+    /**
+     * Remove javascript comments from a string.
+     * 
+     * @param {string} str - The string to search for comments.
+     * @private
+     */
     function removeJsComments(str) {
         str = ('__' + str + '__').split('');
         var mode = {
@@ -103,6 +110,12 @@ function Renderer(modules, globalProperties) {
         return str.join('').slice(2, -2);
     }
 
+    /**
+     * Get module specified by name.
+     * 
+     * @param {string} name - The name of the module.
+     * @return {object} - The module.
+     */
     function getModule(name) {
         return modules[name];
     }
@@ -110,8 +123,11 @@ function Renderer(modules, globalProperties) {
     /**
      * Renders the content.
      * 
+     * If clean is false then render additional data to be used by the editor
+     * to identify containers, also render instance data and text wrappers.
+     * 
      * @param {array} content - The content.
-     * @param {boolean} clean - Render without meta if true.
+     * @param {boolean} clean - Render without meta data if true.
      * @return {string} - The rendered HTML.
      */
     function render(content, clean) {
@@ -126,10 +142,13 @@ function Renderer(modules, globalProperties) {
     }
 
     /**
-     * Render an instance.
+     * Render an instance of module.
      * 
+     * If clean is false then render additional data to be used by the editor
+     * to identify containers, also render instance data and text wrappers.
+     *
      * @param {object} instance - The instance object.
-     * @param {boolean} clean - Render without meta if true.
+     * @param {boolean} clean - Render without meta data if true.
      * @return {string} - The rendered HTML.
      */
     function renderModule(instance, clean) {
@@ -178,7 +197,7 @@ function Renderer(modules, globalProperties) {
      * @param {object} instance - The instance object.
      * @param {object} module - The module object.
      * @param {boolean} customReplace - Use custom replace.
-     * @param {boolean} clean - Render without meta if true.
+     * @param {boolean} clean - Render without meta data if true.
      * @return {string} - The rendered output.
      */
     function getPropertyValue(property, instance, module, customReplace, clean) {
@@ -251,16 +270,19 @@ function Renderer(modules, globalProperties) {
     }
 
     /**
-     * Renders container meta.
+     * Renders container meta data along with its value.
      * 
      * @param {string} name - The container name.
      * @param {string} id - The parent id.
+     * @param {any} value - The container value.
+     * @return {string} - The rendered HTML.
      */
     function renderContainer(name, id, value) {
         return Editor.getContainerPlaceholder(name, id, render(value));
     }
 }
 
+// export the Renderer on test environment
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = Renderer;
 }
