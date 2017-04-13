@@ -53,11 +53,16 @@ function App() {
     showInstanceControls,
     hideInstanceControls,
     renderPreview,
+
+    // expose the save function to be called by save confirmation modal
     _save,
+    
     instanceCommentFilter,
-    renderInstance(instance) {preview.renderInstance(instance)},
   });
 
+  /**
+   * Main initialization function.
+   */
   function init() {
     initRoutes();
     initDrag();
@@ -81,9 +86,9 @@ function App() {
   }
 
   /**
-   * Create single page app with senna.
+   * Initialize route handlers.
    * 
-   * Handle route request by showing just the relevant element.
+   * Handles route request by showing just the relevant element.
    */
   function initRoutes() {
     const app = new senna.App();
@@ -109,11 +114,17 @@ function App() {
         $('#editor').show();
       }),
     ]);
+    // tell senna to navigate to current path and query params
+    // so the handler worked when the user navigated back
     const url = window.location.pathname + window.location.search;
     app.navigate(url);
   }
 
-  // filter parent property to avoid circular reference
+  /**
+   *  Filter parent property to avoid circular reference.
+   * 
+   *  Used by JSON.stringify()
+   */
   function filterContent(key, value) {
     if (key === 'parent') {
       return;

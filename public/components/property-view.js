@@ -182,6 +182,6 @@ function PropertyView(editor, content) {
   function setInstanceProperty(prop, value) {
     const instance = new Instance(instanceId);
     instance.setProperty(prop, value);
-    app.renderInstance(instance);
+    events.emit('instance-changed', instance);
   }
 }

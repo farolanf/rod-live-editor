@@ -8,6 +8,8 @@ function Preview(propertyView) {
   let iframeWindow;
   let selectedElement;
 
+  events.addListener('instance-changed', renderInstance);
+
   return Object.assign(this, {
     editInstanceContent() {editInstanceContent(selectedElement)},
     cloneInstance() {cloneInstance(selectedElement)},
