@@ -4,7 +4,6 @@
  * Manages the modules store and handles modules REST API.
  */
 function Modules() {
-  const ee = new EventEmitter();
   let modules = {};
   let group;
 
@@ -13,7 +12,6 @@ function Modules() {
     group() {return group},
     loadGroups,
     loadGroupModules,
-    subscribe,
     isEmpty,
   });
 
@@ -31,7 +29,7 @@ function Modules() {
       group = name;
       loadModules(data);
       success && success(modules);
-      ee.emit('modules', modules);
+      events.emit('modules-changed', modules);
     }
     function _error(xhr, status) {
       console.log('fail to get module group', name);
@@ -46,10 +44,6 @@ function Modules() {
       eval(`mod = ${modstr}`);
       modules[mod.name] = mod;
     });
-  }
-
-  function subscribe(fn) {
-    ee.addListener('modules', fn);
   }
 
   function isEmpty() {

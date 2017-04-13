@@ -1,17 +1,20 @@
 'use strict';
 
-// init globals
-window.events = new EventEmitter();
+// uri eases uri parts extraction, used to form ajax url
 window.uri = URI(window.location.href);
+
+// emitter for application wide events
+window.events = new EventEmitter();
+
+// generic ui helpers used by several components
 window.uiutils = new UIUtils();
 
-// store stores data in one place for easy access
+// store stores data in one place to ease passing around the whole data
 window.store = new Store();
 
 // editor only need a content store so no need to pass the whole store
 window.editor = new Editor(store.content);
 
-window.propertyView = new PropertyView(editor, store.content);
 window.app = new App();
 
 /**
@@ -20,41 +23,42 @@ window.app = new App();
 function App() {
 
   // get the query params
-  const query = parseQuery();
+  const query = uri.search(true);
+
+  const propertyView = new PropertyView(editor, store.content);
 
   const moduleView = new ModuleView(store, query.moduleGroup);
-  const preview = new Preview();
+
+  const preview = new Preview(propertyView);
+
   const instanceMap = new InstanceMap(store.content, propertyView, preview);
+ 
   let dragond;
 
-  /** subscribe() registers a function for events.
-   *  The emitter (like content and modules) will call emit 
-   *  which calls all registered subscribers (like renderPreview)
-   *  when internal events occured (like content change and module group change).
-  */
+  // register handler for content changed event
+  events.addListener('content-changed', renderPreview);
 
-  // calls renderPreview when content changed
-  store.content.subscribe(renderPreview);
-  
-  // calls renderPreview when modules changed
-  store.modules.subscribe(renderPreview);
+  // register handler for modules changed event
+  events.addListener('modules-changed', renderPreview);
 
-  // calls modulesViewChange when user changed module group 
-  moduleView.subscribe(modulesViewChange);
+  // register handler for module list changed event
+  events.addListener('module-list-changed', moduleListChanged);
+
+  // register handler for instance deleted event
+  events.addListener('instance-deleted', instanceDeleted);
 
   $(init);
 
-  return {
+  return Object.assign(this, {
     showInstanceControls,
     hideInstanceControls,
     renderPreview,
     _save,
     instanceCommentFilter,
     renderInstance(instance) {preview.renderInstance(instance)},
-  };
+  });
 
   function init() {
-    initEvents();
     initRoutes();
     initDrag();
     initEditor();
@@ -65,11 +69,11 @@ function App() {
     }
   }
 
-  function initEvents() {
-    events.addListener('instance-deleted', instanceDeleted);
-  }
-
-  // response to instance-deleted event
+  /**
+   * Handles instance-deleted event.
+   * 
+   * Renders the whole preview when the content becomes empty.
+   */
   function instanceDeleted() {
     if (store.content.isEmpty()) {
       renderPreview();
@@ -247,7 +251,12 @@ function App() {
     $('.instance-controls').addClass('hidden');
   }
 
-  function modulesViewChange() {
+  /**
+   * Handles module-list-changed event.
+   * 
+   * Tell dragond to initialize the new container children for drag operation.
+   */
+  function moduleListChanged() {
     // a check is needed in case modules have been fetched before
     // dragond is ready
     dragond && dragond.initContainers();
@@ -335,9 +344,5 @@ function App() {
   function refresh() {
     initDrag();
     renderPreview();
-  }
-
-  function parseQuery() {
-    return URI(window.location.href).search(true);
   }
 }

@@ -10,8 +10,6 @@ if (typeof require !== 'undefined') {
  */
 function Content() {
 
-	const ee = new EventEmitter();
-
 	let content = {
 		globalProperties: {},
 		data: [],
@@ -26,7 +24,6 @@ function Content() {
 		addGlobalProperty,
 		deleteGlobalProperty,
 		setGlobalProperty,
-		subscribe,
 		isEmpty,
 	});
 
@@ -43,7 +40,7 @@ function Content() {
 	}
 
 	function emit() {
-		ee.emit('content', content.data, content.globalProperties);
+		events.emit('content-changed', content.data, content.globalProperties);
 	}
 
 	function addGlobalProperty(name, type) {
@@ -58,10 +55,6 @@ function Content() {
 
 	function setGlobalProperty(prop, value) {
 		content.globalProperties[prop].value = value;
-	}
-
-	function subscribe(fn) {
-		ee.addListener('content', fn);
 	}
 
 	function isEmpty() {

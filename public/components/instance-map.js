@@ -45,8 +45,8 @@ function InstanceMap(content, propertyView, preview) {
       const id = $(this).data('id');
       propertyView.setInstance(id);
       preview.selectInstanceById(id);
+      preview.scrollToInstance(id);
       !locked && btn.popover('hide');
-      events.emit('instance-selected', id, 'instance-map');
     });
   });
 

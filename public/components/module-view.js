@@ -8,14 +8,12 @@
  */
 function ModuleView(store, initialGroup) {
 
-  const ee = new EventEmitter();
   const modules = store.modules;
 
   init();
 
   return Object.assign(this, {
     getElement,
-    subscribe,
   });
 
   function init() {
@@ -80,7 +78,7 @@ function ModuleView(store, initialGroup) {
     }).on('click dragstart', function() {
       $(this).popover('hide');
     });
-    ee.emit('change');
+    events.emit('module-list-changed');
   }
 
   function getPreview(name, large) {
@@ -108,9 +106,5 @@ function ModuleView(store, initialGroup) {
       html = `<span data-id data-name="${name}" data-root>HTML Document</span>`;  
     }
     return $(html)[0];
-  }
-
-  function subscribe(fn) {
-    ee.addListener('change', fn);
   }
 }

@@ -7,7 +7,7 @@ function Editor(content) {
 
   let newInstanceId = 1;
 
-  content.subscribe(load);
+  events.addListener('content-changed', load);
 
   return {
     createInstance,

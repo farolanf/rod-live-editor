@@ -3,7 +3,7 @@
 /**
  * Handles the preview pane.
  */
-function Preview() {
+function Preview(propertyView) {
 
   let iframeWindow;
   let selectedElement;
@@ -18,6 +18,7 @@ function Preview() {
     initElement,
     init,
     selectInstanceById,
+    scrollToInstance,
   });
 
   function init(win) {
@@ -38,18 +39,6 @@ function Preview() {
         app.showInstanceControls(selectedElement);
       }
     });
-    events.addListener('instance-selected', instanceSelected);
-  }
-
-  /**
-   * Handles instance-selected event.
-   * 
-   * Only handles if it's from instance-map.
-   */
-  function instanceSelected(id, src) {
-    if (src === 'instance-map') {
-      scrollToInstance(id);
-    }
   }
 
   function initElement(startElement) {
