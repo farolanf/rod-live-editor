@@ -99,6 +99,7 @@ function App() {
   function initRoutes() {
     const app = new senna.App();
     app.addRoutes([
+
       // handle /preview
       new senna.Route(uri.path()+'preview', function() {
         const renderer = store.createRenderer();
@@ -107,6 +108,7 @@ function App() {
         $('#app > *').hide();
         $('#app > iframe').attr('srcdoc', html).show();
       }),
+      
       // handle /json
       new senna.Route(uri.path()+'json', function() {
         hideInstanceControls();
@@ -114,12 +116,14 @@ function App() {
         const json = JSON.stringify(store.content.all(), filterContent, 2);
         $('#app > #content-json').html(json).show();
       }),
+      
       // catch all routes for current origin
       new senna.Route(/.*/, function() {
         $('#app > *').hide();
         $('#editor').show();
       }),
     ]);
+
     // tell senna to navigate to current path and query params
     // so the handler worked when the user navigated back
     const url = window.location.pathname + window.location.search;
@@ -138,8 +142,12 @@ function App() {
     return value;
   }
 
+  /**
+   * Initialize drag and drop.
+   */
   function initDrag() {
     if (dragond) {
+      // unregister dragond event handlers
       dragond.destroy();
     }
     // init dragond with specified containers
@@ -174,9 +182,13 @@ function App() {
           $(el).is('[data-root]') && createFirstInstance(el);
         }
         else if (+$(el).attr('data-id') === -1 && $(parent).is('.instance-container')) {
-          onCreateInstance(el, parent, src, sibling);
+          // a new element from module list has been dropped on the preview,
+          // create a new instance of the module
+          createInstance(el, parent, sibling);
         } else if ($(el).is('.instance') && $(parent).is('.instance-container')) {
-          onMoveInstance(el, parent, src, sibling);
+          // an instance element has been moved on the preview,
+          // sync the movement with the content
+          moveInstance(el, parent, src, sibling);
         }
       },
     });
@@ -184,25 +196,47 @@ function App() {
     window.dragond = dragond;
   }
 
+  /**
+   * Create a root instance.
+   * 
+   * @param {element} el - The element that represents the root instance.
+   */
   function createFirstInstance(el) {
     const name = $(el).data('name');
     editor.createInstance(name);
     renderPreview();
   } 
 
-  function onCreateInstance(el, con, src, sibling) {
+  /**
+   * Create a child instance.
+   * 
+   * @param {element} el - The element that represents the instance.
+   * @param {element} con - The container element of the instance.
+   * @param {element} sibling - The next sibling of the element on the DOM.
+   */
+  function createInstance(el, con, sibling) {
     const name = $(el).data('name');
     const container = $(con).data('name');
     const parentId = $(con).data('parent-id');
     sibling = new InstanceElement(sibling);
+    // create the instance on the content
     const instance = editor.createInstance(name, parentId, container, sibling.id);
+    // update data-id attribute with the new id
     $(el).attr('data-id', instance.id);
+    // update nested container comments with the new id
     fixContainerComments(el, instance.id);
+    // initialize events for this element
     preview.initElement(el);
+    // remove default value element from the parent container
     preview.cleanContainer(container, parentId);
   }
 
-  // update parentId on container comments
+  /**
+   * Update parent id on container comments.
+   * 
+   * @param {element} el - Element to use as context.
+   * @param {string} parentId - The new parent id.
+   */
   function fixContainerComments(el, parentId) {
     $('*', el).contents().filter(domutils.instanceCommentFilter).each(function() {
       this.nodeValue = this.nodeValue.replace(
@@ -210,21 +244,38 @@ function App() {
     });
   }
 
-  function onMoveInstance(el, con, src, sibling) {
+  /**
+   * Handles instance movement.
+   * 
+   * @param {element} el - The element that has been moved.
+   * @param {element} con - The container of the element.
+   * @param {element} src - The source container of the element.
+   * @param {element} sibling - The sibling of the element on the DOM.
+   */
+  function moveInstance(el, con, src, sibling) {
+    // move instance on the content
     con = new ContainerElement(con);
     src = new ContainerElement(src);
     el = new InstanceElement(el);
     sibling = new InstanceElement(sibling);
     editor.moveInstance(el.id, con.parentId, con.name, sibling.id);
+    // remove default value element on the parent container
     preview.cleanContainer(con.name, con.parentId);
+    // render default value element on the source container
     renderContainerChildren(src);
   }
 
+  /**
+   * Init toolbar buttons.
+   */
   function initActions() {
     $('.save-btn').on('click', save);
     $('.refresh-btn').on('click', refresh);
   }
 
+  /**
+   * Init editor panes and buttons.
+   */
   function initEditor() {
     // create split panes
     Split(['.module-view', '.preview-container', '.property-view'], {
@@ -236,6 +287,11 @@ function App() {
     });
   }
 
+  /**
+   * Init instance controls.
+   * 
+   * This is the toolbar that appeared beside the selected instance.
+   */
   function initInstanceControls() {
     $('.instance-controls').on('click', function(e) {
       e.stopPropagation();
@@ -251,6 +307,11 @@ function App() {
     });
   }
 
+  /**
+   * Show instance controls beside the element.
+   * 
+   * @param {element} el - The instance element.
+   */
   function showInstanceControls(el) {
     const rect = el.getBoundingClientRect();
     const pos = domutils.topClientPos(rect.right, rect.top, el.ownerDocument.defaultView);
@@ -259,6 +320,9 @@ function App() {
       .css('top', pos.y+'px').removeClass('hidden');
   }
 
+  /**
+   * Hide the instance controls.
+   */
   function hideInstanceControls() {
     $('.instance-controls').addClass('hidden');
   }
@@ -266,7 +330,7 @@ function App() {
   /**
    * Handles module-list-changed event.
    * 
-   * Tell dragond to initialize the new container children for drag operation.
+   * Tell dragond to initialize the new module items for drag operation.
    */
   function moduleListChanged() {
     // a check is needed in case modules have been fetched before
@@ -274,8 +338,12 @@ function App() {
     dragond && dragond.initContainers();
   }
 
+  /**
+   * Render the preview.
+   */
   function renderPreview() {
     if (store.content.isEmpty()) {
+      // render a container that only accepts root modules
       renderEmptyPreview();
       return;
     }
@@ -299,33 +367,47 @@ function App() {
   }
 
   /**
-   * Render the default element for a container.
+   * Render the default element of a container.
    * 
    * When the container becomes empty the default value needs
    * to be rendered again.
    */
   function renderContainerChildren(con) {
-    // remove container property with empty array
+    // remove empty container
     con.parentInstance.cleanContainers();
+    // render if container is empty
     if (con.parentInstance.getContainers()[con.name].isDefault) {
       preview.renderContainerChildren(con.parentInstance, con.name);
     }
   }
 
+  /**
+   * Show the container of the empty content.
+   */
   function renderEmptyPreview() {
     $('.empty-container').show();
   }
 
+  /**
+   * Hide the container of the empty content.
+   */
   function hideEmptyContainer() {
     $('.empty-container').hide();
   }
 
+  /**
+   * Handles save button click.
+   */
   function save() {
     uiutils.showConfirmModal('Save', 'Save the document?', 'Save', 'app._save()');
   }
 
+  /**
+   * Send the document to the backend.
+   */
   function _save() {
     const savingToast = uiutils.toast('Saving...', 'info');
+    // data to be sent
     const data = {
       id: query.id,
       content: filteredContent(),
@@ -347,13 +429,17 @@ function App() {
       uiutils.toast('Fail to save document.', 'error');
       console.log(status, xhr, data);
     }
-    // filter properties which cause circular object reference
+    // remove parent properties
     function filteredContent() {
       return JSON.parse(JSON.stringify(store.content.all(), filterContent));
     }
   }
 
+  /**
+   * Render the whole preview on refresh.
+   */
   function refresh() {
+    // reinitialize drag events
     initDrag();
     renderPreview();
   }
