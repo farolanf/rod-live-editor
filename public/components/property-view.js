@@ -176,7 +176,7 @@ function PropertyView(editor, content) {
 
   function setGlobalProperty(prop, value) {
     content.setGlobalProperty(prop, value);
-    app.renderPreview();
+    events.emit('global-property-changed');
   }
 
   function setInstanceProperty(prop, value) {

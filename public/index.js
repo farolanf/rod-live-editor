@@ -35,24 +35,11 @@ function App() {
  
   let dragond;
 
-  // register handler for content changed event
-  events.addListener('content-changed', renderPreview);
-
-  // register handler for modules changed event
-  events.addListener('modules-changed', renderPreview);
-
-  // register handler for module list changed event
-  events.addListener('module-list-changed', moduleListChanged);
-
-  // register handler for instance deleted event
-  events.addListener('instance-deleted', instanceDeleted);
-
   $(init);
 
   return Object.assign(this, {
     showInstanceControls,
     hideInstanceControls,
-    renderPreview,
 
     // expose the save function to be called by save confirmation modal
     _save,
@@ -62,6 +49,7 @@ function App() {
    * Main initialization function.
    */
   function init() {
+    registerHandlers();
     initRoutes();
     initDrag();
     initEditor();
@@ -70,6 +58,26 @@ function App() {
     if (query.id) {
       store.content.loadContent(query.id);  
     }
+  }
+
+  /**
+   * Register event handlers.
+   */
+  function registerHandlers() {
+    // register handler for content changed event
+    events.addListener('content-changed', renderPreview);
+
+    // register handler for modules changed event
+    events.addListener('modules-changed', renderPreview);
+
+    // register handler for global property changed event
+    events.addListener('global-property-changed', renderPreview);
+
+    // register handler for module list changed event
+    events.addListener('module-list-changed', moduleListChanged);
+
+    // register handler for instance deleted event
+    events.addListener('instance-deleted', instanceDeleted);
   }
 
   /**

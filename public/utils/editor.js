@@ -134,6 +134,7 @@ function Editor(content) {
 
   function cloneInstance(id) {
     _cloneInstance(content.content(), id);
+    events.emit('content-changed');
   }
 
   function _cloneInstance(content, id) {

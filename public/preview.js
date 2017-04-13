@@ -176,7 +176,6 @@ function Preview(propertyView) {
     deselectInstance(clone);
     const id = $(el).data('id');
     editor.cloneInstance(id);
-    app.renderPreview();
     selectInstance($$(`[data-id=${id}]`)[0]);
   }
 
