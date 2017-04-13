@@ -58,7 +58,7 @@ function Preview(propertyView) {
    * @param {element} startElement - The element to begin searching.
    */
   function initContainers(startElement) {
-    const meta = $('*', startElement).contents().filter(app.instanceCommentFilter);
+    const meta = $('*', startElement).contents().filter(domutils.instanceCommentFilter);
     // containers are the comment's parent
     const containers = meta.parent();
     containers.addClass('instance-container');
@@ -264,7 +264,7 @@ function Preview(propertyView) {
       const con = $$(`[data-name="${name}"][data-parent-id="${instance.id}"]`);
       con.append(el);
       initElement(el);
-      const meta = $(con).contents().filter(app.instanceCommentFilter);
+      const meta = $(con).contents().filter(domutils.instanceCommentFilter);
       meta.remove();
     }
   }

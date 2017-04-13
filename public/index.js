@@ -56,8 +56,6 @@ function App() {
 
     // expose the save function to be called by save confirmation modal
     _save,
-    
-    instanceCommentFilter,
   });
 
   /**
@@ -198,15 +196,10 @@ function App() {
 
   // update parentId on container comments
   function fixContainerComments(el, parentId) {
-    $('*', el).contents().filter(instanceCommentFilter).each(function() {
+    $('*', el).contents().filter(domutils.instanceCommentFilter).each(function() {
       this.nodeValue = this.nodeValue.replace(
         /("parentId":\s*)\-?\d+/g, `$1${parentId}`);
     });
-  }
-
-  // filter container comment nodes
-  function instanceCommentFilter() {
-    return this.nodeType === 8 && this.nodeValue.includes('instance-container');
   }
 
   function onMoveInstance(el, con, src, sibling) {

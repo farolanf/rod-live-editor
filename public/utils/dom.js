@@ -26,4 +26,13 @@ const domutils = {
     const rect = el.getBoundingClientRect();
     return x >= rect.left && x < rect.right && y >= rect.top && y < rect.bottom;
   },
+
+  /**
+   * Filter container comment nodes.
+   * 
+   * Used with jQuery. 
+   */
+  instanceCommentFilter() {
+    return this.nodeType === 8 && this.nodeValue.includes('instance-container');
+  },
 };
