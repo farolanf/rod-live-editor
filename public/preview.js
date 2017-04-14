@@ -91,7 +91,10 @@ function Preview(propertyView) {
    * Init an instance element.
    */
   function initInstanceElement(el) {
-    $(el).addClass('instance').on('click', function(e) {
+    const visible = $(el).data('visible');
+    $(el).addClass('instance')
+    .toggleClass('invisible-instance', visible !== true && visible !== 'true')
+    .on('click', function(e) {
       e.stopPropagation();
       if (this !== selectedElement) {
         deselectInstance(selectedElement);
