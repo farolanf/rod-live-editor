@@ -62,8 +62,9 @@ function App() {
 
   function loadContent() {
     if (query.id) {
-      store.content.usePrecompileParameters = usePrecompileParameters;
-      store.content.loadContent(query.id, query.precompileParameters);  
+      const precompileParameters = usePrecompileParameters ? 
+        query.precompileParameters : false;
+      store.content.loadContent(query.id, precompileParameters);  
     }
   }
 

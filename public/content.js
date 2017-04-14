@@ -35,8 +35,6 @@ function Content() {
 		 */
 		all() {return content},
 
-		usePrecompileParameters: true,
-		
 		setContent,
 		loadContent,
 		addGlobalProperty,
@@ -60,10 +58,11 @@ function Content() {
 	 * Load content from the backend.
 	 * 
 	 * @param {string} id - The id of the content to be loaded.
+	 * @param {string} precompileParameters - Precompile parameters or false.
 	 */
 	function loadContent(id, precompileParameters) {
 		const data = {};
-		this.usePrecompileParameters && (data.precompileParameters = precompileParameters);
+		precompileParameters && (data.precompileParameters = precompileParameters);
 		$.getJSON(uri.path()+`api/content/${id}`, data, function(data) {
 			// update the content with new data
 			eval(`content = ${data}`);
