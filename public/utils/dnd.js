@@ -56,6 +56,7 @@ function Dragond(initialContainers, options) {
    */
   function start(e, el, src) {
     // options.shadow && dragShadow.create(el, e);
+    parent = el.parentElement;
     originalSibling = $(el).next()[0];
     $(el).addClass('dg-dragged');
     dnd.$body.addClass('dg-dragging');
