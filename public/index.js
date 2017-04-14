@@ -56,7 +56,12 @@ function App() {
     initEditor();
     initInstanceControls();
     initActions();
+    loadContent();
+  }
+
+  function loadContent() {
     if (query.id) {
+      store.content.usePrecompileParameters = usePrecompileParameters;
       store.content.loadContent(query.id, query.precompileParameters);  
     }
   }
@@ -273,9 +278,20 @@ function App() {
     $('.save-btn').on('click', save);
     $('.refresh-btn').on('click', refresh);
     $('.precompile-btn').toggleClass('inactive', !usePrecompileParameters)
-      .on('click', togglePrecompile);
+      .on('click', onPrecompileClick);
   }
 
+  /**
+   * Handles precompile button click.
+   */
+  function onPrecompileClick() {
+    togglePrecompile.call(this);
+    loadContent();
+  }
+
+  /**
+   * Toggles precompile and update button state.
+   */
   function togglePrecompile() {
     usePrecompileParameters = !usePrecompileParameters;
     $(this).toggleClass('inactive', !usePrecompileParameters);
@@ -421,7 +437,6 @@ function App() {
       content: filteredContent(),
       moduleGroup: store.modules.group(),
     };
-    usePrecompileParameters && (data.precompileParameters = query.precompileParameters);
     $.ajax({
       url: uri.path()+'api/save',
       method: 'POST',
