@@ -34,14 +34,15 @@ function App() {
   const instanceMap = new InstanceMap(store.content, propertyView, preview);
  
   let dragond, 
-    usePrecompileParameters = true;
+    usePrecompileParameters = false;
 
   $(init);
 
   return Object.assign(this, {
     showInstanceControls,
     hideInstanceControls,
-
+    precompileOff,
+    
     // expose the save function to be called by save confirmation modal
     _save,
   });
@@ -175,6 +176,12 @@ function App() {
       inserts(el, con, src) {
         return !$(con).is('.empty-container');
       },
+      start(e, el, src) {
+        if (usePrecompileParameters && $(src).is('.module-view *')) {
+          clearPreview();
+          precompileOff();
+        }
+      },
       // show invalid feedback when dragging a non document element
       // into .empty-container
       enter(e, el, con) {
@@ -203,14 +210,26 @@ function App() {
   }
 
   /**
+   * Clear the preview.
+   * 
+   * Need to clear the preview while the real content is loaded by ajax
+   * to prevent dropping onto precompiled content.
+   */
+  function clearPreview() {
+    store.content.setContent([]);
+  }
+
+  /**
    * Create a root instance.
    * 
    * @param {element} el - The element that represents the root instance.
    */
   function createFirstInstance(el) {
-    const name = $(el).data('name');
-    editor.createInstance(name);
-    renderPreview();
+    precompileOff(function() {
+      const name = $(el).data('name');
+      editor.createInstance(name);
+      renderPreview();
+    });
   } 
 
   /**
@@ -277,8 +296,13 @@ function App() {
   function initActions() {
     $('.save-btn').on('click', save);
     $('.refresh-btn').on('click', refresh);
-    $('.precompile-btn').toggleClass('inactive', !usePrecompileParameters)
-      .on('click', onPrecompileClick);
+
+    if (query.precompileParameters) {
+      usePrecompileParameters = true;
+      $('.precompile-btn').removeClass('hidden');
+      $('.precompile-btn').toggleClass('inactive', !usePrecompileParameters)
+        .on('click', onPrecompileClick);
+    }
   }
 
   /**
@@ -295,6 +319,31 @@ function App() {
   function togglePrecompile() {
     usePrecompileParameters = !usePrecompileParameters;
     $(this).toggleClass('inactive', !usePrecompileParameters);
+  }
+
+  /**
+   * Turn precompile off and reload the content.
+   * 
+   * @param {function} fn - Function to run after preview loaded.
+   */
+  function precompileOff(fn) {
+    if (usePrecompileParameters) {
+      usePrecompileParameters = false;
+      $('.precompile-btn').toggleClass('inactive', true);
+      // reselect instance element
+      let id;
+      if (preview.selectedElement()) {
+        id = $(preview.selectedElement()).data('id');
+      }
+      events.once('preview-loaded', function() {
+        id && preview.selectInstanceById(id);
+        fn && fn();
+      });
+      loadContent();
+    }
+    else {
+      fn && fn();
+    }
   }
 
   /**
@@ -324,10 +373,14 @@ function App() {
       preview.editInstanceContent();
     });
     $('.instance-controls .copy-btn').on('click', function(e) {
-      preview.cloneInstance();
+      precompileOff(function() {
+        preview.cloneInstance();
+      });
     });
     $('.instance-controls .delete-btn').on('click', function(e) {
-      preview.deleteInstance();
+      precompileOff(function() {
+        preview.deleteInstance();
+      });
     });
   }
 
@@ -387,6 +440,7 @@ function App() {
     $('.preview').attr('srcdoc', html).off('load').on('load', function() {
       dragond.addIframe('.preview');
       preview.init(this.contentWindow);
+      events.emit('preview-loaded');
     });
   }
 
@@ -430,33 +484,35 @@ function App() {
    * Send the document to the backend.
    */
   function _save() {
-    const savingToast = uiutils.toast('Saving...', 'info');
-    // data to be sent
-    const data = {
-      id: query.id,
-      content: filteredContent(),
-      moduleGroup: store.modules.group(),
-    };
-    $.ajax({
-      url: uri.path()+'api/save',
-      method: 'POST',
-      data,
-      success,
-      error,
+    precompileOff(function() {
+      const savingToast = uiutils.toast('Saving...', 'info');
+      // data to be sent
+      const data = {
+        id: query.id,
+        content: filteredContent(),
+        moduleGroup: store.modules.group(),
+      };
+      $.ajax({
+        url: uri.path()+'api/save',
+        method: 'POST',
+        data,
+        success,
+        error,
+      });
+      function success(data) {
+        savingToast.reset();
+        uiutils.toast('Document saved.');
+      }
+      function error(xhr, status) {
+        savingToast.reset();
+        uiutils.toast('Fail to save document.', 'error');
+        console.log(status, xhr, data);
+      }
+      // remove parent properties
+      function filteredContent() {
+        return JSON.parse(JSON.stringify(store.content.all(), filterContent));
+      }
     });
-    function success(data) {
-      savingToast.reset();
-      uiutils.toast('Document saved.');
-    }
-    function error(xhr, status) {
-      savingToast.reset();
-      uiutils.toast('Fail to save document.', 'error');
-      console.log(status, xhr, data);
-    }
-    // remove parent properties
-    function filteredContent() {
-      return JSON.parse(JSON.stringify(store.content.all(), filterContent));
-    }
   }
 
   /**

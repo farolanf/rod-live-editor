@@ -14,6 +14,7 @@ function Preview(propertyView) {
     editInstanceContent() {editInstanceContent(selectedElement)},
     cloneInstance() {cloneInstance(selectedElement)},
     deleteInstance() {deleteInstance(selectedElement)},
+    selectedElement() {return selectedElement},
     renderInstance,
     renderContainerChildren,
     cleanContainer,

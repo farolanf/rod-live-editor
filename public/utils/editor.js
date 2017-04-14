@@ -51,6 +51,8 @@ function Editor(content) {
    * @private
    */
   function load() {
+    // reset id
+    newInstanceId = 1;
     prepareContent(content.content());
   }
 
