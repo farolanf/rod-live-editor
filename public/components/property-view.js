@@ -216,8 +216,10 @@ function PropertyView(editor, content) {
    * @private
    */
   function setGlobalProperty(prop, value) {
-    content.setGlobalProperty(prop, value);
-    events.emit('global-property-changed');
+    app.precompileOff(function() {
+      content.setGlobalProperty(prop, value);
+      events.emit('global-property-changed');
+    });
   }
 
   /**
@@ -228,8 +230,10 @@ function PropertyView(editor, content) {
    * @private
    */
   function setInstanceProperty(prop, value) {
-    const instance = new Instance(instanceId);
-    instance.setProperty(prop, value);
-    events.emit('instance-changed', instance);
+    app.precompileOff(function() {
+      const instance = new Instance(instanceId);
+      instance.setProperty(prop, value);
+      events.emit('instance-changed', instance);
+    });
   }
 }

@@ -61,6 +61,12 @@ Flight::route('/api/content/@id', function($id) {
   $content = file_get_contents($file);
   // SAMPLE}
 
+  // PRECOMPILE TEST
+  if (!$precompileParameters) {
+    $content = str_replace('Hi Rod', '<?php get_user_name() ?>', $content);
+  }
+  // PRECOMPILE TEST
+
   Flight::json($content);
 });
 
@@ -80,6 +86,12 @@ Flight::route('POST /api/save', function() {
   $id = $req->data->id;
   $content = $req->data->content;
   $moduleGroup = $req->data->moduleGroup;
+  $precompileParameters = $req->data->precompileParameters;
+
+  // DEBUG
+  // echo join("\n", [$id, json_encode($content), $moduleGroup, $precompileParameters]);
+  // DEBUG
+
   // TODO: save to db
   // save($id, $content, $moduleGroup);
 });
