@@ -80,6 +80,12 @@ Flight::route('POST /api/save', function() {
   $id = $req->data->id;
   $content = $req->data->content;
   $moduleGroup = $req->data->moduleGroup;
+  $precompileParameters = $req->data->precompileParameters;
+
+  // DEBUG
+  // echo join("\n", [$id, json_encode($content), $moduleGroup, $precompileParameters]);
+  // DEBUG
+
   // TODO: save to db
   // save($id, $content, $moduleGroup);
 });

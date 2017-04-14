@@ -33,7 +33,8 @@ function App() {
 
   const instanceMap = new InstanceMap(store.content, propertyView, preview);
  
-  let dragond;
+  let dragond, 
+    usePrecompileParameters = true;
 
   $(init);
 
@@ -413,6 +414,7 @@ function App() {
       content: filteredContent(),
       moduleGroup: store.modules.group(),
     };
+    usePrecompileParameters && (data.precompileParameters = query.precompileParameters);
     $.ajax({
       url: uri.path()+'api/save',
       method: 'POST',
