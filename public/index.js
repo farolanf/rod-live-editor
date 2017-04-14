@@ -272,6 +272,13 @@ function App() {
   function initActions() {
     $('.save-btn').on('click', save);
     $('.refresh-btn').on('click', refresh);
+    $('.precompile-btn').toggleClass('inactive', !usePrecompileParameters)
+      .on('click', togglePrecompile);
+  }
+
+  function togglePrecompile() {
+    usePrecompileParameters = !usePrecompileParameters;
+    $(this).toggleClass('inactive', !usePrecompileParameters);
   }
 
   /**
