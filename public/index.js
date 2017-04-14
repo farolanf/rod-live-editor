@@ -56,7 +56,7 @@ function App() {
     initInstanceControls();
     initActions();
     if (query.id) {
-      store.content.loadContent(query.id);  
+      store.content.loadContent(query.id, query.precompileParameters);  
     }
   }
 

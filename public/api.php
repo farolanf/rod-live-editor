@@ -52,6 +52,8 @@ Flight::route('/api/module/group/@name', function($name) {
  * @return json The content as json.
 */
 Flight::route('/api/content/@id', function($id) {
+  $precompileParameters = Flight::request()->query->precompileParameters;
+
   // TODO: load content specified by id from database
   
   // {SAMPLE-- load sample content. Replace this sample with real code
