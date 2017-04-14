@@ -61,6 +61,12 @@ Flight::route('/api/content/@id', function($id) {
   $content = file_get_contents($file);
   // SAMPLE}
 
+  // PRECOMPILE TEST
+  if (!$precompileParameters) {
+    $content = str_replace('Hi Rod', '<?php get_user_name() ?>', $content);
+  }
+  // PRECOMPILE TEST
+
   Flight::json($content);
 });
 
