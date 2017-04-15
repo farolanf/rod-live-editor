@@ -12,7 +12,8 @@ function renderContent($content, $moduleGroup) {
   // check nodejs existence
   exec('node -v 1>/dev/null', $output, $ret);
   if ($ret == 0) {
-    exec("node node-render.js $content $moduleGroup", $output);
+    $path = escapeshellarg(dirname(__FILE__) . '/node-render.js');
+    exec("node $path $content $moduleGroup", $output);
     return join($output);
   }
   return 'node failed';
