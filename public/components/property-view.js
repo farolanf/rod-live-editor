@@ -129,14 +129,14 @@ function PropertyView(editor, content) {
     let html = `<div class="list-group-item module-name">${name}</div>`;
     _.forOwn(props, function(prop, key) {
       const delHtml = canDelete ? `<i class="fa fa-trash del-prop-btn" data-property="${key}"></i>` : '';
-      const color = prop.value.replace('#', '');
+      const value = prop.type === 'color' ? prop.value.replace('#', '') : prop.value;
       const textCls = prop.type === 'text' ? 'text-editor-btn' : '';
       const textBtn = prop.type === 'text' ? '<i class="fa fa-pencil"></i>' : '';
       const dataGlobal = instanceId === null ? 'data-global="true"' : '';
       html += `
         <div class="list-group-item">
           <span class="name ${textCls}">${key} ${textBtn}</span>
-          <input class="form-control" value="${color}" ${dataGlobal} data-name="${key}" data-type="${prop.type}">
+          <input class="form-control" value="${value}" ${dataGlobal} data-name="${key}" data-type="${prop.type}">
           ${delHtml}
         </div>`;
     });
