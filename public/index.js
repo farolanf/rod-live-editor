@@ -121,7 +121,8 @@ function App() {
       new senna.Route(uri.path()+'json', function() {
         hideInstanceControls();
         $('#app > *').hide();
-        const json = JSON.stringify(store.content.all(), filterContent, 2);
+        let json = JSON.stringify(store.content.all(), filterContent, 2);
+        json = Renderer.prettify(json);
         $('#app > #content-json').html(json).show();
       }),
       
