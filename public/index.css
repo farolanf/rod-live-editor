@@ -27,6 +27,9 @@ html, body, #app, #editor, .editor-container, .preview {
   cursor: pointer;
   user-select: none;
 }
+.navbar .toggle.btn {
+  top: -1px;
+}
 
 .gutter {
   background-color: #ddd;
