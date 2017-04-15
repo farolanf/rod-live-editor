@@ -63,6 +63,10 @@ function Modules() {
       eval(`mod = ${modstr}`);
       // create property for this module
       modules[mod.name] = mod;
+      // add visible property if not exist
+      if (mod.properties && !mod.properties.hasOwnProperty('visible')) {
+        mod.properties.visible = {type: 'property', default: 'true'};
+      }
     });
   }
 
