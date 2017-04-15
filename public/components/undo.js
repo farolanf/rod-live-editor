@@ -14,15 +14,15 @@ function Undo(content) {
     canRedo,
   });
 
-  function push(stay) {
+  function push() {
     if (pos === latest) {
       pos++;
       return;
     }
     stack[pos] = content.getJSON();
     latest = pos;
-    !stay && pos++;
-    if (pos >= max) {
+    pos++;
+    if (pos > max) {
       stack.shift();
       pos--;
       latest--;
@@ -33,7 +33,8 @@ function Undo(content) {
   function undo() {
     if (canUndo()) {
       if (pos > latest) {
-        push(true);
+        push();
+        pos--;
       }
       pos--;
       content.fromJSON(stack[pos]);
