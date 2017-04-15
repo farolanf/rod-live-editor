@@ -36,6 +36,10 @@ html, body, #app, #editor, .editor-container, .preview {
 .precompile-btn > .toggle.btn {
   width: 86px;
 }
+.navbar .undo-btn.disabled, .navbar .redo-btn.disabled {
+  color: #ddd;
+  pointer-events: none;
+}
 
 .gutter {
   background-color: #ddd;

@@ -12,6 +12,8 @@ window.uiutils = new UIUtils();
 // store stores data in one place to ease passing around the whole data
 window.store = new Store();
 
+window.undo = new Undo(store.content);
+
 // editor only need a content store so no need to pass the whole store
 window.editor = new Editor(store.content);
 
@@ -209,6 +211,7 @@ function App() {
    */
   function createFirstInstance(el) {
     precompileOff(function() {
+      undo.push();
       const name = $(el).data('name');
       editor.createInstance(name);
       renderPreview();
@@ -223,6 +226,7 @@ function App() {
    * @param {element} sibling - The next sibling of the element on the DOM.
    */
   function createInstance(el, con, sibling) {
+    undo.push();
     const name = $(el).data('name');
     const container = $(con).data('name');
     const parentId = $(con).data('parent-id');
@@ -261,6 +265,7 @@ function App() {
    * @param {element} sibling - The sibling of the element on the DOM.
    */
   function moveInstance(el, con, src, sibling) {
+    undo.push();
     // move instance on the content
     con = new ContainerElement(con);
     src = new ContainerElement(src);
@@ -279,6 +284,12 @@ function App() {
   function initActions() {
     $('.save-btn').on('click', save);
     $('.refresh-btn').on('click', refresh);
+
+    $('.undo-btn').on('click', undo.undo); 
+    $('.redo-btn').on('click', undo.redo);
+    events.addListener('undo-changed', updateUndoButtons);
+    updateUndoButtons();
+    
     $('.content-json-btn').on('click', function() {
       precompileOff(jsonView.show);
     });
@@ -289,6 +300,11 @@ function App() {
     // when updating button state
     $('.precompile-btn').toggleClass('hidden', !usePrecompileParameters)
       .on('click', onPrecompileToggle);
+  }
+
+  function updateUndoButtons() {
+    $('.undo-btn').toggleClass('disabled', !undo.canUndo());
+    $('.redo-btn').toggleClass('disabled', !undo.canRedo());
   }
 
   /**
@@ -361,11 +377,13 @@ function App() {
     });
     $('.instance-controls .copy-btn').on('click', function(e) {
       precompileOff(function() {
+        undo.push();
         preview.cloneInstance();
       });
     });
     $('.instance-controls .delete-btn').on('click', function(e) {
       precompileOff(function() {
+        undo.push();
         preview.deleteInstance();
       });
     });
