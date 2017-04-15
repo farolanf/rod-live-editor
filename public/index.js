@@ -33,6 +33,8 @@ function App() {
 
   const instanceMap = new InstanceMap(store.content, propertyView, preview);
  
+  const jsonView = new JsonView(store.content);
+
   let dragond, 
     usePrecompileParameters = false;
 
@@ -117,15 +119,6 @@ function App() {
         $('#app > iframe').attr('srcdoc', html).show();
       }),
       
-      // handle /json
-      new senna.Route(uri.path()+'json', function() {
-        hideInstanceControls();
-        $('#app > *').hide();
-        let json = JSON.stringify(store.content.all(), filterContent, 2);
-        json = Renderer.prettify(json);
-        $('#app > #content-json').html(json).show();
-      }),
-      
       // catch all routes for current origin
       new senna.Route(/.*/, function() {
         $('#app > *').hide();
@@ -137,18 +130,6 @@ function App() {
     // so the handler worked when the user navigated back
     const url = window.location.pathname + window.location.search;
     app.navigate(url);
-  }
-
-  /**
-   *  Filter parent property to avoid circular reference.
-   * 
-   *  Used by JSON.stringify()
-   */
-  function filterContent(key, value) {
-    if (key === 'parent') {
-      return;
-    }
-    return value;
   }
 
   /**
@@ -298,6 +279,7 @@ function App() {
   function initActions() {
     $('.save-btn').on('click', save);
     $('.refresh-btn').on('click', refresh);
+    $('.content-json-btn').on('click', jsonView.show);
 
     if (query.precompileParameters) {
       usePrecompileParameters = true;
@@ -512,7 +494,7 @@ function App() {
       }
       // remove parent properties
       function filteredContent() {
-        return JSON.parse(JSON.stringify(store.content.all(), filterContent));
+        return JSON.parse(store.content.getJSON());
       }
     });
   }
