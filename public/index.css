@@ -33,6 +33,9 @@ html, body, #app, #editor, .editor-container, .preview {
 .precompile-btn * {
   pointer-events: none !important;
 }
+.precompile-btn > .toggle.btn {
+  width: 86px;
+}
 
 .gutter {
   background-color: #ddd;
