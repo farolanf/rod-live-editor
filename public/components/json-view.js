@@ -41,6 +41,7 @@ function JsonView(content) {
    * Save the JSON to content and disable save button.
    */
   function save() {
+    undo.push();
     content.fromJSON(acedit.getValue());
     $('.json-view .json-save-btn').addClass('disabled');
   }
