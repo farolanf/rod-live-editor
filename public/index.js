@@ -279,7 +279,9 @@ function App() {
   function initActions() {
     $('.save-btn').on('click', save);
     $('.refresh-btn').on('click', refresh);
-    $('.content-json-btn').on('click', jsonView.show);
+    $('.content-json-btn').on('click', function() {
+      precompileOff(jsonView.show);
+    });
 
     setPrecompile(!!query.precompileParameters);
 
