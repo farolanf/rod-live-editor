@@ -281,28 +281,30 @@ function App() {
     $('.refresh-btn').on('click', refresh);
     $('.content-json-btn').on('click', jsonView.show);
 
-    if (query.precompileParameters) {
-      usePrecompileParameters = true;
-      $('.precompile-btn').removeClass('hidden');
-      $('.precompile-btn').toggleClass('inactive', !usePrecompileParameters)
-        .on('click', onPrecompileClick);
-    }
+    setPrecompile(!!query.precompileParameters);
+
+    // avoid using input change event to prevent refiring it 
+    // when updating button state
+    $('.precompile-btn').toggleClass('hidden', !usePrecompileParameters)
+      .on('click', onPrecompileToggle);
   }
 
   /**
-   * Handles precompile button click.
+   * Set use precompile and update precompile button state.
+   * 
+   * @param {boolean} set - Use precompile if true.
    */
-  function onPrecompileClick() {
-    togglePrecompile.call(this);
+  function setPrecompile(set) {
+    usePrecompileParameters = set;
+    $('.precompile-btn input').prop('checked', usePrecompileParameters).change();
+  }
+
+  /**
+   * Handles precompile-btn click.
+   */
+  function onPrecompileToggle() {
+    setPrecompile(!usePrecompileParameters);
     loadContent();
-  }
-
-  /**
-   * Toggles precompile and update button state.
-   */
-  function togglePrecompile() {
-    usePrecompileParameters = !usePrecompileParameters;
-    $(this).toggleClass('inactive', !usePrecompileParameters);
   }
 
   /**
@@ -312,8 +314,7 @@ function App() {
    */
   function precompileOff(fn) {
     if (usePrecompileParameters) {
-      usePrecompileParameters = false;
-      $('.precompile-btn').toggleClass('inactive', true);
+      setPrecompile(false);
       // reselect instance element
       let id;
       if (preview.selectedElement()) {

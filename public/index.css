@@ -30,6 +30,9 @@ html, body, #app, #editor, .editor-container, .preview {
 .navbar .toggle.btn {
   top: -1px;
 }
+.precompile-btn * {
+  pointer-events: none !important;
+}
 
 .gutter {
   background-color: #ddd;
