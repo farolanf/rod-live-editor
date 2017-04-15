@@ -176,6 +176,16 @@ function Renderer(modules, globalProperties) {
                 Editor.injectInstanceData(output, instance.id, instance.name);
         }
 
+        // check visibility
+        let visible = getPropertyValue('visible', instance, module, true, false); 
+        if (visible !== true && visible !== 'true' && clean) {
+            // render nothing on final render
+            return '';
+        }
+
+        // visible on the live editor should only be true or false
+        visible = visible === true || visible === 'true';
+
         var customReplace = true;
         for (var property in module.properties)
             output = output.replace(new RegExp('%' + property + '%', 'g'), 
@@ -187,7 +197,7 @@ function Renderer(modules, globalProperties) {
         }
 
         return clean ? output :
-            Editor.injectInstanceData(output, instance.id, instance.name);
+            Editor.injectInstanceData(output, instance.id, instance.name, visible);
     }
 
     /**
@@ -205,6 +215,13 @@ function Renderer(modules, globalProperties) {
         var moduleProperty = module.properties ? module.properties[property] : null;
 
         if (!moduleProperty) {
+            if (property === 'visible') {
+                if (instance.hasOwnProperty('visible')) {
+                    return instance['visible'];
+                }
+                // visible property defaults to true if not present
+                return true;
+            }
             console.error("module ", instance.name, " doesn't have a property ", property);
             return value;
         }

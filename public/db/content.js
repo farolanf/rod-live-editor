@@ -33,7 +33,8 @@
                     }]
                 },
                 {
-                    "name": "block-image"
+                    "name": "block-image",
+                    "visible": false
                 },
                 {
                     "name": "block-image"
@@ -59,7 +60,8 @@
                         },
                         {
                             "name": "block-text",
-                            "text": "<b>You missed learning:</b>"
+                            "text": "<b>You missed learning:</b>",
+                            "visible": "false"
                         },
 
 
