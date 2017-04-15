@@ -217,6 +217,7 @@ function PropertyView(editor, content) {
    */
   function setGlobalProperty(prop, value) {
     app.precompileOff(function() {
+      undo.push();
       content.setGlobalProperty(prop, value);
       events.emit('global-property-changed');
     });
@@ -231,6 +232,7 @@ function PropertyView(editor, content) {
    */
   function setInstanceProperty(prop, value) {
     app.precompileOff(function() {
+      undo.push();
       const instance = new Instance(instanceId);
       instance.setProperty(prop, value);
       events.emit('instance-changed', instance);
