@@ -112,6 +112,8 @@ html, body, #app, #editor, .editor-container, .preview {
   width: 100%;
   height: 100%;
   z-index: 2000;
+  display: flex;
+  flex-flow: column nowrap;
 }
 .json-view .btn-group {
   position: absolute;
@@ -119,11 +121,16 @@ html, body, #app, #editor, .editor-container, .preview {
   right: 4px;
 }
 .json-view .panel-body {
-  height: 100%;
+  flex-grow: 1;
+  position: relative;
   padding: 0;
 }
 #content-json {
-  height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .instance-controls {
