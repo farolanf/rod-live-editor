@@ -169,7 +169,7 @@ function Renderer(modules, globalProperties) {
 
     //Remove JS comments from output definition
     var output = removeJsComments(module.output);
-    output = prettify(output);
+    output = Renderer.prettify(output);
 
     if (!module.properties) {
       console.info("no properties in the module ", instance.name, " defined");
@@ -282,7 +282,7 @@ function Renderer(modules, globalProperties) {
         console.error("Missing \"condition\" child on \"replace\" parameter of property ", property, " in module ", instance.name);
       }
     }
-    value = prettify(value);
+    value = Renderer.prettify(value);
     return moduleProperty.type == "container" ?
       (clean ? render(value, clean) : renderContainer(property, instance.id, value))
       : value;
@@ -299,23 +299,23 @@ function Renderer(modules, globalProperties) {
   function renderContainer(name, id, value) {
     return Editor.getContainerPlaceholder(name, id, render(value));
   }
+}
 
-  /**
-   * Process PHP tags.
-   * 
-   * @param {string} str - String to search for the tags.
-   * @return {string} - The processed string.
-   */
-  function prettify(str) {
-    if (typeof str !== 'string') {
-      return str;
-    }
-    str = str.replace(/<\?php[^>]*?\/\*\s*(.*?)\s*\*\/.*?\?>/g, '$1');
-    str = str.replace(/<\?php/g, '&lt;?php');
-    str = str.replace(/\?>/g, '?&gt;');
+/**
+ * Process PHP tags.
+ * 
+ * @param {string} str - String to search for the tags.
+ * @return {string} - The processed string.
+ */
+Renderer.prettify = function(str) {
+  if (typeof str !== 'string') {
     return str;
   }
-}
+  str = str.replace(/<\?php[^>]*?\/\*\s*(.*?)\s*\*\/.*?\?>/g, '$1');
+  str = str.replace(/<\?php/g, '&lt;?php');
+  str = str.replace(/\?>/g, '?&gt;');
+  return str;
+};
 
 // export the Renderer on test environment
 if (typeof module !== 'undefined' && module.exports) {
