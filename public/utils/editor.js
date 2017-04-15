@@ -51,6 +51,8 @@ function Editor(content) {
    * @private
    */
   function load() {
+    // reset id
+    newInstanceId = 1;
     prepareContent(content.content());
   }
 
@@ -345,10 +347,10 @@ Editor.getContainerPlaceholder = function(name, parentId, children) {
  * @param {string} name - The instance name.
  * @return {string} - The HTML.
  */
-Editor.injectInstanceData = function(str, id, name) {
+Editor.injectInstanceData = function(str, id, name, visible) {
   str = Editor.wrapText(str);
   return str.replace(/(?:<!DOCTYPE [^]*?>)?\s*(<.*?)>/i, 
-    `$1 data-id="${id}" data-name="${name}">`);
+    `$1 data-id="${id}" data-name="${name}" data-visible="${visible}">`);
 }
 
 /**

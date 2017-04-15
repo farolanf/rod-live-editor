@@ -21,19 +21,20 @@
                     "padding": "30px 40px 0",
                     "content": [{
                         "name": "block-text",
-                        "text": "Hi Rod, <br><br> How is it going? Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make<br><br>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make"
+                        "text": "Hi Rod, thanks for joining us, we have prepared your mac on your desk. <br><br> How is it going? Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make<br><br>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make"
                     },
                     {
                         "name": "block-text",
-                        "text": " The Hidden Patterns of Music "
+                        "text": " your friends "
                     },
                     {
                         "name": "block-text",
-                        "text": " is ready!"
+                        "text": " are here!"
                     }]
                 },
                 {
-                    "name": "block-image"
+                    "name": "block-image",
+                    "visible": false
                 },
                 {
                     "name": "block-image"
@@ -59,7 +60,8 @@
                         },
                         {
                             "name": "block-text",
-                            "text": "<b>You missed learning:</b>"
+                            "text": "<b>You missed learning:</b>",
+                            "visible": "false"
                         },
 
 

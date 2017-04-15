@@ -17,6 +17,10 @@ body * {
   box-shadow: 0 0 22px -2px #555;
 }
 
+.invisible-instance {
+  opacity: 0.2;
+}
+
 .dg-dragging * {
   pointer-events: auto;
 }

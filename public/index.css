@@ -25,6 +25,7 @@ html, body, #app, #editor, .editor-container, .preview {
 }
 .navbar a {
   cursor: pointer;
+  user-select: none;
 }
 
 .gutter {
@@ -216,4 +217,8 @@ html, body, #app, #editor, .editor-container, .preview {
 #text-editor-modal__text-editor {
   position: relative;
   height: 300px;
+}
+
+.inactive {
+  color: #ccc !important;
 }

@@ -34,7 +34,7 @@ function Content() {
 		 * Get the content which has data and global properties.
 		 */
 		all() {return content},
-		
+
 		setContent,
 		loadContent,
 		addGlobalProperty,
@@ -58,9 +58,12 @@ function Content() {
 	 * Load content from the backend.
 	 * 
 	 * @param {string} id - The id of the content to be loaded.
+	 * @param {string} precompileParameters - Precompile parameters or false.
 	 */
-	function loadContent(id) {
-		$.getJSON(uri.path()+`api/content/${id}`, function(data) {
+	function loadContent(id, precompileParameters) {
+		const data = {};
+		precompileParameters && (data.precompileParameters = precompileParameters);
+		$.getJSON(uri.path()+`api/content/${id}`, data, function(data) {
 			// update the content with new data
 			eval(`content = ${data}`);
 			// tell subscribers about this change

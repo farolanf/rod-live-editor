@@ -52,12 +52,26 @@ Flight::route('/api/module/group/@name', function($name) {
  * @return json The content as json.
 */
 Flight::route('/api/content/@id', function($id) {
+  $precompileParameters = Flight::request()->query->precompileParameters;
+
   // TODO: load content specified by id from database
   
   // {SAMPLE-- load sample content. Replace this sample with real code
   $file = join('/', [__DIR__, 'db', 'content.js']);
   $content = file_get_contents($file);
   // SAMPLE}
+
+  // PRECOMPILE TEST
+  if (!$precompileParameters) {
+    // test without php comment
+    $content = str_replace('Hi Rod', '<?php get_user_name() ?>', $content);
+    // test with php comments
+    $content = str_replace('thanks for joining us', 
+      '<?php get_opening() /* [Opening] */ ?>', $content);
+    $content = str_replace('your mac', '<?php get_gift_name() /* [Gift] */?>', $content);
+    $content = str_replace('on your desk', '<?php get_gift_place() /* [Gift Place] */?>', $content);
+  }
+  // PRECOMPILE TEST
 
   Flight::json($content);
 });
@@ -78,6 +92,12 @@ Flight::route('POST /api/save', function() {
   $id = $req->data->id;
   $content = $req->data->content;
   $moduleGroup = $req->data->moduleGroup;
+  $precompileParameters = $req->data->precompileParameters;
+
+  // DEBUG
+  // echo join("\n", [$id, json_encode($content), $moduleGroup, $precompileParameters]);
+  // DEBUG
+
   // TODO: save to db
   // save($id, $content, $moduleGroup);
 });
