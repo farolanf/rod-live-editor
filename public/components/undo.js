@@ -1,4 +1,9 @@
 
+/**
+ * Handles undo and redo.
+ * 
+ * @param {object} content - The content store.
+ */
 function Undo(content) {
 
   const max = 10;
@@ -14,6 +19,9 @@ function Undo(content) {
     canRedo,
   });
 
+  /**
+   * Save current state.
+   */
   function push() {
     if (pos === latest) {
       pos++;
@@ -30,6 +38,9 @@ function Undo(content) {
     events.emit('undo-changed');
   }
 
+  /**
+   * Step backward in history.
+   */
   function undo() {
     if (canUndo()) {
       if (pos > latest) {
@@ -42,6 +53,9 @@ function Undo(content) {
     }
   }
 
+  /**
+   * Step forward in history.
+   */
   function redo() {
     if (canRedo()) {
       pos++;
@@ -50,10 +64,16 @@ function Undo(content) {
     }
   }
 
+  /**
+   * If currently undoable.
+   */
   function canUndo() {
     return pos > 0;
   }
 
+  /**
+   * If currently redoable.
+   */
   function canRedo() {
     return pos < latest;
   }
