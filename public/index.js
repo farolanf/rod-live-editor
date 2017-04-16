@@ -46,6 +46,7 @@ function App() {
     showInstanceControls,
     hideInstanceControls,
     precompileOff,
+    togglePrecompile,
     
     // expose the save function to be called by save confirmation modal
     _save,
@@ -285,8 +286,8 @@ function App() {
     $('.save-btn').on('click', save);
     $('.refresh-btn').on('click', refresh);
 
-    $('.undo-btn').on('click', undo.undo); 
-    $('.redo-btn').on('click', undo.redo);
+    $('.undo-btn').on('click', precompileOff.bind(this, undo.undo)); 
+    $('.redo-btn').on('click', precompileOff.bind(this, undo.redo));
     events.addListener('undo-changed', updateUndoButtons);
     updateUndoButtons();
     
@@ -321,6 +322,17 @@ function App() {
    * Handles precompile-btn click.
    */
   function onPrecompileToggle() {
+    if (!usePrecompileParameters) {
+      uiutils.showConfirmModal('Activate Precompile', 'Changes will be discarded upon switching precompile, proceed?', 'Activate Precompile', 'app.togglePrecompile()', 'danger');
+      return;
+    }
+    togglePrecompile();
+  }
+
+  /**
+   * Toggle precompile.
+   */
+  function togglePrecompile() {
     setPrecompile(!usePrecompileParameters);
     loadContent();
   }
