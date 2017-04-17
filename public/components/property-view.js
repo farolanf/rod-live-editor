@@ -57,8 +57,8 @@ function PropertyView(editor, content) {
    * @param {string} id - The id of instance to be edited.
    * @public
    */
-  function setInstance(id) {
-    if (instanceId !== id) {
+  function setInstance(id, force) {
+    if (force || instanceId !== id) {
       _setInstance(id);
     }
   }
@@ -263,13 +263,27 @@ function PropertyView(editor, content) {
    * @private
    */
   function setInstanceProperty(prop, value) {
-    app.precompileOff(function() {
+    app.precompileOff(function(reloaded) {
       noLoad = true;
       undo.push();
       const instance = new Instance(instanceId);
       instance.setProperty(prop, value);
       events.emit('instance-changed', instance);
+      reloaded && updatePropertyUi(prop, value);
       noLoad = false;
     });
+  }
+
+  /**
+   * Update the property ui control to new value.
+   * 
+   * This separation is needed to handle newly rendered property view elements.
+   * 
+   * @param {string} prop - Property name.
+   * @param {string} value - Property value.
+   */
+  function updatePropertyUi(prop, value) {
+    value = value.replace(/^#/, '');
+    $(`.property-view input[data-name="${prop}"]`).val(value);
   }
 }

@@ -6,6 +6,13 @@ window.uri = URI(window.location.href);
 // emitter for application wide events
 window.events = new EventEmitter();
 
+// DEBUG - log events
+// const emit = events.emit;
+// events.emit = function() {
+//   emit.apply(events, arguments);
+//   console.log(arguments[0]);
+// };
+
 // generic ui helpers used by several components
 window.uiutils = new UIUtils();
 
@@ -345,19 +352,13 @@ function App() {
   function precompileOff(fn) {
     if (usePrecompileParameters) {
       setPrecompile(false);
-      // reselect instance element
-      let id;
-      if (preview.selectedElement()) {
-        id = $(preview.selectedElement()).data('id');
-      }
       events.once('preview-loaded', function() {
-        id && preview.selectInstanceById(id);
-        fn && fn();
+        fn && fn(true);
       });
       loadContent();
     }
     else {
-      fn && fn();
+      fn && fn(false);
     }
   }
 
