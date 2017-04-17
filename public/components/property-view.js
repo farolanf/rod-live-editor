@@ -9,8 +9,11 @@
 function PropertyView(editor, content) {
 
   let instanceId;
+  let editingGlobal;
+  let noLoad;
 
   events.addListener('instance-deleted', instanceDeleted);
+  // events.addListener('preview-loaded', load);
 
   const acedit = ace.edit('text-editor-modal__text-editor');
   acedit.setFontSize(14);
@@ -24,6 +27,18 @@ function PropertyView(editor, content) {
     deleteGlobalProperty,
   };
 
+  function load() {
+    if (noLoad) {
+      return;
+    }
+    if (editingGlobal) {
+      editGlobals();
+    }
+    else if (instanceId !== null) {
+      _setInstance(instanceId);
+    }
+  }
+
   /**
    * Clear the view when the current edited instance is deleted.
    * 
@@ -32,8 +47,7 @@ function PropertyView(editor, content) {
    */
   function instanceDeleted(id) {
     if (instanceId === id) {
-      instanceId = null;
-      $('.property-view .list-group').html('');
+      _setInstance(null);
     }
   }
 
@@ -45,7 +59,22 @@ function PropertyView(editor, content) {
    */
   function setInstance(id) {
     if (instanceId !== id) {
-      instanceId = id;
+      _setInstance(id);
+    }
+  }
+
+  /**
+   * Edit an instance.
+   * 
+   * @param {string} id - Id of instance to be edited.
+   */
+  function _setInstance(id) {
+    editingGlobal = false;
+    instanceId = id;
+    if (isNaN(instanceId)) {
+      $('.property-view .list-group').html('');
+    }
+    else {
       render();
     }
   }
@@ -56,6 +85,7 @@ function PropertyView(editor, content) {
    * @public
    */
   function editGlobals() {
+    editingGlobal = true;
     // reset instanceId so the same instance can be selected later
     instanceId = null;
     // render add global property button
@@ -217,9 +247,11 @@ function PropertyView(editor, content) {
    */
   function setGlobalProperty(prop, value) {
     app.precompileOff(function() {
+      noLoad = true;
       undo.push();
       content.setGlobalProperty(prop, value);
       events.emit('global-property-changed');
+      noLoad = false;
     });
   }
 
@@ -232,10 +264,12 @@ function PropertyView(editor, content) {
    */
   function setInstanceProperty(prop, value) {
     app.precompileOff(function() {
+      noLoad = true;
       undo.push();
       const instance = new Instance(instanceId);
       instance.setProperty(prop, value);
       events.emit('instance-changed', instance);
+      noLoad = false;
     });
   }
 }
