@@ -64,11 +64,11 @@ Flight::route('/api/content/@id', function($id) {
   // PRECOMPILE TEST
   if (!$precompileParameters) {
     // test without php comment
-    $content = str_replace('Hi Rod', '<?php get_user_name() ?>', $content);
+    $content = str_replace('Rod', '<?php get_user_name() ?>', $content);
     // test with php comments
     $content = str_replace('thanks for joining us', 
       '<?php get_opening() /* [Opening] */ ?>', $content);
-    $content = str_replace('your mac', '<?php get_gift_name() /* [Gift] */?>', $content);
+    $content = str_replace('%gift%', '<?php get_gift_variable() /* [Gift] */?>', $content);
     $content = str_replace('on your desk', '<?php get_gift_place() /* [Gift Place] */?>', $content);
   }
   // PRECOMPILE TEST

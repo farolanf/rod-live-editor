@@ -10,6 +10,7 @@
     <link href="libs/jquery-ui-bundle/jquery-ui.min.css" rel="stylesheet">
     <link href="libs/jquery-toast-plugin/dist/jquery.toast.min.css" rel="stylesheet">
     <link href="libs/color-picker/jquery.colorpicker.css" rel="stylesheet">
+    <link href="libs/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
     <link href="index.css" rel="stylesheet">
   <body>
     
@@ -30,9 +31,11 @@
               <ul class="nav navbar-nav">
                 <li><a class="save-btn"><i class="fa fa-save"></i></a></li>
                 <li><a href="preview" class="preview-btn">Preview</a></li>
-                <li><a href="json" class="content-json-btn">JSON</a></li>
+                <li><a class="content-json-btn">JSON</a></li>
                 <li><a class="refresh-btn"><i class="fa fa-refresh"></i></a></li>
-                <li><a class="precompile-btn hidden">Precompile</a></li>
+                <li><a class="precompile-btn"><input type="checkbox" data-toggle="toggle" data-on="Precompiled" data-off="Raw" data-size="mini"></a></li>
+                <li><a class="undo-btn"><i class="fa fa-undo"></i></a></li>
+                <li><a class="redo-btn"><i class="fa fa-undo fa-flip-horizontal"></i></a></li>
               </ul>
             </div>
           </div>
@@ -65,7 +68,22 @@
           </div>
         </div>
       </div>
-      <pre id="content-json" style="display: none"></pre>
+      <div class="panel panel-default json-view" style="display: none">
+        <div class="panel-heading">
+          <h3 class="panel-title">Content JSON</h3>
+          <div class="btn-group">
+            <button type="button" class="btn btn-default btn-sm json-save-btn">
+              <i class="fa fa-save"></i>
+            </button>
+            <button type="button" class="btn btn-default btn-sm modal-close-btn">
+              <i class="fa fa-close"></i>
+            </button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="content-json"></div>
+        </div>
+      </div>
       <iframe style="display: none"></iframe>
     </div>
 
@@ -155,6 +173,7 @@
     <script src="libs/js/EventEmitter.min.js"></script>
     <script src="libs/js/URI.min.js"></script>
     <script src="libs/ace/ace.js"></script>
+    <script src="libs/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
 
     <script src="utils/dom.js"></script>
     <script src="utils/dnd.js"></script>
@@ -172,6 +191,8 @@
     <script src="components/property-view.js"></script>
     <script src="components/instance-map.js"></script>
     <script src="components/module-view.js"></script>
+    <script src="components/json-view.js"></script>
+    <script src="components/undo.js"></script>
     <script src="preview.js"></script>
     <script src="index.js"></script>
   </body>

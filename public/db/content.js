@@ -6,6 +6,7 @@
 		"backgroundColorFooter": {type: 'color', value: "blue"},
 		"backgroundColor": {type: 'color', value: "#fff"},
 		"hiddenPreheader": {type: 'text', value: "test"},
+        "gift": {type: 'text', value: 'mac'}
     },
     data: [
         {
@@ -21,7 +22,7 @@
                     "padding": "30px 40px 0",
                     "content": [{
                         "name": "block-text",
-                        "text": "Hi Rod, thanks for joining us, we have prepared your mac on your desk. <br><br> How is it going? Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make<br><br>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make"
+                        "text": "Hi Rod, thanks for joining us, we have prepared your %gift% on your desk. <br><br> How is it going? Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make<br><br>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make"
                     },
                     {
                         "name": "block-text",

@@ -29,12 +29,9 @@ function Content() {
 		 * @return {array} - The array of root instances.
 		 */
 		content() {return content.data},
-		
-		/**
-		 * Get the content which has data and global properties.
-		 */
-		all() {return content},
 
+		getJSON,
+		fromJSON,		
 		setContent,
 		loadContent,
 		addGlobalProperty,
@@ -42,6 +39,29 @@ function Content() {
 		setGlobalProperty,
 		isEmpty,
 	});
+
+	function getJSON() {
+		return JSON.stringify(content, filterContent, 2);		
+	}
+
+	function fromJSON(json) {
+		// update the content with new data
+		eval(`content = ${json}`);
+		// tell subscribers about this change
+		emit();
+	}
+
+  /**
+   *  Filter parent property to avoid circular reference.
+   * 
+   *  Used by JSON.stringify()
+   */
+  function filterContent(key, value) {
+    if (key === 'parent') {
+      return;
+    }
+    return value;
+  }
 
 	/**
 	 * Set the content data.
@@ -64,10 +84,7 @@ function Content() {
 		const data = {};
 		precompileParameters && (data.precompileParameters = precompileParameters);
 		$.getJSON(uri.path()+`api/content/${id}`, data, function(data) {
-			// update the content with new data
-			eval(`content = ${data}`);
-			// tell subscribers about this change
-			emit();
+			fromJSON(data);
 		});
 	}
 

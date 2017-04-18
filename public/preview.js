@@ -26,9 +26,16 @@ function Preview(propertyView) {
 
   function init(win) {
     iframeWindow = win;
-    selectedElement = null;
     initElement(iframeWindow.document.body);
     initEvents(iframeWindow);
+    reselectElement();
+  }
+
+  function reselectElement() {
+    if (selectedElement) {
+      const id = $(selectedElement).data('id');
+      selectInstanceById(id, true);
+    }
   }
 
   function initEvents(iframeWindow) {
@@ -119,9 +126,9 @@ function Preview(propertyView) {
     });
   }
 
-  function selectInstanceById(id) {
+  function selectInstanceById(id, noEvent) {
     const el = $$(`[data-id="${id}"]`)[0];
-    selectInstance(el);
+    el && selectInstance(el, noEvent);
   }
 
   /**
@@ -132,12 +139,12 @@ function Preview(propertyView) {
    * 
    * @param {element} el - The element.
    */
-  function selectInstance(el) {
+  function selectInstance(el, noEvent) {
     selectedElement = el;
     $(el).addClass('active');
     app.showInstanceControls(el);
     const id = $(el).data('id');
-    propertyView.setInstance(id);
+    !noEvent && events.emit('preview-element-selected', id);
   }
 
   /**

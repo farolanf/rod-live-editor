@@ -27,6 +27,19 @@ html, body, #app, #editor, .editor-container, .preview {
   cursor: pointer;
   user-select: none;
 }
+.navbar .toggle.btn {
+  top: -1px;
+}
+.precompile-btn * {
+  pointer-events: none !important;
+}
+.precompile-btn > .toggle.btn {
+  width: 86px;
+}
+.navbar .undo-btn.disabled, .navbar .redo-btn.disabled {
+  color: #ddd;
+  pointer-events: none;
+}
 
 .gutter {
   background-color: #ddd;
@@ -70,6 +83,7 @@ html, body, #app, #editor, .editor-container, .preview {
   height: 100%;
 }
 .preview {
+  display: block;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -102,6 +116,34 @@ html, body, #app, #editor, .editor-container, .preview {
 }
 .empty-container.dg-dragover::before {
   color: #ccc;
+}
+
+.json-view {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+  display: flex;
+  flex-flow: column nowrap;
+}
+.json-view .btn-group {
+  position: absolute;
+  top: 3px;
+  right: 4px;
+}
+.json-view .panel-body {
+  flex-grow: 1;
+  position: relative;
+  padding: 0;
+}
+#content-json {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .instance-controls {

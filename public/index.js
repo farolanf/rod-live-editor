@@ -6,11 +6,20 @@ window.uri = URI(window.location.href);
 // emitter for application wide events
 window.events = new EventEmitter();
 
+// DEBUG - log events
+// const emit = events.emit;
+// events.emit = function() {
+//   emit.apply(events, arguments);
+//   console.log(arguments[0]);
+// };
+
 // generic ui helpers used by several components
 window.uiutils = new UIUtils();
 
 // store stores data in one place to ease passing around the whole data
 window.store = new Store();
+
+window.undo = new Undo(store.content);
 
 // editor only need a content store so no need to pass the whole store
 window.editor = new Editor(store.content);
@@ -33,6 +42,8 @@ function App() {
 
   const instanceMap = new InstanceMap(store.content, propertyView, preview);
  
+  const jsonView = new JsonView(store.content);
+
   let dragond, 
     usePrecompileParameters = false;
 
@@ -42,6 +53,7 @@ function App() {
     showInstanceControls,
     hideInstanceControls,
     precompileOff,
+    togglePrecompile,
     
     // expose the save function to be called by save confirmation modal
     _save,
@@ -117,15 +129,6 @@ function App() {
         $('#app > iframe').attr('srcdoc', html).show();
       }),
       
-      // handle /json
-      new senna.Route(uri.path()+'json', function() {
-        hideInstanceControls();
-        $('#app > *').hide();
-        let json = JSON.stringify(store.content.all(), filterContent, 2);
-        json = Renderer.prettify(json);
-        $('#app > #content-json').html(json).show();
-      }),
-      
       // catch all routes for current origin
       new senna.Route(/.*/, function() {
         $('#app > *').hide();
@@ -137,18 +140,6 @@ function App() {
     // so the handler worked when the user navigated back
     const url = window.location.pathname + window.location.search;
     app.navigate(url);
-  }
-
-  /**
-   *  Filter parent property to avoid circular reference.
-   * 
-   *  Used by JSON.stringify()
-   */
-  function filterContent(key, value) {
-    if (key === 'parent') {
-      return;
-    }
-    return value;
   }
 
   /**
@@ -228,6 +219,7 @@ function App() {
    */
   function createFirstInstance(el) {
     precompileOff(function() {
+      undo.push();
       const name = $(el).data('name');
       editor.createInstance(name);
       renderPreview();
@@ -242,6 +234,7 @@ function App() {
    * @param {element} sibling - The next sibling of the element on the DOM.
    */
   function createInstance(el, con, sibling) {
+    undo.push();
     const name = $(el).data('name');
     const container = $(con).data('name');
     const parentId = $(con).data('parent-id');
@@ -280,6 +273,7 @@ function App() {
    * @param {element} sibling - The sibling of the element on the DOM.
    */
   function moveInstance(el, con, src, sibling) {
+    undo.push();
     // move instance on the content
     con = new ContainerElement(con);
     src = new ContainerElement(src);
@@ -299,28 +293,55 @@ function App() {
     $('.save-btn').on('click', save);
     $('.refresh-btn').on('click', refresh);
 
-    if (query.precompileParameters) {
-      usePrecompileParameters = true;
-      $('.precompile-btn').removeClass('hidden');
-      $('.precompile-btn').toggleClass('inactive', !usePrecompileParameters)
-        .on('click', onPrecompileClick);
-    }
+    $('.undo-btn').on('click', precompileOff.bind(this, undo.undo)); 
+    $('.redo-btn').on('click', precompileOff.bind(this, undo.redo));
+    events.addListener('undo-changed', updateUndoButtons);
+    updateUndoButtons();
+    
+    $('.content-json-btn').on('click', function() {
+      precompileOff(jsonView.show);
+    });
+
+    setPrecompile(!!query.precompileParameters);
+
+    // avoid using input change event to prevent refiring it 
+    // when updating button state
+    $('.precompile-btn').toggleClass('hidden', !usePrecompileParameters)
+      .on('click', onPrecompileToggle);
+  }
+
+  function updateUndoButtons() {
+    $('.undo-btn').toggleClass('disabled', !undo.canUndo());
+    $('.redo-btn').toggleClass('disabled', !undo.canRedo());
   }
 
   /**
-   * Handles precompile button click.
+   * Set use precompile and update precompile button state.
+   * 
+   * @param {boolean} set - Use precompile if true.
    */
-  function onPrecompileClick() {
-    togglePrecompile.call(this);
-    loadContent();
+  function setPrecompile(set) {
+    usePrecompileParameters = set;
+    $('.precompile-btn input').prop('checked', usePrecompileParameters).change();
   }
 
   /**
-   * Toggles precompile and update button state.
+   * Handles precompile-btn click.
+   */
+  function onPrecompileToggle() {
+    if (!usePrecompileParameters) {
+      uiutils.showConfirmModal('Activate Precompile', 'Changes will be discarded upon switching precompile, proceed?', 'Activate Precompile', 'app.togglePrecompile()', 'danger');
+      return;
+    }
+    togglePrecompile();
+  }
+
+  /**
+   * Toggle precompile.
    */
   function togglePrecompile() {
-    usePrecompileParameters = !usePrecompileParameters;
-    $(this).toggleClass('inactive', !usePrecompileParameters);
+    setPrecompile(!usePrecompileParameters);
+    loadContent();
   }
 
   /**
@@ -330,21 +351,14 @@ function App() {
    */
   function precompileOff(fn) {
     if (usePrecompileParameters) {
-      usePrecompileParameters = false;
-      $('.precompile-btn').toggleClass('inactive', true);
-      // reselect instance element
-      let id;
-      if (preview.selectedElement()) {
-        id = $(preview.selectedElement()).data('id');
-      }
+      setPrecompile(false);
       events.once('preview-loaded', function() {
-        id && preview.selectInstanceById(id);
-        fn && fn();
+        fn && fn(true);
       });
       loadContent();
     }
     else {
-      fn && fn();
+      fn && fn(false);
     }
   }
 
@@ -376,11 +390,13 @@ function App() {
     });
     $('.instance-controls .copy-btn').on('click', function(e) {
       precompileOff(function() {
+        undo.push();
         preview.cloneInstance();
       });
     });
     $('.instance-controls .delete-btn').on('click', function(e) {
       precompileOff(function() {
+        undo.push();
         preview.deleteInstance();
       });
     });
@@ -512,7 +528,7 @@ function App() {
       }
       // remove parent properties
       function filteredContent() {
-        return JSON.parse(JSON.stringify(store.content.all(), filterContent));
+        return JSON.parse(store.content.getJSON());
       }
     });
   }
