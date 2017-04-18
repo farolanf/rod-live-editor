@@ -35,7 +35,6 @@
                             b.padStart(2, '0');
                     }
                     const color = brighten(value, 0.65);
-                    console.log('color', color);
                     return color;
                 }
             }
