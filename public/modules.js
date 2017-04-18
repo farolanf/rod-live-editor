@@ -58,6 +58,7 @@ function Modules() {
   function loadModules(data) {
     // clear the properties
     modules = {};
+    addSystemModules();
     data.forEach(function(modstr) {
       let mod;
       eval(`mod = ${modstr}`);
@@ -68,6 +69,29 @@ function Modules() {
         mod.properties.visible = {type: 'property', default: 'true'};
       }
     });
+  }
+
+  /**
+   * Add modules that always included on every module group.
+   */
+  function addSystemModules() {
+    addBlockInclude();
+  }
+
+  /**
+   * Add block-include module.
+   */
+  function addBlockInclude() {
+    modules['block-include'] = {
+      "name": "block-include",
+      "output": `<div style="background: black; color: white; text-align: center;   padding: 50px;">Remote content with id %remoteId%</div>`,
+      "properties": {
+        "remoteId": {
+          "default": "",
+          "type": "property"
+        }
+      }
+    };    
   }
 
   /**
