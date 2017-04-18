@@ -8,7 +8,7 @@ function JsonView(content) {
 
   const acedit = ace.edit('content-json');
   acedit.setFontSize(14);
-  acedit.getSession().setMode('ace/mode/json');
+  acedit.getSession().setMode('ace/mode/javascript');
   acedit.getSession().setUseWrapMode(true);
 
   acedit.on('change', setDirty);

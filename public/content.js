@@ -41,7 +41,7 @@ function Content() {
 	});
 
 	function getJSON() {
-		return JSON.stringify(content, filterContent, 2);		
+		return toJs(JSON.stringify(content, filterContent, 2));		
 	}
 
 	function fromJSON(json) {
@@ -49,6 +49,23 @@ function Content() {
 		eval(`content = ${json}`);
 		// tell subscribers about this change
 		emit();
+	}
+
+	function toJs(json) {
+		return json.replace(/"([^"]+)":/g, '$1:')
+			.replace(/"<(function [^>]+)>"(,?\n)/g, functionStr)
+			.replace(/: "([^"]*)"(,?\n)/g, valueStr);
+		
+		function functionStr(m0, m1, m2) {
+			m1 = m1.replace(/\\n/g, "\n")
+				.replace(/\\"/g, '"')
+				.replace(/\\'/g, "'");
+			return m1 + m2;
+		}
+		function valueStr(m0, m1, m2) {
+			m1 = m1.replace(/'/g, "\\'");
+			return `: '${m1}'${m2}`;
+		}
 	}
 
   /**
@@ -60,6 +77,9 @@ function Content() {
     if (key === 'parent') {
       return;
     }
+		if (typeof value === 'function') {
+			return `<${value.toString()}>`;
+		}
     return value;
   }
 
