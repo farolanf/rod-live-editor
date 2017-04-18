@@ -13,7 +13,8 @@ function PropertyView(editor, content) {
   let noLoad;
 
   events.addListener('instance-deleted', instanceDeleted);
-  // events.addListener('preview-loaded', load);
+  events.addListener('preview-loaded', load);
+  events.addListener('preview-element-selected', setInstance);
 
   const acedit = ace.edit('text-editor-modal__text-editor');
   acedit.setFontSize(14);
@@ -57,8 +58,8 @@ function PropertyView(editor, content) {
    * @param {string} id - The id of instance to be edited.
    * @public
    */
-  function setInstance(id, force) {
-    if (force || instanceId !== id) {
+  function setInstance(id) {
+    if (instanceId !== id) {
       _setInstance(id);
     }
   }
