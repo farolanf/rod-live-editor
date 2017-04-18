@@ -42,6 +42,28 @@ Flight::route('/api/module/group/@name', function($name) {
   Flight::json($modules);
 });
 
+
+/**
+ * Precompile a given content.
+ *
+ * @param string content The content.
+ * @param string precompileParameters The precompile parameters.
+ */
+function precompile($content, $precompileParameters) {
+  // PRECOMPILE TEST
+  if (!$precompileParameters) {
+    // test without php comment
+    $content = str_replace('Rod', '<?php get_user_name() ?>', $content);
+    // test with php comments
+    $content = str_replace('thanks for joining us', 
+      '<?php get_opening() /* [Opening] */ ?>', $content);
+    $content = str_replace('%gift%', '<?php get_gift_variable() /* [Gift] */?>', $content);
+    $content = str_replace('on your desk', '<?php get_gift_place() /* [Gift Place] */?>', $content);
+  }
+  // PRECOMPILE TEST
+  return $content;
+}
+
 /**
  * Get content specified by id.
  *
@@ -61,19 +83,22 @@ Flight::route('/api/content/@id', function($id) {
   $content = file_get_contents($file);
   // SAMPLE}
 
-  // PRECOMPILE TEST
-  if (!$precompileParameters) {
-    // test without php comment
-    $content = str_replace('Rod', '<?php get_user_name() ?>', $content);
-    // test with php comments
-    $content = str_replace('thanks for joining us', 
-      '<?php get_opening() /* [Opening] */ ?>', $content);
-    $content = str_replace('%gift%', '<?php get_gift_variable() /* [Gift] */?>', $content);
-    $content = str_replace('on your desk', '<?php get_gift_place() /* [Gift Place] */?>', $content);
-  }
-  // PRECOMPILE TEST
+  $content = precompile($content, $precompileParameters);
 
   Flight::json($content);
+});
+
+/**
+ * Precompile a given content.
+ *
+ * @param string content The content.
+ * @param string precompileParameters The precompile parameters.
+ */
+Flight::route('POST /api/precompile', function() {
+  $content = Flight::request()->data->content;
+  $precompileParameters = Flight::request()->data->precompileParameters;
+  $content = precompile(json_encode($content), $precompileParameters);
+  Flight::json(json_decode($content));
 });
 
 /**
