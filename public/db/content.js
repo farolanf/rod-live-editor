@@ -9,7 +9,7 @@
         "gift": { type: 'text', value: 'mac' },
         "color1": {
             "type": "color",
-            "value": "green"
+            "value": "#00ff00"
         },
         "_color2": {
             "alias": "color1",
@@ -28,12 +28,15 @@
                         var g = parseInt(color.substr(3, 2), 16);
                         var b = parseInt(color.substr(5, 2), 16);
 
-                        return '#' +
-                            Math.min(255, Math.floor(r * percent)).toString(16) +
-                            Math.min(255, Math.floor(g * percent)).toString(16) +
-                            Math.min(255, Math.floor(b * percent)).toString(16);
+                        r = Math.min(255, Math.floor(r * percent)).toString(16);
+                        g = Math.min(255, Math.floor(g * percent)).toString(16);
+                        b = Math.min(255, Math.floor(b * percent)).toString(16);
+                        return '#' + r.padStart(2, '0') + g.padStart(2, '0') +
+                            b.padStart(2, '0');
                     }
-                    return brighten(value, 0.5);
+                    const color = brighten(value, 0.65);
+                    console.log('color', color);
+                    return color;
                 }
             }
         }
