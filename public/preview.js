@@ -126,9 +126,9 @@ function Preview(propertyView) {
     });
   }
 
-  function selectInstanceById(id, force) {
+  function selectInstanceById(id, noEvent) {
     const el = $$(`[data-id="${id}"]`)[0];
-    el && selectInstance(el, force);
+    el && selectInstance(el, noEvent);
   }
 
   /**
@@ -138,14 +138,13 @@ function Preview(propertyView) {
    * and init the property view to show its properties.
    * 
    * @param {element} el - The element.
-   * @param {boolean} force - Force rendering the property view.
    */
-  function selectInstance(el, force) {
+  function selectInstance(el, noEvent) {
     selectedElement = el;
     $(el).addClass('active');
     app.showInstanceControls(el);
     const id = $(el).data('id');
-    propertyView.setInstance(id, force);
+    !noEvent && events.emit('preview-element-selected', id);
   }
 
   /**
