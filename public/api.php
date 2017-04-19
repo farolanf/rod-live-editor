@@ -79,7 +79,7 @@ Flight::route('/api/content/@id', function($id) {
   // TODO: load content specified by id from database
   
   // {SAMPLE-- load sample content. Replace this sample with real code
-  $file = join('/', [__DIR__, 'db', 'content.js']);
+  $file = join('/', [__DIR__, 'db/content', $id.'.js']);
   $content = file_get_contents($file);
   // SAMPLE}
 
