@@ -248,6 +248,7 @@ function Dragond(initialContainers, options) {
    * @private
    */
   function canPlace(el, con) {
+    return true;
     const tags = {
       'TABLE': ['CAPTION', 'COLGROUP', 'THEAD', 'TBODY', 'TFOOT'],
       'TBODY': ['TR'],
