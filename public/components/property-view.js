@@ -72,7 +72,7 @@ function PropertyView(editor, content) {
   function _setInstance(id) {
     editingGlobal = false;
     instanceId = id;
-    if (isNaN(instanceId)) {
+    if (isNaN(String(instanceId))) {
       $('.property-view .list-group').html('');
     }
     else {
