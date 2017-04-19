@@ -52,7 +52,7 @@ function Content() {
 	}
 
 	function toJs(json) {
-		return json.replace(/"([^"]+)":/g, '$1:')
+		return json.replace(/"([\w]+)":/g, '$1:')
 			.replace(/"<(function [^>]+)>"(,?\n)/g, functionStr)
 			.replace(/: "([^"]*)"(,?\n)/g, valueStr);
 		
