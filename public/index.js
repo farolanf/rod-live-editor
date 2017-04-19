@@ -185,8 +185,7 @@ function App() {
       end(e, el, con, src, parent, sibling) {
         // create the first instance when dropping to .empty-container
         if ($(con).is('.empty-container')) {
-          createFirstInstance(el);
-          // $(el).is('[data-root]') && createFirstInstance(el);
+          $(el).is('[data-root]') && createFirstInstance(el);
         }
         else if (+$(el).attr('data-id') === -1 && $(parent).is('.instance-container')) {
           // a new element from module list has been dropped on the preview,
