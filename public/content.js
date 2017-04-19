@@ -30,6 +30,7 @@ function Content() {
 		 */
 		content() {return content.data},
 
+		getJs,
 		getJSON,
 		fromJSON,		
 		setContent,
@@ -40,8 +41,12 @@ function Content() {
 		isEmpty,
 	});
 
+	function getJs() {
+		return toJs(getJSON());
+	}
+
 	function getJSON() {
-		return toJs(JSON.stringify(content, filterContent, 2));		
+		return JSON.stringify(content, filterContent, 2);		
 	}
 
 	function fromJSON(json) {
@@ -53,7 +58,7 @@ function Content() {
 
 	function toJs(json) {
 		return json.replace(/"([\w]+)":/g, '$1:')
-			.replace(/"<(function [^>]+)>"(,?\n)/g, functionStr)
+			.replace(/"(function [^]+?})"(,?\n)/g, functionStr)
 			.replace(/: "([^"]*)"(,?\n)/g, valueStr);
 		
 		function functionStr(m0, m1, m2) {
@@ -78,7 +83,7 @@ function Content() {
       return;
     }
 		if (typeof value === 'function') {
-			return `<${value.toString()}>`;
+			return `${value.toString()}`;
 		}
     return value;
   }
