@@ -200,13 +200,19 @@ function Renderer(modules, globalProperties) {
     return clean ? output :
       Editor.injectInstanceData(output, instance.id, instance.name, visible);
 
+    /**
+     * Get global property value.
+     * 
+     * @param {string} name - The global property name.
+     * @param {int} depth - Current nested alias depth.
+     */
     function getGlobalValue(name, depth) {
       if (globalProperties.hasOwnProperty(name)) {
         const property = globalProperties[name];
         let value;
         // only use alias from the original property
         if (!depth && property.hasOwnProperty('alias')) {
-          value = getGlobalValue(property.alias, 1)
+          value = getGlobalValue(property.alias, depth + 1)
         }
         else {
           value = property.value;
