@@ -15,10 +15,24 @@ function JsonView(content) {
 
   $('.json-view .modal-close-btn').on('click', hide);
   $('.json-view .json-save-btn').on('click', save);
+  $('.json-view .json-js-btn').on('click', jsonJsToggle);
 
   return Object.assign(this, {
     show,
   });
+
+  /**
+   * Toggle between JSON and JS format.
+   */
+  function jsonJsToggle() {
+    const btn = $(this);
+    // active need to be inversed because it's reading the old state
+    const active = !btn.is('.active');
+    const mode = active ? 'javascript' : 'json';
+    btn.text(active ? 'JS' : 'JSON');
+    acedit.getSession().setMode(`ace/mode/${mode}`);
+    load(active);
+  }
 
   /**
    * Enable save button.
@@ -30,8 +44,8 @@ function JsonView(content) {
   /**
    * Load content JSON onto editor.
    */
-  function load() {
-    acedit.setValue(content.getJSON());
+  function load(js) {
+    acedit.setValue(js ? content.getJs() : content.getJSON());
     acedit.getSession().getSelection().clearSelection();
     acedit.getSession().setScrollTop(0);
     $('.json-view .json-save-btn').addClass('disabled');
@@ -50,7 +64,7 @@ function JsonView(content) {
    * Show the JSON view.
    */
   function show() {
-    load();
+    load($('.json-js-btn').is('.active'));
     $('.json-view').show();
   }
 
