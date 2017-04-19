@@ -185,7 +185,8 @@ function App() {
       end(e, el, con, src, parent, sibling) {
         // create the first instance when dropping to .empty-container
         if ($(con).is('.empty-container')) {
-          $(el).is('[data-root]') && createFirstInstance(el);
+          createFirstInstance(el);
+          // $(el).is('[data-root]') && createFirstInstance(el);
         }
         else if (+$(el).attr('data-id') === -1 && $(parent).is('.instance-container')) {
           // a new element from module list has been dropped on the preview,
@@ -450,11 +451,6 @@ function App() {
     }
     dragond.removeIframe('.preview');
     let html = store.createRenderer().render(store.content.content());
-    // inject css on the preview iframe
-    html = html.replace(/<\/head>/, `
-        <link href="preview.css" rel="stylesheet">
-      </head>
-    `);
     $('.preview').attr('srcdoc', html).off('load').on('load', function() {
       dragond.addIframe('.preview');
       preview.init(this.contentWindow);

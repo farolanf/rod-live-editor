@@ -29,6 +29,11 @@ function Preview(propertyView) {
     initElement(iframeWindow.document.body);
     initEvents(iframeWindow);
     reselectElement();
+    injectCss();
+  }
+
+  function injectCss() {
+    $$('head').append('<link href="preview.css" rel="stylesheet">');
   }
 
   function reselectElement() {
@@ -85,7 +90,7 @@ function Preview(propertyView) {
    * Make the children of a container as intances.
    */
   function initInstanceElements(startElement) {
-    const childrenSelector = '.instance-container > [data-id]:not(br)';
+    const childrenSelector = '[data-id]:not(br)';
     if ($(startElement).is('[data-id]')) {
       initInstanceElement(startElement);
     }
