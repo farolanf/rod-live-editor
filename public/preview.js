@@ -30,12 +30,24 @@ function Preview(propertyView) {
     initEvents(iframeWindow);
     reselectElement();
     injectCss();
+    initRootContainer();
   }
 
+  function initRootContainer() {
+    // TODO: make body a root container if the root instance is not\
+    // an html document
+  }
+
+  /**
+   * Inject preview css.
+   */
   function injectCss() {
     $$('head').append('<link href="preview.css" rel="stylesheet">');
   }
 
+  /**
+   * Reselect element after reload.
+   */
   function reselectElement() {
     if (selectedElement) {
       const id = $(selectedElement).data('id');
@@ -43,6 +55,11 @@ function Preview(propertyView) {
     }
   }
 
+  /**
+   * Init events on the preview iframe window.
+   * 
+   * @param {window} iframeWindow - The iframe window.
+   */
   function initEvents(iframeWindow) {
     $(iframeWindow).off('click scroll').on('click', function(e) {
       deselectInstance(selectedElement);
@@ -56,6 +73,11 @@ function Preview(propertyView) {
     });
   }
 
+  /**
+   * Init container and instance elements.
+   * 
+   * @param {element} startElement - The element to start searching.
+   */
   function initElement(startElement) {
     initContainers(startElement);
     initInstanceElements(startElement);
