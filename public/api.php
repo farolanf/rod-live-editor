@@ -42,6 +42,17 @@ Flight::route('/api/module/group/@name', function($name) {
   Flight::json($modules);
 });
 
+/**
+ * Replace block-include in content.
+ *
+ * @param string content The content code.
+ * @return string The new content with replacements.
+ */
+function replace_blocks($content) {
+  $content = escapeshellarg($content);
+  exec("node node-replace-blocks.js $content", $output);
+  return join("\n", $output);
+}
 
 /**
  * Precompile a given content.
@@ -51,7 +62,10 @@ Flight::route('/api/module/group/@name', function($name) {
  */
 function precompile($content, $precompileParameters) {
   // PRECOMPILE TEST
-  if (!$precompileParameters) {
+  if ($precompileParameters) {
+    $content = replace_blocks($content);
+  }
+  else {
     // test without php comment
     $content = str_replace('Rod', '<?php get_user_name() ?>', $content);
     // test with php comments
