@@ -172,7 +172,7 @@ function PropertyView(editor, content) {
       html += `
         <div class="list-group-item">
           <span class="name ${textCls}">${key} ${textBtn}</span>
-          <input class="form-control" value="${value}" ${dataGlobal} data-name="${key}" data-type="${prop.type}" style="background-color: ${prop.value}">
+          <input class="form-control" value="${value}" ${dataGlobal} data-name="${key}" data-type="${prop.type}" style="box-shadow: inset 0 0 0 4px ${prop.value}">
           ${delHtml}
         </div>`;
     });
@@ -187,7 +187,7 @@ function PropertyView(editor, content) {
         if (!isNaN(hex)) {
           value = `#${value}`;
         }
-        $(this).css('background-color', value + ' !important');
+        $(this).css('box-shadow', `box-shadow: inset 0 0 0 4px ${value} !important`);
       } 
       onChange(prop, value);
     });
