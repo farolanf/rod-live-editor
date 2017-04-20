@@ -50,6 +50,11 @@
             "hiddenPreheader": "test",
             "body": [
                 {
+                    name: 'block-include',
+                    contentId: 202,
+                    instanceId: 2 
+                },
+                {
                 "name": "1-column",
                 "textAlign": "left",
                 "padding": "30px 40px 0",
