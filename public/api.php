@@ -26,6 +26,20 @@ Flight::route('/api/module/group', function() {
   Flight::json(array_values($entries));
 });
 
+function _load_modules($dir) {
+  $entries = array_filter(scandir($dir), function($val) {
+    return $val !== '.' && $val !== '..';
+  });
+  $modules = file_contents(array_values($entries), $dir);
+  return $modules;
+}
+
+function load_modules($name) {
+  $modules = _load_modules(join('/', [__DIR__, 'modules', $name]));
+  $system_modules = _load_modules(join('/', [__DIR__, 'system-modules']));
+  return array_merge($system_modules, $modules);
+}
+
 /**
  * Get modules inside the group folder.
  *
@@ -34,12 +48,7 @@ Flight::route('/api/module/group', function() {
  * @return json The array of modules.
 */
 Flight::route('/api/module/group/@name', function($name) {
-  $entries = array_filter(scandir('modules/'.$name), function($val) {
-    return $val !== '.' && $val !== '..';
-  });
-  $dir = join('/', [__DIR__, 'modules', $name]);
-  $modules = file_contents(array_values($entries), $dir);
-  Flight::json($modules);
+  Flight::json(load_modules($name));
 });
 
 /**
