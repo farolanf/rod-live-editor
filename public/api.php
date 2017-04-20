@@ -79,6 +79,20 @@ function precompile($content, $precompileParameters) {
 }
 
 /**
+ * Load content from database.
+ *
+ * @param id The content id.
+ */
+function load_content($id) {
+  // TODO: load content specified by id from database
+
+  // {SAMPLE-- load sample content. Replace this sample with real code
+  $file = join('/', [__DIR__, 'db/content', $id.'.js']);
+  return file_get_contents($file);
+  // SAMPLE}
+}
+
+/**
  * Get content specified by id.
  *
  * A content is an object which has properties: 
@@ -89,16 +103,8 @@ function precompile($content, $precompileParameters) {
 */
 Flight::route('/api/content/@id', function($id) {
   $precompileParameters = Flight::request()->query->precompileParameters;
-
-  // TODO: load content specified by id from database
-  
-  // {SAMPLE-- load sample content. Replace this sample with real code
-  $file = join('/', [__DIR__, 'db/content', $id.'.js']);
-  $content = file_get_contents($file);
-  // SAMPLE}
-
+  $content = load_content($id);
   $content = precompile($content, $precompileParameters);
-
   Flight::json($content);
 });
 
@@ -114,6 +120,12 @@ Flight::route('POST /api/precompile', function() {
   $content = precompile(json_encode($content), $precompileParameters);
   Flight::json(json_decode($content));
 });
+
+function save($id, $content, $moduleGroup) {
+  // TEST
+  file_put_contents(join('/', [__DIR__, 'db', $id.'.js']), json_encode($content));
+  // TEST
+}
 
 /**
  * Save a document.
@@ -138,7 +150,7 @@ Flight::route('POST /api/save', function() {
   // DEBUG
 
   // TODO: save to db
-  // save($id, $content, $moduleGroup);
+  save($id, $content, $moduleGroup);
 });
 
 /**
