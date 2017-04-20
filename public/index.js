@@ -450,11 +450,6 @@ function App() {
     }
     dragond.removeIframe('.preview');
     let html = store.createRenderer().render(store.content.content());
-    // inject css on the preview iframe
-    html = html.replace(/<\/head>/, `
-        <link href="preview.css" rel="stylesheet">
-      </head>
-    `);
     $('.preview').attr('srcdoc', html).off('load').on('load', function() {
       dragond.addIframe('.preview');
       preview.init(this.contentWindow);

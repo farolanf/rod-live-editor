@@ -15,6 +15,8 @@ function PropertyView(editor, content) {
   events.addListener('instance-deleted', instanceDeleted);
   events.addListener('preview-loaded', load);
   events.addListener('preview-element-selected', setInstance);
+  events.addListener('add-global-property', addGlobalProperty);
+  events.addListener('delete-global-property', deleteGlobalProperty);
 
   const acedit = ace.edit('text-editor-modal__text-editor');
   acedit.setFontSize(14);
@@ -72,7 +74,7 @@ function PropertyView(editor, content) {
   function _setInstance(id) {
     editingGlobal = false;
     instanceId = id;
-    if (isNaN(instanceId)) {
+    if (isNaN(String(instanceId))) {
       $('.property-view .list-group').html('');
     }
     else {
@@ -106,7 +108,7 @@ function PropertyView(editor, content) {
       const modal = $('#add-property-modal');
       $('#add-property-modal__name', modal).val('');
       $('#add-property-modal__type', modal).val('text');
-      $('.btn-primary', modal).attr('onclick', "propertyView.addGlobalProperty()");
+      $('.btn-primary', modal).attr('onclick', 'events.emit("add-global-property")');
       modal.modal();
     }
   }
@@ -191,7 +193,7 @@ function PropertyView(editor, content) {
     $('.property-view .del-prop-btn').on('click', function() {
       const name = $(this).data('property');
       uiutils.showConfirmModal('Delete Global Property', `Delete global property '${name}'?`, 
-        'Delete', `propertyView.deleteGlobalProperty('${name}')`, 'danger');
+        'Delete', `events.emit('delete-global-property', '${name}')`, 'danger');
     });
     $('.property-view .text-editor-btn').on('click', onTextBtnClick);
   }
