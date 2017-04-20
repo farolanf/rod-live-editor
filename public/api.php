@@ -123,7 +123,9 @@ Flight::route('POST /api/precompile', function() {
 
 function save($id, $content, $moduleGroup) {
   // TEST
-  file_put_contents(join('/', [__DIR__, 'db', $id.'.js']), json_encode($content));
+  // file_put_contents(join('/', [__DIR__, 'db', $id.'-'.time().'.js']), $content);
+
+    // join("\n", [$id, $content, $moduleGroup]));
   // TEST
 }
 
