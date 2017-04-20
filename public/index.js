@@ -171,7 +171,7 @@ function App() {
         return !$(con).is('.empty-container');
       },
       start(e, el, src) {
-        if (usePrecompileParameters && $(src).is('.module-view *')) {
+        if (usePrecompileParameters) {
           clearPreview();
           precompileOff();
         }
