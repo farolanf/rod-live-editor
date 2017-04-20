@@ -169,10 +169,11 @@ function PropertyView(editor, content) {
       const textCls = prop.type === 'text' ? 'text-editor-btn' : '';
       const textBtn = prop.type === 'text' ? '<i class="fa fa-pencil"></i>' : '';
       const dataGlobal = instanceId === null ? 'data-global="true"' : '';
+      const style = prop.value ? `style="box-shadow: inset 0 0 0 4px ${prop.value}"` : '';
       html += `
         <div class="list-group-item">
           <span class="name ${textCls}">${key} ${textBtn}</span>
-          <input class="form-control" value="${value}" ${dataGlobal} data-name="${key}" data-type="${prop.type}" style="box-shadow: inset 0 0 0 4px ${prop.value}">
+          <input class="form-control" value="${value}" ${dataGlobal} data-name="${key}" data-type="${prop.type}" ${style}>
           ${delHtml}
         </div>`;
     });
