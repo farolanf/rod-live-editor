@@ -187,7 +187,7 @@ function PropertyView(editor, content) {
         if (!isNaN(hex)) {
           value = `#${value}`;
         }
-        $(this).css('box-shadow', `box-shadow: inset 0 0 0 4px ${value} !important`);
+        $(this).attr('style', `box-shadow: inset 0 0 0 4px ${value}`);
       } 
       onChange(prop, value);
     });
