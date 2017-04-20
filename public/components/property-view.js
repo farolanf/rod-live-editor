@@ -32,6 +32,7 @@ function PropertyView(editor, content) {
 
   function load() {
     if (noLoad) {
+      noLoad = false;
       return;
     }
     if (editingGlobal) {
@@ -100,9 +101,7 @@ function PropertyView(editor, content) {
       </div>
     `;
     const props = content.globalProperties();
-    _render(`Global Properties ${btn}`, props, function(prop, value) {
-      setGlobalProperty(prop, value);
-    }, true);
+    _render(`Global Properties ${btn}`, props, setGlobalProperty, true);
     $('.property-view .module-name .add-property-btn').on('click', addProperty);
     function addProperty() {
       const modal = $('#add-property-modal');
@@ -144,9 +143,7 @@ function PropertyView(editor, content) {
    */
   function render() {
     const instance = new Instance(instanceId);
-    _render(instance.name, instance.getProperties(), function(prop, value) {
-      setInstanceProperty(prop, value);
-    });
+    _render(instance.name, instance.getProperties(), setInstanceProperty);
   }
 
   /**
@@ -254,12 +251,11 @@ function PropertyView(editor, content) {
    * @private
    */
   function setGlobalProperty(prop, value) {
+    noLoad = true;
     app.precompileOff(function() {
-      noLoad = true;
       undo.push();
       content.setGlobalProperty(prop, value);
       events.emit('global-property-changed');
-      noLoad = false;
     });
   }
 
@@ -271,14 +267,13 @@ function PropertyView(editor, content) {
    * @private
    */
   function setInstanceProperty(prop, value) {
+    noLoad = true;
     app.precompileOff(function(reloaded) {
-      noLoad = true;
       undo.push();
       const instance = new Instance(instanceId);
       instance.setProperty(prop, value);
       events.emit('instance-changed', instance);
       reloaded && updatePropertyUi(prop, value);
-      noLoad = false;
     });
   }
 
