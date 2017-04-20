@@ -50,27 +50,29 @@
             "hiddenPreheader": "test",
             "body": [
                 {
-                    name: 'block-include',
-                    contentId: 202,
-                    instanceId: 2 
-                },
-                {
                 "name": "1-column",
                 "textAlign": "left",
                 "padding": "30px 40px 0",
                 "backgroundColor": "%_color2%",
-                "content": [{
-                    "name": "block-text",
-                    "text": "Hi Rod, thanks for joining us, we have prepared your %gift% on your desk. <br><br> How is it going? Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make<br><br>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make"
-                },
-                {
-                    "name": "block-text",
-                    "text": " your friends "
-                },
-                {
-                    "name": "block-text",
-                    "text": " are here!"
-                }]
+                "content": [
+                    {
+                        "name": "block-text",
+                        "text": "Hi Rod, thanks for joining us, we have prepared your %gift% on your desk. <br><br> How is it going? Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make<br><br>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make"
+                    },
+                    {
+                        "name": "block-text",
+                        "text": " your friends "
+                    },
+                    {
+                        "name": "block-text",
+                        "text": " are here!"
+                    },
+                    {
+                        name: 'block-include',
+                        contentId: 202,
+                        instanceId: 2 
+                    },
+                ]
             },
             {
                 "name": "block-image",
