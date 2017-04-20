@@ -52,7 +52,8 @@
                 {
                     name: 'block-include',
                     contentId: 202,
-                    instanceId: 2 
+                    instanceId: 2,
+                    title: 'Example of invalid placement (&lt;div&gt; in &lt;tbody&gt;)',
                 },
                 {
                 "name": "1-column",
@@ -75,7 +76,8 @@
                     {
                         name: 'block-include',
                         contentId: 202,
-                        instanceId: 2 
+                        instanceId: 2,
+                        title: 'Example of valid placement (&lt;div&gt; in &lt;td&gt;)',
                     },
                 ]
             },
