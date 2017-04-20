@@ -6,7 +6,8 @@ let content = process.argv[2];
 content = eval(`content = ${content}`);
 
 replaceBlocks(content);
-console.log(JSON.stringify(content, null, 2));
+const js = utils.toJs(utils.getJSON(content));
+console.log(js);
 
 /**
  * Replace block-include with the specified content.
