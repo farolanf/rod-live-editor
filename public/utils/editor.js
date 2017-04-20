@@ -349,7 +349,7 @@ Editor.getContainerPlaceholder = function(name, parentId, children) {
  */
 Editor.injectInstanceData = function(str, id, name, visible) {
   str = Editor.wrapText(str);
-  return str.replace(/(?:<!DOCTYPE [^]*?>)?\s*(<.*?)>/i, 
+  return str.replace(/((?:<!DOCTYPE [^]*?>\s*)?<[^]+?)>/i, 
     `$1 data-id="${id}" data-name="${name}" data-visible="${visible}">`);
 }
 
