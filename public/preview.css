@@ -16,6 +16,13 @@ body * {
   cursor: text;
   box-shadow: 0 0 22px -2px #555;
 }
+[data-name="block-include"] a {
+  pointer-events: auto;
+  color: #44b;
+}
+[data-name="block-include"] a:hover {
+  color: #ebe;
+}
 
 .invisible-instance {
   opacity: 0.2;

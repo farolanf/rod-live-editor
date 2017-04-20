@@ -15,6 +15,8 @@ function PropertyView(editor, content) {
   events.addListener('instance-deleted', instanceDeleted);
   events.addListener('preview-loaded', load);
   events.addListener('preview-element-selected', setInstance);
+  events.addListener('add-global-property', addGlobalProperty);
+  events.addListener('delete-global-property', deleteGlobalProperty);
 
   const acedit = ace.edit('text-editor-modal__text-editor');
   acedit.setFontSize(14);
@@ -30,6 +32,7 @@ function PropertyView(editor, content) {
 
   function load() {
     if (noLoad) {
+      noLoad = false;
       return;
     }
     if (editingGlobal) {
@@ -72,7 +75,7 @@ function PropertyView(editor, content) {
   function _setInstance(id) {
     editingGlobal = false;
     instanceId = id;
-    if (isNaN(instanceId)) {
+    if (isNaN(String(instanceId))) {
       $('.property-view .list-group').html('');
     }
     else {
@@ -98,15 +101,13 @@ function PropertyView(editor, content) {
       </div>
     `;
     const props = content.globalProperties();
-    _render(`Global Properties ${btn}`, props, function(prop, value) {
-      setGlobalProperty(prop, value);
-    }, true);
+    _render(`Global Properties ${btn}`, props, setGlobalProperty, true);
     $('.property-view .module-name .add-property-btn').on('click', addProperty);
     function addProperty() {
       const modal = $('#add-property-modal');
       $('#add-property-modal__name', modal).val('');
       $('#add-property-modal__type', modal).val('text');
-      $('.btn-primary', modal).attr('onclick', "propertyView.addGlobalProperty()");
+      $('.btn-primary', modal).attr('onclick', 'events.emit("add-global-property")');
       modal.modal();
     }
   }
@@ -142,9 +143,7 @@ function PropertyView(editor, content) {
    */
   function render() {
     const instance = new Instance(instanceId);
-    _render(instance.name, instance.getProperties(), function(prop, value) {
-      setInstanceProperty(prop, value);
-    });
+    _render(instance.name, instance.getProperties(), setInstanceProperty);
   }
 
   /**
@@ -159,15 +158,19 @@ function PropertyView(editor, content) {
   function _render(name, props, onChange, canDelete) {
     let html = `<div class="list-group-item module-name">${name}</div>`;
     _.forOwn(props, function(prop, key) {
+      if (prop.hasOwnProperty('alias')) {
+        return;
+      }
       const delHtml = canDelete ? `<i class="fa fa-trash del-prop-btn" data-property="${key}"></i>` : '';
       const value = prop.type === 'color' ? prop.value.replace('#', '') : prop.value;
       const textCls = prop.type === 'text' ? 'text-editor-btn' : '';
       const textBtn = prop.type === 'text' ? '<i class="fa fa-pencil"></i>' : '';
       const dataGlobal = instanceId === null ? 'data-global="true"' : '';
+      const style = prop.value ? `style="box-shadow: inset 0 0 0 4px ${prop.value}"` : '';
       html += `
         <div class="list-group-item">
           <span class="name ${textCls}">${key} ${textBtn}</span>
-          <input class="form-control" value="${value}" ${dataGlobal} data-name="${key}" data-type="${prop.type}">
+          <input class="form-control" value="${value}" ${dataGlobal} data-name="${key}" data-type="${prop.type}" ${style}>
           ${delHtml}
         </div>`;
     });
@@ -182,13 +185,14 @@ function PropertyView(editor, content) {
         if (!isNaN(hex)) {
           value = `#${value}`;
         }
+        $(this).attr('style', `box-shadow: inset 0 0 0 4px ${value}`);
       } 
       onChange(prop, value);
     });
     $('.property-view .del-prop-btn').on('click', function() {
       const name = $(this).data('property');
       uiutils.showConfirmModal('Delete Global Property', `Delete global property '${name}'?`, 
-        'Delete', `propertyView.deleteGlobalProperty('${name}')`, 'danger');
+        'Delete', `events.emit('delete-global-property', '${name}')`, 'danger');
     });
     $('.property-view .text-editor-btn').on('click', onTextBtnClick);
   }
@@ -247,12 +251,11 @@ function PropertyView(editor, content) {
    * @private
    */
   function setGlobalProperty(prop, value) {
+    noLoad = true;
     app.precompileOff(function() {
-      noLoad = true;
       undo.push();
       content.setGlobalProperty(prop, value);
       events.emit('global-property-changed');
-      noLoad = false;
     });
   }
 
@@ -264,14 +267,13 @@ function PropertyView(editor, content) {
    * @private
    */
   function setInstanceProperty(prop, value) {
+    noLoad = true;
     app.precompileOff(function(reloaded) {
-      noLoad = true;
       undo.push();
       const instance = new Instance(instanceId);
       instance.setProperty(prop, value);
       events.emit('instance-changed', instance);
       reloaded && updatePropertyUi(prop, value);
-      noLoad = false;
     });
   }
 

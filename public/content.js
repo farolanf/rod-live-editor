@@ -30,6 +30,7 @@ function Content() {
 		 */
 		content() {return content.data},
 
+		getJs,
 		getJSON,
 		fromJSON,		
 		setContent,
@@ -40,8 +41,12 @@ function Content() {
 		isEmpty,
 	});
 
+	function getJs() {
+		return contentUtils.toJs(contentUtils.getJSON(content));
+	}
+
 	function getJSON() {
-		return JSON.stringify(content, filterContent, 2);		
+		return contentUtils.getJSON(content);
 	}
 
 	function fromJSON(json) {
@@ -50,18 +55,6 @@ function Content() {
 		// tell subscribers about this change
 		emit();
 	}
-
-  /**
-   *  Filter parent property to avoid circular reference.
-   * 
-   *  Used by JSON.stringify()
-   */
-  function filterContent(key, value) {
-    if (key === 'parent') {
-      return;
-    }
-    return value;
-  }
 
 	/**
 	 * Set the content data.

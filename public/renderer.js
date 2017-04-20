@@ -194,11 +194,43 @@ function Renderer(modules, globalProperties) {
 
     //Replace Global Variables with their values
     for (var key in globalProperties) {
-      output = output.replace(new RegExp('%' + key + '%', 'g'), globalProperties[key].value);
+      output = output.replace(new RegExp('%' + key + '%', 'g'), getGlobalValue(key));
     }
 
     return clean ? output :
       Editor.injectInstanceData(output, instance.id, instance.name, visible);
+
+    /**
+     * Get global property value.
+     * 
+     * @param {string} name - The global property name.
+     * @param {int} depth - Current nested alias depth.
+     */
+    function getGlobalValue(name, depth) {
+      if (globalProperties.hasOwnProperty(name)) {
+        const property = globalProperties[name];
+        let value;
+        // only use alias from the original property
+        if (!depth && property.hasOwnProperty('alias')) {
+          value = getGlobalValue(property.alias, depth + 1)
+        }
+        else {
+          value = property.value;
+        }
+        // only use replace from the original property
+        if (!depth) {
+          value = replace(property, value,
+            `replace <condition> not found for <${name}> global property`,
+            `Invalid condition type for <${name}> global property`,
+            `condition result <%result%> not found for <${name}> global property`
+          );
+        }
+        return value;
+      }
+      else {
+        console.error('Invalid global property <%s>', name);
+      }
+    }
   }
 
   /**
@@ -255,17 +287,41 @@ function Renderer(modules, globalProperties) {
       // console.log(value);
     }
 
-    /* Conditional Replace: override value property if necessary */
-    if ((alias || customReplace) && moduleProperty.hasOwnProperty("replace")) {
-      var replaceProperty = moduleProperty.replace;
+    if (alias || customReplace) {
+      value = replace(moduleProperty, value,
+        `Missing "condition" child on "replace" parameter of property ${property}, in module ${instance.name}`,
+        
+        `Incorrect type for child "condition"  on "replace" parameter of property ${property} in module ${instance.name}: it should be a function.`,
 
+        `Missing result child %result% for "replace" parameter of ${property} in module ${instance.name}. Add a child element under "
+        "replace" parent with name %result% and sample value containing %value%. E.g: 'Some Content %value%'.`
+      );
+    }
+
+    value = Renderer.prettify(value);
+    return moduleProperty.type == "container" ?
+      (clean ? render(value, clean) : renderContainer(property, instance.id, value))
+      : value;
+  }
+
+  /**
+   * Replace value specified by replace property if any.
+   * 
+   * @param {object} property - The object to check for a replace property.
+   * @param {any} value - The original value.
+   * @param {string} conditionErr - Error to display when condition not found.
+   * @param {string} conditionTypeErr - Error for invalid condition type.
+   * @param {string} resultErr - Error for result not found. %result% will be replaced with the result of condition function.
+   */
+  function replace(property, value, conditionErr, conditionTypeErr, resultErr) {
+    if (property.hasOwnProperty("replace")) {
+      var replaceProperty = property.replace;
       if (replaceProperty.hasOwnProperty("condition")) {
         var conditionFunction = replaceProperty.condition;
         if ((typeof (conditionFunction)) == 'function') {
           var conditionResult = conditionFunction(value);
           if (replaceProperty.hasOwnProperty(conditionResult)) {
             var newOutput = replaceProperty[conditionResult];
-
             if ((typeof (newOutput)) == 'function') {
               value = newOutput(value);
             }
@@ -273,19 +329,16 @@ function Renderer(modules, globalProperties) {
               value = newOutput.replace(new RegExp('%value%', 'g'), value);
             }
           } else {
-            console.error("Missing result child ", conditionResult, " for \"replace\" parameter of ", property, " in module ", instance.name, ". Add a child element under 'replace' parent with name ", conditionResult, " and sample value containing %value%. E.g: 'Some Content %value%'.");
+            console.error(resultErr.replace(/%result%/g, conditionResult));
           }
         } else {
-          console.error("Incorrect type for child \"condition\"  on \"replace\" parameter of  property ", property, " in module ", instance.name, ": it should be a function.");
+          console.error(conditionTypeErr);
         }
       } else {
-        console.error("Missing \"condition\" child on \"replace\" parameter of property ", property, " in module ", instance.name);
+        console.error(conditionErr);
       }
     }
-    value = Renderer.prettify(value);
-    return moduleProperty.type == "container" ?
-      (clean ? render(value, clean) : renderContainer(property, instance.id, value))
-      : value;
+    return value;
   }
 
   /**

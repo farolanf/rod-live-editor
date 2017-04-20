@@ -43,6 +43,56 @@ Flight::route('/api/module/group/@name', function($name) {
 });
 
 /**
+ * Replace block-include in content.
+ *
+ * @param string content The content code.
+ * @return string The new content with replacements.
+ */
+function replace_blocks($content) {
+  $content = escapeshellarg($content);
+  exec("node node-replace-blocks.js $content", $output);
+  return join("\n", $output);
+}
+
+/**
+ * Precompile a given content.
+ *
+ * @param string content The content.
+ * @param string precompileParameters The precompile parameters.
+ */
+function precompile($content, $precompileParameters) {
+  // PRECOMPILE TEST
+  if ($precompileParameters) {
+    $content = replace_blocks($content);
+  }
+  else {
+    // test without php comment
+    $content = str_replace('Rod', '<?php get_user_name() ?>', $content);
+    // test with php comments
+    $content = str_replace('thanks for joining us', 
+      '<?php get_opening() /* [Opening] */ ?>', $content);
+    $content = str_replace('%gift%', '<?php get_gift_variable() /* [Gift] */?>', $content);
+    $content = str_replace('on your desk', '<?php get_gift_place() /* [Gift Place] */?>', $content);
+  }
+  // PRECOMPILE TEST
+  return $content;
+}
+
+/**
+ * Load content from database.
+ *
+ * @param id The content id.
+ */
+function load_content($id) {
+  // TODO: load content specified by id from database
+
+  // {SAMPLE-- load sample content. Replace this sample with real code
+  $file = join('/', [__DIR__, 'db/content', $id.'.js']);
+  return file_get_contents($file);
+  // SAMPLE}
+}
+
+/**
  * Get content specified by id.
  *
  * A content is an object which has properties: 
@@ -53,28 +103,31 @@ Flight::route('/api/module/group/@name', function($name) {
 */
 Flight::route('/api/content/@id', function($id) {
   $precompileParameters = Flight::request()->query->precompileParameters;
-
-  // TODO: load content specified by id from database
-  
-  // {SAMPLE-- load sample content. Replace this sample with real code
-  $file = join('/', [__DIR__, 'db', 'content.js']);
-  $content = file_get_contents($file);
-  // SAMPLE}
-
-  // PRECOMPILE TEST
-  if (!$precompileParameters) {
-    // test without php comment
-    $content = str_replace('Rod', '<?php get_user_name() ?>', $content);
-    // test with php comments
-    $content = str_replace('thanks for joining us', 
-      '<?php get_opening() /* [Opening] */ ?>', $content);
-    $content = str_replace('%gift%', '<?php get_gift_variable() /* [Gift] */?>', $content);
-    $content = str_replace('on your desk', '<?php get_gift_place() /* [Gift Place] */?>', $content);
-  }
-  // PRECOMPILE TEST
-
+  $content = load_content($id);
+  $content = precompile($content, $precompileParameters);
   Flight::json($content);
 });
+
+/**
+ * Precompile a given content.
+ *
+ * @param string content The content.
+ * @param string precompileParameters The precompile parameters.
+ */
+Flight::route('POST /api/precompile', function() {
+  $content = Flight::request()->data->content;
+  $precompileParameters = Flight::request()->data->precompileParameters;
+  $content = precompile(json_encode($content), $precompileParameters);
+  Flight::json(json_decode($content));
+});
+
+function save($id, $content, $moduleGroup) {
+  // TEST
+  // file_put_contents(join('/', [__DIR__, 'db', $id.'-'.time().'.js']), $content);
+
+    // join("\n", [$id, $content, $moduleGroup]));
+  // TEST
+}
 
 /**
  * Save a document.
@@ -99,7 +152,7 @@ Flight::route('POST /api/save', function() {
   // DEBUG
 
   // TODO: save to db
-  // save($id, $content, $moduleGroup);
+  save($id, $content, $moduleGroup);
 });
 
 /**

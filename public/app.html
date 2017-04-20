@@ -72,6 +72,10 @@
         <div class="panel-heading">
           <h3 class="panel-title">Content JSON</h3>
           <div class="btn-group">
+            <button type="button" class="btn btn-default btn-sm json-js-btn active"
+            data-toggle="button" aria-pressed="true" autocomplete="off">
+              JS
+            </button>
             <button type="button" class="btn btn-default btn-sm json-save-btn">
               <i class="fa fa-save"></i>
             </button>
@@ -108,6 +112,7 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="button" class="btn btn-primary" data-primary-btn data-dismiss="modal"></button>
+            <button type="button" class="btn btn-primary hidden" data-third-btn data-dismiss="modal"></button>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
@@ -128,7 +133,7 @@
               <input class="form-control" placeholder="Property name" id="add-property-modal__name">
             </div>
             <div class="form-group">
-              <label for="add-property-modal__type">Name</label>
+              <label for="add-property-modal__type">Type</label>
               <select class="form-control" id="add-property-modal__type">
                 <option value="text">Text</option>
                 <option value="color">Color</option>
@@ -162,6 +167,7 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
+    <script src="libs/js/polyfill.min.js"></script>
     <script src="libs/js/jquery-3.1.1.min.js"></script>
     <script src="libs/jquery-toast-plugin/dist/jquery.toast.min.js"></script>
     <script src="libs/jquery-ui-bundle/jquery-ui.min.js"></script>
@@ -179,6 +185,7 @@
     <script src="utils/dnd.js"></script>
     <script src="utils/editor.js"></script>
     <script src="utils/ui.js"></script>
+    <script src="utils/content.js"></script>
 
     <script src="modules.js"></script>
     <script src="content.js"></script>

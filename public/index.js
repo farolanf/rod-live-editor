@@ -54,6 +54,7 @@ function App() {
     hideInstanceControls,
     precompileOff,
     togglePrecompile,
+    togglePrecompileSafe,
     
     // expose the save function to be called by save confirmation modal
     _save,
@@ -330,7 +331,7 @@ function App() {
    */
   function onPrecompileToggle() {
     if (!usePrecompileParameters) {
-      uiutils.showConfirmModal('Activate Precompile', 'Changes will be discarded upon switching precompile, proceed?', 'Activate Precompile', 'app.togglePrecompile()', 'danger');
+      uiutils.showConfirmModal('Activate Precompile', 'Changes will be discarded upon switching precompile, proceed?', 'Discard then Activate', 'app.togglePrecompile()', 'danger', 'Save then Activate', 'app.togglePrecompileSafe()', 'success');
       return;
     }
     togglePrecompile();
@@ -342,6 +343,16 @@ function App() {
   function togglePrecompile() {
     setPrecompile(!usePrecompileParameters);
     loadContent();
+  }
+
+  /**
+   * Toggle precompile after save.
+   */
+  function togglePrecompileSafe() {
+    _save(function() {
+      setPrecompile(!usePrecompileParameters);
+      loadContent();
+    });
   }
 
   /**
@@ -450,11 +461,6 @@ function App() {
     }
     dragond.removeIframe('.preview');
     let html = store.createRenderer().render(store.content.content());
-    // inject css on the preview iframe
-    html = html.replace(/<\/head>/, `
-        <link href="preview.css" rel="stylesheet">
-      </head>
-    `);
     $('.preview').attr('srcdoc', html).off('load').on('load', function() {
       dragond.addIframe('.preview');
       preview.init(this.contentWindow);
@@ -501,13 +507,13 @@ function App() {
   /**
    * Send the document to the backend.
    */
-  function _save() {
+  function _save(fn) {
     precompileOff(function() {
       const savingToast = uiutils.toast('Saving...', 'info');
       // data to be sent
       const data = {
         id: query.id,
-        content: filteredContent(),
+        content: store.content.getJs(),
         moduleGroup: store.modules.group(),
       };
       $.ajax({
@@ -520,15 +526,12 @@ function App() {
       function success(data) {
         savingToast.reset();
         uiutils.toast('Document saved.');
+        fn && fn();
       }
       function error(xhr, status) {
         savingToast.reset();
         uiutils.toast('Fail to save document.', 'error');
         console.log(status, xhr, data);
-      }
-      // remove parent properties
-      function filteredContent() {
-        return JSON.parse(store.content.getJSON());
       }
     });
   }
