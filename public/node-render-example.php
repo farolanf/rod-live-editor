@@ -1,25 +1,30 @@
 <?php
-require_once 'node-render.php';
+require_once 'node-utils.php';
 
 $content = <<<EOS
 {
-  "globalProperties": {
-		"color1": {"type": "color", "value": "#eeeeee"},
-		"color2": {"type": "color", "value": "green"},
-		"color3": {"type": "color", "value": "red"},
-		"backgroundColorBody": {"type": "color","value": "white"},
-		"backgroundColorFooter": {"type": "color","value": "blue"},
-		"backgroundColor": {"type": "color","value": "#fff"},
-		"hiddenPreheader": {"type": "text","value": "test"}
+  globalProperties: {
+		color2: {type: 'color', 'value': 'green'},
+    _color4: {
+      alias: 'color2',
+      replace: {
+        condition: function(value) {
+          return 'test';
+        },
+        test: function(value) {
+          return 'black';
+        }
+      }
+    },
   },
-  "data": [
+  data: [
     {
-      "name": "document-html-email",
-      "backgroundColorHeader": "%color3%"
+      name: 'block-text',
+      text: 'Text with \\'single\\' and \"double\" quotes'
     },
     {
-      "name": "block-text",
-      "text": "Text with 'single' and \"double\" quotes"
+      name: 'block-text',
+      text: 'The color is %_color4% not %color2%',
     }
   ]
 }
@@ -28,5 +33,5 @@ EOS;
 $moduleGroup = 'email-html';
 
 // renderContent expects content array
-echo renderContent(json_decode($content), $moduleGroup)."\n";
+echo renderContent($content, $moduleGroup)."\n";
 ?>

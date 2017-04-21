@@ -1,6 +1,6 @@
 <?php
 
-require_once './node-render.php';
+require_once './node-utils.php';
 
 /**
  * Get file contents from a list of files.
@@ -50,18 +50,6 @@ function load_modules($name) {
 Flight::route('/api/module/group/@name', function($name) {
   Flight::json(load_modules($name));
 });
-
-/**
- * Replace block-include in content.
- *
- * @param string content The content code.
- * @return string The new content with replacements.
- */
-function replace_blocks($content) {
-  $content = escapeshellarg($content);
-  exec("node node-replace-blocks.js $content", $output);
-  return join("\n", $output);
-}
 
 /**
  * Precompile a given content.
@@ -167,7 +155,7 @@ Flight::route('POST /api/save', function() {
 /**
  * Render a content with specified module group.
  * 
- * @param   json content The content to be rendered.
+ * @param   string content The content javascript code to be rendered.
  * @param   string moduleGroup Module group to be used.
  * @return  string The renderered html.
 */
