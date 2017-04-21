@@ -52,6 +52,8 @@ function JsonView(content) {
 
   /**
    * Load content JSON onto editor.
+   * 
+   * @param {boolean} js - Format in javascript if true else json.
    */
   function load(js) {
     // enclose js with parenthesis to fix ace syntax error
