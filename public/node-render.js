@@ -1,3 +1,4 @@
+'use strict';
 
 /**
  * Renders content.
@@ -8,9 +9,11 @@
 const fs = require('fs');
 const Renderer = require('./renderer');
 
-const content = JSON.parse(process.argv[2]);
+const code = process.argv[2];
 const moduleGroup = process.argv[3];
 
+let content;
+eval(`content = ${code}`);
 const modules = loadModules(moduleGroup);
 
 const renderer = new Renderer(modules, content.globalProperties);
