@@ -48,6 +48,7 @@ function JsonView(content) {
     acedit.setValue(js ? content.getJs() : content.getJSON());
     acedit.getSession().getSelection().clearSelection();
     acedit.getSession().setScrollTop(0);
+    acedit.setReadOnly(!js);
     $('.json-view .json-save-btn').addClass('disabled');
   }
 
