@@ -53,7 +53,7 @@ const contentUtils = {
    *  Used by JSON.stringify()
    */
   filterContent(key, value) {
-    if (key === 'parent') {
+    if (key === 'parent' || key === 'container') {
       return;
     }
     if (typeof value === 'function') {
