@@ -231,6 +231,16 @@ function Renderer(modules, globalProperties, language) {
         else {
           value = property.value;
         }
+        // i18n
+        if (typeof value === 'object') {
+          if (value.hasOwnProperty(language)) {
+            value = value[language];
+          }
+          else {
+            value = '[?]';
+            console.error(`Missing value for '${language}' on global property '${name}'`);
+          }
+        }
         // only use replace from the original property
         if (!depth) {
           value = replace(property, value,
