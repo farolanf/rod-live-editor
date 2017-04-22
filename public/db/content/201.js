@@ -84,7 +84,9 @@
                     },
                     {
                         "name": "block-text",
-                        "text": " your friends "
+                        "text": {
+                            en: " your friends "
+                        }
                     },
                     {
                         "name": "block-text",
