@@ -21,14 +21,15 @@
       default: '',
     },
     info: {
+      alias: 'contentId',
       replace: {
         condition: function(value, instance) {
-          const contentId = instance.getPropertyValue('contentId');
+          const contentId = value;
           const instanceId = instance.getPropertyValue('instanceId');
           return contentId && instanceId ? 'show' : 'hide';
         },
         show: function(value, instance) {
-          const contentId = instance.getPropertyValue('contentId');
+          const contentId = value;
           const instanceId = instance.getPropertyValue('instanceId');
           return `content-id <${contentId}> instance-id <${instanceId}><br>`;
         },
@@ -36,14 +37,15 @@
       }
     },
     button: {
+      alias: 'contentId',
       replace: {
         condition: function(value, instance) {
-          const contentId = instance.getPropertyValue('contentId');
+          const contentId = value;
           const instanceId = instance.getPropertyValue('instanceId');
           return contentId && instanceId ? 'show' : 'hide';          
         },
         show: function(value, instance) {
-          const contentId = instance.getPropertyValue('contentId');
+          const contentId = value;
           const instanceId = instance.getPropertyValue('instanceId');
           return `
             <a href="?id=${contentId}&instanceId=${instanceId}" target="_blank">
@@ -51,7 +53,7 @@
             </a>`;
         },
         hide: function(value, instance) {
-          const contentId = instance.getPropertyValue('contentId');
+          const contentId = value;
           const instanceId = instance.getPropertyValue('instanceId');
           return `Missing ${!contentId ? 'contentId' : ''}${!contentId && !instanceId ? ' and instanceId.' : !instanceId ? 'instanceId.' : '.'}`;
         },
