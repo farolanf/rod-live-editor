@@ -130,9 +130,6 @@ function Preview(propertyView) {
     .toggleClass('invisible-instance', visible !== true && visible !== 'true')
     .on('click', function(e) {
       e.stopPropagation();
-      if (this !== selectedElement) {
-        deselectInstance(selectedElement);
-      }
       selectInstance(this);
     })
     .on('blur', function(e) {
@@ -167,6 +164,9 @@ function Preview(propertyView) {
    * @param {element} el - The element.
    */
   function selectInstance(el, noEvent) {
+    if (el !== selectedElement) {
+      deselectInstance(selectedElement);
+    }
     selectedElement = el;
     $(el).addClass('active');
     app.showInstanceControls(el);
