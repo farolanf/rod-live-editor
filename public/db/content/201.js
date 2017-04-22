@@ -56,6 +56,23 @@
                     title: 'Example of invalid placement (&lt;div&gt; in &lt;tbody&gt;)',
                 },
                 {
+                    name: '1-column',
+                    content: [
+                        {
+                            "name": "block-text",
+                            "text": 'i18n example: '
+                        },
+                        {
+                            "name": "block-text",
+                            "text": {
+                                "en": "Headline<br>",
+                                "es": "Titular<br>",
+                                "pt": "Manchete<br>" 
+                            }
+                        },
+                    ]
+                },
+                {
                 "name": "1-column",
                 "textAlign": "left",
                 "padding": "30px 40px 0",
