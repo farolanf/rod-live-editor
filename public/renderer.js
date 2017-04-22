@@ -11,7 +11,9 @@ if (typeof require !== 'undefined') {
  * @param {object} modules - The modules object.
  * @param {object} globalProperties - The global properties object.
  */
-function Renderer(modules, globalProperties) {
+function Renderer(modules, globalProperties, language) {
+
+  language = language || config.defaultLanguage;
 
   return {
     render,

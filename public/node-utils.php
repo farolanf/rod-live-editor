@@ -13,12 +13,13 @@ function node_exists() {
  * @param string $moduleGroup The group folder name.
  * @return string The rendered HTML.
 */
-function renderContent($content, $moduleGroup) {
+function renderContent($content, $moduleGroup, $language) {
   if (node_exists()) {
     $content = escapeshellarg($content);
     $moduleGroup = escapeshellarg($moduleGroup);
+    $language = escapeshellarg($language);
     $path = escapeshellarg(dirname(__FILE__) . '/node-render.js');
-    exec("node $path $content $moduleGroup", $output);
+    exec("node $path $content $moduleGroup $language", $output);
     return join($output);
   }
   return 'node failed';
