@@ -92,8 +92,17 @@ function App() {
   function getLanguages() {
     if (!store.content.isEmpty()) {
       const langs = [];
+      scanGlobal(store.content.globalProperties());
       scanContent(store.content.content());
       return langs;
+
+      function scanGlobal(props) {
+        _.forOwn(props, function(value, key) {
+          if (value.value && typeof value.value === 'object') {
+            getLanguages(value.value);
+          }
+        });
+      }
 
       function scanContent(content) {
         if (Array.isArray(content)) {
@@ -111,13 +120,17 @@ function App() {
           }
           // if not an instance then assume it's an i18n object
           else {
-            _.forOwn(content, function(value, key) {
-              if (!langs.includes(key)) {
-                langs.push(key);
-              }
-            });
+            getLanguages(content);
           }
         }
+      }
+
+      function getLanguages(prop) {
+        _.forOwn(prop, function(value, key) {
+          if (!langs.includes(key)) {
+            langs.push(key);
+          }
+        });
       }
     }
     return [];
