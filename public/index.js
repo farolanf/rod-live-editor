@@ -71,6 +71,11 @@ function App() {
     initInstanceControls();
     initActions();
     loadContent();
+    initTooltips();
+  }
+
+  function initTooltips() {
+    $('[data-toggle="tooltip"]').tooltip();
   }
 
   function loadContent() {

@@ -81,7 +81,7 @@ function InstanceMap(content, propertyView, preview) {
         <div class="arrow"></div>
         <h3 class="popover-title">
         </h3>
-        <i class="fa fa-lock lock-btn lock-btn--disabled"></i>
+        <i class="fa fa-lock lock-btn lock-btn--disabled" title="Enable lock to prevent popover nagivation from closing on select"></i>
         <div class="popover-content"></div>
       </div>
     `; 
