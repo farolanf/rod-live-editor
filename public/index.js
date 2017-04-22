@@ -162,7 +162,7 @@ function App() {
       updateLanguageButton(query.language);
       loadContent();
     });
-    updateLanguageButton(query.language);
+    updateLanguageButton(query.language || config.defaultLanguage);
   }
 
   /**
