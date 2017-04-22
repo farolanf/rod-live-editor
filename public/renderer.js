@@ -238,7 +238,7 @@ function Renderer(modules, globalProperties, language) {
           }
           else {
             value = '[?]';
-            console.error(`Missing value for '${language}' on global property '${name}'`);
+            console.error(`Missing value for <${language}> on global property <${name}>`);
           }
         }
         // only use replace from the original property
@@ -252,7 +252,7 @@ function Renderer(modules, globalProperties, language) {
         return value;
       }
       else {
-        console.error('Invalid global property <%s>', name);
+        console.error('Invalid global property <%s> on instance #%d', name, instance.id);
       }
     }
   }
@@ -299,10 +299,10 @@ function Renderer(modules, globalProperties, language) {
       //There is no alias, use this property's values
       if (instance.hasOwnProperty(property)) {
         value = instance[property];
-        value = getValue(value, `Missing value for '${language}' on instance #${instance.id}.${property}`);
+        value = getValue(value, `Missing value for <${language}> on instance #${instance.id} property <${property}>`);
       } else if (moduleProperty.hasOwnProperty("default")) {
         value = moduleProperty.default;
-        value = getValue(value, `Missing default value for '${language}' on module '${module.name}' property '${property}'`);
+        value = getValue(value, `Missing default value for <${language}> on module <${module.name}> property <${property}>`);
       } else if (!moduleProperty.type) {
         // default is optional for internal property
       } else {
