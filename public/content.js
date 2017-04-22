@@ -30,6 +30,13 @@ function Content() {
 		 */
 		content() {return content.data},
 
+		/**
+		 * Return the content object.
+		 * 
+		 * @return {object} - The content object.
+		 */
+		all() {return content},
+
 		getJs,
 		getJSON,
 		fromJSON,		
