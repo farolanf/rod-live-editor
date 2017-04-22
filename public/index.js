@@ -300,7 +300,7 @@ function App() {
     updateUndoButtons();
     
     $('.content-json-btn').on('click', function() {
-      precompileOff(jsonView.show);
+      jsonView.show(usePrecompileParameters);
     });
 
     setPrecompile(!!query.precompileParameters);

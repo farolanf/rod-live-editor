@@ -6,6 +6,9 @@
  */
 function JsonView(content) {
 
+  let readOnly;
+  let js = $('.json-view .json-js-btn').is('.active');
+
   const acedit = ace.edit('content-json');
   acedit.setFontSize(14);
   acedit.getSession().setMode('ace/mode/javascript');
@@ -15,7 +18,7 @@ function JsonView(content) {
 
   $('.json-view .modal-close-btn').on('click', hide);
   $('.json-view .json-save-btn').on('click', save);
-  $('.json-view .json-js-btn').on('click', jsonJsToggle);
+  $('.json-view .json-js-btn').on('click', onToggleFormat);
 
   return Object.assign(this, {
     show,
@@ -24,14 +27,25 @@ function JsonView(content) {
   /**
    * Toggle between JSON and JS format.
    */
-  function jsonJsToggle() {
-    const btn = $(this);
-    // active need to be inversed because it's reading the old state
-    const active = !btn.is('.active');
-    const mode = active ? 'javascript' : 'json';
-    btn.text(active ? 'JS' : 'JSON');
+  function onToggleFormat() {
+    if (isDirty() && js) {
+      events.removeListener('switch-to-json', toggleFormat);
+      events.once('switch-to-json', toggleFormat);
+      uiutils.showConfirmModal('Switch to JSON', 'Changes will be discarded, proceed?', 'Proceed', 'events.emit("switch-to-json")', 'danger');
+    }
+    else {
+      toggleFormat();
+    }
+  }
+
+  function toggleFormat() {
+    js = !js;
+    const btn = $('.json-view .json-js-btn');
+    btn.toggleClass('active', js);
+    btn.text(js ? 'JS' : 'JSON');
+    const mode = js ? 'javascript' : 'json';
     acedit.getSession().setMode(`ace/mode/${mode}`);
-    load(active);
+    load(js);
   }
 
   /**
@@ -39,6 +53,13 @@ function JsonView(content) {
    */
   function setDirty() {
     $('.json-view .json-save-btn').removeClass('disabled');
+  }
+
+  /**
+   * Get changed status.
+   */
+  function isDirty() {
+    return !$('.json-view .json-save-btn').is('.disabled');
   }
 
   /**
@@ -61,7 +82,7 @@ function JsonView(content) {
     acedit.setValue(str);
     acedit.getSession().getSelection().clearSelection();
     acedit.getSession().setScrollTop(0);
-    acedit.setReadOnly(!js);
+    acedit.setReadOnly(readOnly || !js);
     $('.json-view .json-save-btn').addClass('disabled');
   }
 
@@ -77,7 +98,9 @@ function JsonView(content) {
   /**
    * Show the JSON view.
    */
-  function show() {
+  function show(_readOnly) {
+    readOnly = _readOnly;
+    $('.json-view .json-save-btn').toggleClass('hidden', readOnly);
     load($('.json-js-btn').is('.active'));
     $('.json-view').show();
   }
