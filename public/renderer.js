@@ -167,6 +167,18 @@ function Renderer(modules, globalProperties) {
       return '';
     }
 
+    // inject helper function to get property value
+    // without replace functionality to avoid recursive calls
+    instance.getPropertyValue = function(name) {
+      if (this.hasOwnProperty(name)) {
+        return this[name];
+      }
+      else if (module.properties.hasOwnProperty(name)) {
+        const prop = module.properties[name];
+        return prop.default;
+      }
+    };
+
     //Remove JS comments from output definition
     var output = removeJsComments(module.output);
     output = Renderer.prettify(output);
@@ -294,7 +306,9 @@ function Renderer(modules, globalProperties) {
         `Incorrect type for child "condition"  on "replace" parameter of property ${property} in module ${instance.name}: it should be a function.`,
 
         `Missing result child %result% for "replace" parameter of ${property} in module ${instance.name}. Add a child element under "
-        "replace" parent with name %result% and sample value containing %value%. E.g: 'Some Content %value%'.`
+        "replace" parent with name %result% and sample value containing %value%. E.g: 'Some Content %value%'.`,
+
+        instance
       );
     }
 
@@ -313,17 +327,17 @@ function Renderer(modules, globalProperties) {
    * @param {string} conditionTypeErr - Error for invalid condition type.
    * @param {string} resultErr - Error for result not found. %result% will be replaced with the result of condition function.
    */
-  function replace(property, value, conditionErr, conditionTypeErr, resultErr) {
+  function replace(property, value, conditionErr, conditionTypeErr, resultErr, instance) {
     if (property.hasOwnProperty("replace")) {
       var replaceProperty = property.replace;
       if (replaceProperty.hasOwnProperty("condition")) {
         var conditionFunction = replaceProperty.condition;
         if ((typeof (conditionFunction)) == 'function') {
-          var conditionResult = conditionFunction(value);
+          var conditionResult = conditionFunction(value, instance);
           if (replaceProperty.hasOwnProperty(conditionResult)) {
             var newOutput = replaceProperty[conditionResult];
             if ((typeof (newOutput)) == 'function') {
-              value = newOutput(value);
+              value = newOutput(value, instance);
             }
             else {
               value = newOutput.replace(new RegExp('%value%', 'g'), value);
