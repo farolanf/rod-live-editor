@@ -6,7 +6,13 @@
         "backgroundColorFooter": { type: 'color', value: "blue" },
         "backgroundColor": { type: 'color', value: "#fff" },
         "hiddenPreheader": { type: 'text', value: "test" },
-        "gift": { type: 'text', value: 'mac' },
+        "gift": { 
+            type: 'text', 
+            value: {
+                en: 'new Mac',
+                id: 'Mac baru'
+            } 
+        },
         "color1": {
             "type": "color",
             "value": "#00ff00"
