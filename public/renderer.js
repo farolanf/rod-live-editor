@@ -302,7 +302,7 @@ function Renderer(modules, globalProperties, language) {
         value = getValue(value, `Missing value for '${language}' on instance #${instance.id}.${property}`);
       } else if (moduleProperty.hasOwnProperty("default")) {
         value = moduleProperty.default;
-        value = getValue(value, `Missing default value for '${language}' on '${module.name}' module's '${property}' property`);
+        value = getValue(value, `Missing default value for '${language}' on module '${module.name}' property '${property}'`);
       } else if (!moduleProperty.type) {
         // default is optional for internal property
       } else {
