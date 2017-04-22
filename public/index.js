@@ -71,13 +71,97 @@ function App() {
     initInstanceControls();
     initActions();
     loadContent();
+    initLanguage();
     initTooltips();
   }
 
+  /**
+   * Determines i18n usage.
+   * 
+   * @return {boolean} - True if using i18n.
+   */
+  function useLanguage() {
+    return !!query.language || getLanguages().length > 0;
+  }
+
+  /**
+   * Scan content to collect languages.
+   * 
+   * @return {array} - Array of found languages.
+   */
+  function getLanguages() {
+    if (!store.content.isEmpty()) {
+      const langs = [];
+      scanContent(store.content.content());
+      return langs;
+
+      function scanContent(content) {
+        if (Array.isArray(content)) {
+          content.forEach(function(value) {
+            scanContent(value);
+          });
+        }
+        else if (typeof content === 'object') {
+          if (content.name) {
+            _.forOwn(content, function(value, key) {
+              if (key !== 'parent' && typeof value === 'object') {
+                scanContent(value);
+              }
+            });
+          }
+          // if not an instance then assume it's an i18n object
+          else {
+            _.forOwn(content, function(value, key) {
+              if (!langs.includes(key)) {
+                langs.push(key);
+              }
+            });
+          }
+        }
+      }
+    }
+    return [];
+  }
+
+  /**
+   * Show active language.
+   * 
+   * @param {string} language - The language.
+   */
+  function updateLanguageButton(language) {
+    $('.language-menu .language-code').text(`Language (${language})`);
+  }
+
+  /**
+   * Update language menu.
+   */
+  function initLanguage() {
+    const html = getLanguages().map(function(value) {
+      return `
+      <li>
+        <a data-language-choice data-language="${value}">${value}</a>
+      </li>`;
+    }).join('');
+    $('.language-menu').toggleClass('hidden', !useLanguage());
+    $('.language-menu .language-list').html(html);
+    $('[data-language-choice]').on('click', function() {
+      query.language = $(this).data('language');
+      updateLanguageButton(query.language);
+      loadContent();
+    });
+    updateLanguageButton(query.language);
+  }
+
+  /**
+   * Init bootstrap tooltips.
+   */
   function initTooltips() {
     $('[data-toggle="tooltip"]').tooltip();
   }
 
+  /**
+   * Load content with specified id.
+   */
   function loadContent() {
     if (query.id) {
       const precompileParameters = usePrecompileParameters ? 
@@ -92,6 +176,7 @@ function App() {
   function registerHandlers() {
     // register handler for content changed event
     events.addListener('content-changed', renderPreview);
+    events.addListener('content-changed', initLanguage);
 
     // register handler for modules changed event
     events.addListener('modules-changed', renderPreview);
