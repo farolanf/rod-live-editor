@@ -289,13 +289,29 @@ function Renderer(modules, globalProperties, language) {
       //There is no alias, use this property's values
       if (instance.hasOwnProperty(property)) {
         value = instance[property];
+        value = getValue(value, `Missing value for ${language} on:\ninstance with id: ${instance.id}\nproperty: ${property}`);
       } else if (moduleProperty.hasOwnProperty("default")) {
         value = moduleProperty.default;
+        value = getValue(value, `Missing default value for ${language} on:\nmodule: ${module.name}\nproperty: ${property}`);
       } else if (!moduleProperty.type) {
         // default is optional for internal property
       } else {
         console.error("property ", property, " in module ", instance.name, " doesn't have a default value");
       }
+    }
+
+    // i18n
+    function getValue(value, err) {
+      if (moduleProperty.type !== 'container' && typeof value === 'object') {
+        if (value.hasOwnProperty(language)) {
+          return value[language];
+        }
+        else {
+          console.error(err);
+          return '[?]';
+        }
+      }
+      return value;
     }
 
     //If property is of type text do replacements 
