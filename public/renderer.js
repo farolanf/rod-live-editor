@@ -289,6 +289,8 @@ function Renderer(modules, globalProperties) {
         value = instance[property];
       } else if (moduleProperty.hasOwnProperty("default")) {
         value = moduleProperty.default;
+      } else if (!moduleProperty.type) {
+        // default is optional for internal property
       } else {
         console.error("property ", property, " in module ", instance.name, " doesn't have a default value");
       }
