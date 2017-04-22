@@ -42,12 +42,26 @@ function JsonView(content) {
   }
 
   /**
+   * Get editor value between parentheses if any.
+   * 
+   * @return {string} - The value between parentheses or the original value.
+   */
+  function getValue() {
+    return acedit.getValue().replace(/^\(([^]*)\)$/, '$1');    
+  }
+
+  /**
    * Load content JSON onto editor.
+   * 
+   * @param {boolean} js - Format in javascript if true else json.
    */
   function load(js) {
-    acedit.setValue(js ? content.getJs() : content.getJSON());
+    // enclose js with parenthesis to fix ace syntax error
+    const str = js ? `(${content.getJs()})` : content.getJSON();
+    acedit.setValue(str);
     acedit.getSession().getSelection().clearSelection();
     acedit.getSession().setScrollTop(0);
+    acedit.setReadOnly(!js);
     $('.json-view .json-save-btn').addClass('disabled');
   }
 
@@ -56,7 +70,7 @@ function JsonView(content) {
    */
   function save() {
     undo.push();
-    content.fromJSON(acedit.getValue());
+    content.fromJSON(getValue());
     $('.json-view .json-save-btn').addClass('disabled');
   }
 

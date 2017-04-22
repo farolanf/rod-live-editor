@@ -264,3 +264,7 @@ html, body, #app, #editor, .editor-container, .preview {
 .inactive {
   color: #ccc !important;
 }
+
+.json-view .json-save-btn.disabled {
+  pointer-events: none;
+}

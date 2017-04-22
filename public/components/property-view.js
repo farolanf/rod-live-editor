@@ -30,6 +30,10 @@ function PropertyView(editor, content) {
     deleteGlobalProperty,
   };
 
+  /**
+   * Load the last edited properties.
+   * @private
+   */
   function load() {
     if (noLoad) {
       noLoad = false;

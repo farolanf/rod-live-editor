@@ -4,11 +4,8 @@
     <div style="background: black; color: white; text-align: center;   
     padding: 50px; line-height: 1.4em">
       <small>%title%</small><br>
-      content-id <%contentId%> instance-id <%instanceId%><br>
-      <a href="?id=%contentId%&instanceId=%instanceId%" 
-      target="_blank">
-        Edit
-      </a>
+      %info%
+      %button%
     </div>`,
   properties: {
     title: {
@@ -22,6 +19,47 @@
     instanceId: {
       type: 'property',
       default: '',
+    },
+    info: {
+      type: 'property',
+      default: '',
+      replace: {
+        condition: function(value, instance) {
+          const contentId = instance.getPropertyValue('contentId');
+          const instanceId = instance.getPropertyValue('instanceId');
+          return contentId && instanceId ? 'show' : 'hide';
+        },
+        show: function(value, instance) {
+          const contentId = instance.getPropertyValue('contentId');
+          const instanceId = instance.getPropertyValue('instanceId');
+          return `content-id <${contentId}> instance-id <${instanceId}><br>`;
+        },
+        hide: '',
+      }
+    },
+    button: {
+      type: 'property',
+      default: '',
+      replace: {
+        condition: function(value, instance) {
+          const contentId = instance.getPropertyValue('contentId');
+          const instanceId = instance.getPropertyValue('instanceId');
+          return contentId && instanceId ? 'show' : 'hide';          
+        },
+        show: function(value, instance) {
+          const contentId = instance.getPropertyValue('contentId');
+          const instanceId = instance.getPropertyValue('instanceId');
+          return `
+            <a href="?id=${contentId}&instanceId=${instanceId}" target="_blank">
+              Edit
+            </a>`;
+        },
+        hide: function(value, instance) {
+          const contentId = instance.getPropertyValue('contentId');
+          const instanceId = instance.getPropertyValue('instanceId');
+          return `Missing ${!contentId ? 'contentId' : ''}${!contentId && !instanceId ? ' and instanceId.' : !instanceId ? 'instanceId.' : '.'}`;
+        },
+      },
     }
   }
 }    
