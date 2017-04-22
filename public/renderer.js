@@ -206,10 +206,10 @@ function Renderer(modules, globalProperties, language) {
       output = output.replace(new RegExp('%' + property + '%', 'g'),
         getPropertyValue(property, instance, module, customReplace, clean));
 
-    //Replace Global Variables with their values
-    for (var key in globalProperties) {
-      output = output.replace(new RegExp('%' + key + '%', 'g'), getGlobalValue(key));
-    }
+    // substitute global properties
+    output = output.replace(/%([a-zA-Z0-9_-]+?)%/g, function(m0, m1) {
+      return getGlobalValue(m1);
+    });
 
     return clean ? output :
       Editor.injectInstanceData(output, instance.id, instance.name, visible);
