@@ -79,6 +79,14 @@
                         {
                             name: 'block-text-i18n',
                         },
+                        {
+                            name: 'block-text',
+                            text: '<br>i18n on global: '
+                        },
+                        {
+                            name: 'block-text',
+                            text: '%gift%'
+                        }
                     ]
                 },
                 {
