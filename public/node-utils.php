@@ -36,7 +36,7 @@ function replace_blocks($content) {
     exec("node node-replace-blocks.js $content", $output);
     return join("\n", $output);
   }
-  return $content;
+  return 'node failed';
 }
 
 ?>
