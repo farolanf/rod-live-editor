@@ -465,7 +465,7 @@ function App() {
       return;
     }
     dragond.removeIframe('.preview');
-    let html = store.createRenderer().render(store.content.content());
+    let html = store.createRenderer(query.language).render(store.content.content());
     $('.preview').attr('srcdoc', html).off('load').on('load', function() {
       dragond.addIframe('.preview');
       preview.init(this.contentWindow);
