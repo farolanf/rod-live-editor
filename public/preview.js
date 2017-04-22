@@ -183,7 +183,7 @@ function Preview(propertyView) {
   }
 
   function scrollToElement(el) {
-    $$('body').scrollTop($(el).offset().top);
+    $$('body').scrollTop($(el).offset().top - 100);
   }
 
   function deselectInstance(el) {
