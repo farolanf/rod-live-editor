@@ -162,7 +162,7 @@ function PropertyView(editor, content) {
   function _render(name, props, onChange, canDelete) {
     let html = `<div class="list-group-item module-name">${name}</div>`;
     _.forOwn(props, function(prop, key) {
-      if (prop.hasOwnProperty('alias')) {
+      if (prop.hasOwnProperty('alias') || !prop.type) {
         return;
       }
       const delHtml = canDelete ? `<i class="fa fa-trash del-prop-btn" data-property="${key}"></i>` : '';

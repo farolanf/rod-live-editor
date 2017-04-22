@@ -21,8 +21,6 @@
       default: '',
     },
     info: {
-      type: 'property',
-      default: '',
       replace: {
         condition: function(value, instance) {
           const contentId = instance.getPropertyValue('contentId');
@@ -38,8 +36,6 @@
       }
     },
     button: {
-      type: 'property',
-      default: '',
       replace: {
         condition: function(value, instance) {
           const contentId = instance.getPropertyValue('contentId');
