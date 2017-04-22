@@ -289,10 +289,10 @@ function Renderer(modules, globalProperties, language) {
       //There is no alias, use this property's values
       if (instance.hasOwnProperty(property)) {
         value = instance[property];
-        value = getValue(value, `Missing value for ${language} on:\ninstance with id: ${instance.id}\nproperty: ${property}`);
+        value = getValue(value, `Missing value for '${language}' on instance #${instance.id}.${property}`);
       } else if (moduleProperty.hasOwnProperty("default")) {
         value = moduleProperty.default;
-        value = getValue(value, `Missing default value for ${language} on:\nmodule: ${module.name}\nproperty: ${property}`);
+        value = getValue(value, `Missing default value for '${language}' on '${module.name}' module's '${property}' property`);
       } else if (!moduleProperty.type) {
         // default is optional for internal property
       } else {
