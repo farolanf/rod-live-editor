@@ -66,15 +66,19 @@
                     content: [
                         {
                             "name": "block-text",
-                            "text": 'i18n example: '
+                            "text": 'i18n on instance: '
                         },
                         {
                             "name": "block-text",
                             "text": {
-                                "en": "Headline<br>",
-                                "es": "Titular<br>",
-                                "pt": "Manchete<br>" 
+                                "en": "Headline",
+                                "es": "Titular",
+                                "pt": "Manchete" 
                             }
+                        },
+                        {
+                            name: 'block-text',
+                            text: '<br>i18n on default value: '
                         },
                         {
                             name: 'block-text-i18n',
@@ -101,9 +105,7 @@
                     },
                     {
                         "name": "block-text",
-                        "text": {
-                            en: " your friends "
-                        }
+                        "text": " your friends "
                     },
                     {
                         "name": "block-text",
