@@ -70,6 +70,9 @@
                                 "pt": "Manchete<br>" 
                             }
                         },
+                        {
+                            name: 'block-text-i18n',
+                        },
                     ]
                 },
                 {
