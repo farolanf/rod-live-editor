@@ -14,6 +14,7 @@ function PropertyView(editor, content) {
 
   events.addListener('instance-deleted', instanceDeleted);
   events.addListener('preview-loaded', load);
+  events.addListener('language-changed', load.bind(null, true));
   events.addListener('preview-element-selected', setInstance);
   events.addListener('add-global-property', addGlobalProperty);
   events.addListener('delete-global-property', deleteGlobalProperty);
@@ -185,10 +186,10 @@ function PropertyView(editor, content) {
 
       if (typeof value === 'object') {
         value = value[language] || '';
-        if (prop.type === 'color') {
-          value = value.replace('#', '');
-        } 
       }
+      if (prop.type === 'color') {
+        value = value.replace('#', '');
+      } 
 
       const delBtnHtml = canDelete ? `<i class="fa fa-trash del-prop-btn" data-property="${key}"></i>` : '';
 
