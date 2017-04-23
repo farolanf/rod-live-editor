@@ -22,7 +22,7 @@
                                                     <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: %fontSize%;text-align: left;">
                                                         <tr>
                                                             <td>
-                                                                <img src="%imageUrlLeft%" aria-hidden="true" width="200" height="" border="0" alt="%imageLeftAlt%" class="center-on-narrow" style="width: 100%; max-width: 200px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
+                                                                <img src="%imageUrlLeft%" aria-hidden="true" width="200" height="" border="0" alt="%imageAltLeft%" class="center-on-narrow" style="width: 100%; max-width: 200px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -46,7 +46,7 @@
                                                     <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: %fontSize%;text-align: left;">
                                                         <tr>
                                                             <td>
-                                                                <img src="%imageUrlCenter%" aria-hidden="true" width="200" height="" border="0" alt="%imageCenterAlt%" class="center-on-narrow" style="width: 100%; max-width: 200px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
+                                                                <img src="%imageUrlCenter%" aria-hidden="true" width="200" height="" border="0" alt="%imageAltCenter%" class="center-on-narrow" style="width: 100%; max-width: 200px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -70,7 +70,7 @@
                                                     <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: 14px;text-align: left;">
                                                         <tr>
                                                             <td>
-                                                                <img src="%imageUrlRight%" aria-hidden="true" width="200" height="" border="0" alt="%imageRightAlt%" class="center-on-narrow" style="width: 100%; max-width: 200px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
+                                                                <img src="%imageUrlRight%" aria-hidden="true" width="200" height="" border="0" alt="%imageAltRight%" class="center-on-narrow" style="width: 100%; max-width: 200px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
                                                             </td>
                                                         </tr>
                                                         <tr>

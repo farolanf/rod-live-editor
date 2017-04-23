@@ -8,15 +8,19 @@
 
 const fs = require('fs');
 const Renderer = require('./renderer');
+const config = require('./config');
+
+global['config'] = config;
 
 const code = process.argv[2];
 const moduleGroup = process.argv[3];
+const language = process.argv[4];
 
 let content;
 eval(`content = ${code}`);
 const modules = loadModules(moduleGroup);
 
-const renderer = new Renderer(modules, content.globalProperties);
+const renderer = new Renderer(modules, content.globalProperties, language);
 console.log(renderer.render(content.data, true));
 
 /**

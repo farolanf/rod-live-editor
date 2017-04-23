@@ -163,6 +163,7 @@ Flight::route('POST /api/render', function() {
   $req = Flight::request();
   $content = $req->data->content;
   $moduleGroup = $req->data->moduleGroup;
-  echo renderContent($content, $moduleGroup);
+  $language = $req->data->language;
+  echo renderContent($content, $moduleGroup, $language);
 });
 ?>

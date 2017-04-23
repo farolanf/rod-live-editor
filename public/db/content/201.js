@@ -6,7 +6,13 @@
         "backgroundColorFooter": { type: 'color', value: "blue" },
         "backgroundColor": { type: 'color', value: "#fff" },
         "hiddenPreheader": { type: 'text', value: "test" },
-        "gift": { type: 'text', value: 'mac' },
+        "gift": { 
+            type: 'text', 
+            value: {
+                en: 'new Mac',
+                id: 'Mac baru'
+            } 
+        },
         "color1": {
             "type": "color",
             "value": "#00ff00"
@@ -54,6 +60,38 @@
                     contentId: 202,
                     instanceId: 2,
                     title: 'Example of invalid placement (&lt;div&gt; in &lt;tbody&gt;)',
+                },
+                {
+                    name: '1-column',
+                    content: [
+                        {
+                            "name": "block-text",
+                            "text": 'i18n on instance: '
+                        },
+                        {
+                            "name": "block-text",
+                            "text": {
+                                "en": "Headline",
+                                "es": "Titular",
+                                "pt": "Manchete" 
+                            }
+                        },
+                        {
+                            name: 'block-text',
+                            text: '<br>i18n on default value: '
+                        },
+                        {
+                            name: 'block-text-i18n',
+                        },
+                        {
+                            name: 'block-text',
+                            text: '<br>i18n on global: '
+                        },
+                        {
+                            name: 'block-text',
+                            text: '%gift%'
+                        }
+                    ]
                 },
                 {
                 "name": "1-column",

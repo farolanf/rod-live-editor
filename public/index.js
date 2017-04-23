@@ -55,6 +55,8 @@ function App() {
     precompileOff,
     togglePrecompile,
     togglePrecompileSafe,
+    useLanguage,
+    getLanguage,
     
     // expose the save function to be called by save confirmation modal
     _save,
@@ -71,13 +73,118 @@ function App() {
     initInstanceControls();
     initActions();
     loadContent();
+    initLanguage();
     initTooltips();
   }
 
+  /**
+   * Determines i18n usage.
+   * 
+   * @return {boolean} - True if using i18n.
+   */
+  function useLanguage() {
+    return !!query.language || getLanguages().length > 0;
+  }
+
+  /**
+   * Return active language.
+   */
+  function getLanguage() {
+    return query.language || config.defaultLanguage;
+  }
+
+  /**
+   * Scan content to collect languages.
+   * 
+   * @return {array} - Array of found languages.
+   */
+  function getLanguages() {
+    if (!store.content.isEmpty()) {
+      const langs = [];
+      scanGlobal(store.content.globalProperties());
+      scanContent(store.content.content());
+      return langs;
+
+      function scanGlobal(props) {
+        _.forOwn(props, function(value, key) {
+          if (value.value && typeof value.value === 'object') {
+            getLanguages(value.value);
+          }
+        });
+      }
+
+      function scanContent(content) {
+        if (Array.isArray(content)) {
+          content.forEach(function(value) {
+            scanContent(value);
+          });
+        }
+        else if (typeof content === 'object') {
+          if (content.name) {
+            _.forOwn(content, function(value, key) {
+              if (key !== 'parent' && typeof value === 'object') {
+                scanContent(value);
+              }
+            });
+          }
+          // if not an instance then assume it's an i18n object
+          else {
+            getLanguages(content);
+          }
+        }
+      }
+
+      function getLanguages(prop) {
+        _.forOwn(prop, function(value, key) {
+          if (!langs.includes(key)) {
+            langs.push(key);
+          }
+        });
+      }
+    }
+    return [];
+  }
+
+  /**
+   * Show active language.
+   * 
+   * @param {string} language - The language.
+   */
+  function updateLanguageButton(language) {
+    $('.language-menu .language-code').text(`Language (${language})`);
+  }
+
+  /**
+   * Update language menu.
+   */
+  function initLanguage() {
+    const html = getLanguages().map(function(value) {
+      return `
+      <li>
+        <a data-language-choice data-language="${value}">${value}</a>
+      </li>`;
+    }).join('');
+    $('.language-menu').toggleClass('hidden', !useLanguage());
+    $('.language-menu .language-list').html(html);
+    $('[data-language-choice]').on('click', function() {
+      query.language = $(this).data('language');
+      updateLanguageButton(query.language);
+      renderPreview();
+      events.emit('language-changed');
+    });
+    updateLanguageButton(getLanguage());
+  }
+
+  /**
+   * Init bootstrap tooltips.
+   */
   function initTooltips() {
     $('[data-toggle="tooltip"]').tooltip();
   }
 
+  /**
+   * Load content with specified id.
+   */
   function loadContent() {
     if (query.id) {
       const precompileParameters = usePrecompileParameters ? 
@@ -92,6 +199,7 @@ function App() {
   function registerHandlers() {
     // register handler for content changed event
     events.addListener('content-changed', renderPreview);
+    events.addListener('content-changed', initLanguage);
 
     // register handler for modules changed event
     events.addListener('modules-changed', renderPreview);
@@ -128,7 +236,7 @@ function App() {
 
       // handle /preview
       new senna.Route(uri.path()+'preview', function() {
-        const renderer = store.createRenderer();
+        const renderer = store.createRenderer(getLanguage());
         const html = renderer.render(store.content.content(), true);
         hideInstanceControls();
         $('#app > *').hide();
@@ -465,7 +573,7 @@ function App() {
       return;
     }
     dragond.removeIframe('.preview');
-    let html = store.createRenderer().render(store.content.content());
+    let html = store.createRenderer(getLanguage()).render(store.content.content());
     $('.preview').attr('srcdoc', html).off('load').on('load', function() {
       dragond.addIframe('.preview');
       preview.init(this.contentWindow);

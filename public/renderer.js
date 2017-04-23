@@ -11,7 +11,9 @@ if (typeof require !== 'undefined') {
  * @param {object} modules - The modules object.
  * @param {object} globalProperties - The global properties object.
  */
-function Renderer(modules, globalProperties) {
+function Renderer(modules, globalProperties, language) {
+
+  language = language || config.defaultLanguage;
 
   return {
     render,
@@ -204,10 +206,10 @@ function Renderer(modules, globalProperties) {
       output = output.replace(new RegExp('%' + property + '%', 'g'),
         getPropertyValue(property, instance, module, customReplace, clean));
 
-    //Replace Global Variables with their values
-    for (var key in globalProperties) {
-      output = output.replace(new RegExp('%' + key + '%', 'g'), getGlobalValue(key));
-    }
+    // substitute global properties
+    output = output.replace(/%([a-zA-Z0-9_-]+?)%/g, function(m0, m1) {
+      return getGlobalValue(m1);
+    });
 
     return clean ? output :
       Editor.injectInstanceData(output, instance.id, instance.name, visible);
@@ -229,6 +231,16 @@ function Renderer(modules, globalProperties) {
         else {
           value = property.value;
         }
+        // i18n
+        if (typeof value === 'object') {
+          if (value.hasOwnProperty(language)) {
+            value = value[language];
+          }
+          else {
+            value = '[?]';
+            console.error(`Missing value for <${language}> on global property <${name}>`);
+          }
+        }
         // only use replace from the original property
         if (!depth) {
           value = replace(property, value,
@@ -240,7 +252,7 @@ function Renderer(modules, globalProperties) {
         return value;
       }
       else {
-        console.error('Invalid global property <%s>', name);
+        console.error('Invalid global property <%s> on instance #%d', name, instance.id);
       }
     }
   }
@@ -287,13 +299,29 @@ function Renderer(modules, globalProperties) {
       //There is no alias, use this property's values
       if (instance.hasOwnProperty(property)) {
         value = instance[property];
+        value = getValue(value, `Missing value for <${language}> on instance #${instance.id} property <${property}>`);
       } else if (moduleProperty.hasOwnProperty("default")) {
         value = moduleProperty.default;
+        value = getValue(value, `Missing default value for <${language}> on module <${module.name}> property <${property}>`);
       } else if (!moduleProperty.type) {
         // default is optional for internal property
       } else {
         console.error("property ", property, " in module ", instance.name, " doesn't have a default value");
       }
+    }
+
+    // i18n
+    function getValue(value, err) {
+      if (moduleProperty.type !== 'container' && typeof value === 'object') {
+        if (value.hasOwnProperty(language)) {
+          return value[language];
+        }
+        else {
+          console.error(err);
+          return '[?]';
+        }
+      }
+      return value;
     }
 
     //If property is of type text do replacements 
