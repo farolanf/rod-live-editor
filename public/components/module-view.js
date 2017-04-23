@@ -123,7 +123,7 @@ function ModuleView(store, initialGroup) {
    * @private
    */
   function getPreview(name, large) {
-    const renderer = store.createRenderer();
+    const renderer = store.createRenderer(app.getLanguage());
     const style = large ? 'style="width: 800px; height: 600px"' : '';
     const html = `
       <html>
@@ -145,7 +145,7 @@ function ModuleView(store, initialGroup) {
    * @public
    */
   function getElement(el) {
-    const renderer = store.createRenderer();
+    const renderer = store.createRenderer(app.getLanguage());
     // extract data from the preview element
     const name = $(el).data('name');
     const content = {name: name, id: -1};

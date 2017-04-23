@@ -32,12 +32,16 @@ function PropertyView(editor, content) {
 
   /**
    * Load the last edited properties.
+   * 
+   * @param {boolean} force - Force reloading.
    * @private
    */
-  function load() {
+  function load(force) {
     if (noLoad) {
       noLoad = false;
-      return;
+      if (!force) {
+        return;
+      }
     }
     if (editingGlobal) {
       editGlobals();
@@ -165,17 +169,44 @@ function PropertyView(editor, content) {
       if (prop.hasOwnProperty('alias') || !prop.type) {
         return;
       }
-      const delHtml = canDelete ? `<i class="fa fa-trash del-prop-btn" data-property="${key}"></i>` : '';
-      const value = prop.type === 'color' ? prop.value.replace('#', '') : prop.value;
+
+      const dataGlobal = instanceId === null ? 'data-global="true"' : '';
+
+      let value = prop.value;
+
+      // i18n
+      const useLanguage = app.useLanguage();
+      const language = app.getLanguage();
+
+      const lang = useLanguage && typeof value === 'object' ? ` (${language})` : '';
+
+      const flag = typeof value === 'object' ? 'fa-flag' : 'fa-flag-o';
+      const langBtnHtml = useLanguage ? `<i class="fa ${flag} i18n-btn" data-name="${key}" ${dataGlobal}></i>` : '';
+
+      if (typeof value === 'object') {
+        value = value[language] || '';
+        if (prop.type === 'color') {
+          value = value.replace('#', '');
+        } 
+      }
+
+      const delBtnHtml = canDelete ? `<i class="fa fa-trash del-prop-btn" data-property="${key}"></i>` : '';
+
       const textCls = prop.type === 'text' ? 'text-editor-btn' : '';
       const textBtn = prop.type === 'text' ? '<i class="fa fa-pencil"></i>' : '';
-      const dataGlobal = instanceId === null ? 'data-global="true"' : '';
-      const style = prop.value ? `style="box-shadow: inset 0 0 0 4px ${prop.value}"` : '';
+      
+      const style = prop.type === 'color' ? `style="box-shadow: inset 0 0 0 4px #${value}"` : '';
+      
       html += `
         <div class="list-group-item">
-          <span class="name ${textCls}">${key} ${textBtn}</span>
-          <input class="form-control" value="${value}" ${dataGlobal} data-name="${key}" data-type="${prop.type}" ${style}>
-          ${delHtml}
+          <span class="name ${textCls}">${key}<span class="language-info">${lang}</span> ${textBtn}</span>
+          <div class="property-controls">
+            <input class="form-control" value="${value}" ${dataGlobal} data-name="${key}" data-type="${prop.type}" ${style}>
+            <div class="prop-buttons">
+              ${langBtnHtml}
+              ${delBtnHtml}
+            </div>
+          </div>
         </div>`;
     });
     $('#editor .property-view .list-group').html(html);
@@ -199,6 +230,51 @@ function PropertyView(editor, content) {
         'Delete', `events.emit('delete-global-property', '${name}')`, 'danger');
     });
     $('.property-view .text-editor-btn').on('click', onTextBtnClick);
+    $('.property-view .i18n-btn').on('click', oni18nClick);
+  }
+
+  function oni18nClick() {
+    const btn = $(this);
+    const usei18n = btn.is('.fa-flag');
+    const prop = btn.data('name');
+    const isGlobal = !!btn.data('global');
+    const value = isGlobal ? getGlobalProperty(prop) : getInstanceProperty(prop);
+    const language = app.getLanguage();
+    if (usei18n) {
+      // discard i18n 
+      const eventName = 'discard-i18n-property';
+      events.removeListener(eventName);
+      events.once(eventName, function() {
+        const newValue = value[language];
+        setProperty(isGlobal, prop, newValue, false);
+        load(true);
+      });
+      uiutils.showConfirmModal('Discard i18n', 'Discard i18n for this property and use current value for all languages?', 'Discard', `events.emit("${eventName}")`, 'danger');
+    }
+    else {
+      // use i18n
+      const newValue = {[language]: value};
+      setProperty(isGlobal, prop, newValue, false);
+      load(true);
+    }
+  }
+
+  /**
+   * Set global or instance property.
+   * 
+   * @param {boolean} isGlobal - Set global property if true otherwise 
+   * set instance property.
+   * @param {string} prop - The property name.
+   * @param {string} value - The property value.
+   * @param {boolean} usei18n - Integrate the value to i18n object.
+   */
+  function setProperty(isGlobal, prop, value, usei18n) {
+    if (isGlobal) {
+      setGlobalProperty(prop, value, usei18n);
+    }
+    else {
+      setInstanceProperty(prop, value, usei18n);
+    }
   }
 
   /**
@@ -248,16 +324,40 @@ function PropertyView(editor, content) {
   }
 
   /**
+   * Get i18n object with updated value.
+   * 
+   * @param {string} prop - Property name.
+   * @param {string} newValue - New property value.
+   * @param {(string|object)} curValue - Current property value.
+   * @return {(string|object)} - The i18n object or the original new value.
+   */
+  function geti18nValue(prop, newValue, curValue) {
+    if (app.useLanguage()) {
+      if (typeof curValue === 'object') {
+        const language = app.getLanguage();
+        newValue = Object.assign({}, curValue, { 
+          [language]: newValue,
+        });
+      }
+    }
+    return newValue;
+  }
+
+  /**
    * Set global property to a new value.
    * 
    * @param {string} prop - The global property name.
    * @param {string} value - The new global property value.
    * @private
    */
-  function setGlobalProperty(prop, value) {
+  function setGlobalProperty(prop, value, usei18n) {
+    usei18n = usei18n || typeof usei18n === 'undefined';
     noLoad = true;
     app.precompileOff(function() {
       undo.push();
+      if (usei18n) {
+        value = geti18nValue(prop, value, getGlobalProperty(prop));
+      }
       content.setGlobalProperty(prop, value);
       events.emit('global-property-changed');
     });
@@ -270,14 +370,19 @@ function PropertyView(editor, content) {
    * @param {string} value - The new property value.
    * @private
    */
-  function setInstanceProperty(prop, value) {
+  function setInstanceProperty(prop, value, usei18n) {
+    usei18n = usei18n || typeof usei18n === 'undefined';
     noLoad = true;
     app.precompileOff(function(reloaded) {
       undo.push();
+      const textValue = value;
+      if (usei18n) {
+        value = geti18nValue(prop, value, getInstanceProperty(prop));
+      }
       const instance = new Instance(instanceId);
       instance.setProperty(prop, value);
       events.emit('instance-changed', instance);
-      reloaded && updatePropertyUi(prop, value);
+      reloaded && updatePropertyUi(prop, textValue);
     });
   }
 

@@ -55,6 +55,8 @@ function App() {
     precompileOff,
     togglePrecompile,
     togglePrecompileSafe,
+    useLanguage,
+    getLanguage,
     
     // expose the save function to be called by save confirmation modal
     _save,
@@ -82,6 +84,13 @@ function App() {
    */
   function useLanguage() {
     return !!query.language || getLanguages().length > 0;
+  }
+
+  /**
+   * Return active language.
+   */
+  function getLanguage() {
+    return query.language || config.defaultLanguage;
   }
 
   /**
@@ -160,9 +169,10 @@ function App() {
     $('[data-language-choice]').on('click', function() {
       query.language = $(this).data('language');
       updateLanguageButton(query.language);
-      loadContent();
+      renderPreview();
+      events.emit('language-changed');
     });
-    updateLanguageButton(query.language || config.defaultLanguage);
+    updateLanguageButton(getLanguage());
   }
 
   /**
@@ -226,7 +236,7 @@ function App() {
 
       // handle /preview
       new senna.Route(uri.path()+'preview', function() {
-        const renderer = store.createRenderer();
+        const renderer = store.createRenderer(getLanguage());
         const html = renderer.render(store.content.content(), true);
         hideInstanceControls();
         $('#app > *').hide();
@@ -563,7 +573,7 @@ function App() {
       return;
     }
     dragond.removeIframe('.preview');
-    let html = store.createRenderer(query.language).render(store.content.content());
+    let html = store.createRenderer(getLanguage()).render(store.content.content());
     $('.preview').attr('srcdoc', html).off('load').on('load', function() {
       dragond.addIframe('.preview');
       preview.init(this.contentWindow);
