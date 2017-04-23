@@ -60,7 +60,7 @@ Flight::route('/api/module/group/@name', function($name) {
 function precompile($content, $precompileParameters) {
   // PRECOMPILE TEST
   if ($precompileParameters) {
-    $content = replace_blocks($content);
+    $content = NodeJsUtils::replaceBlocks($content);
   }
   else {
     // test without php comment
@@ -164,6 +164,6 @@ Flight::route('POST /api/render', function() {
   $content = $req->data->content;
   $moduleGroup = $req->data->moduleGroup;
   $language = $req->data->language;
-  echo renderContent($content, $moduleGroup, $language);
+  echo NodeJsUtils::renderContent($content, $moduleGroup, $language);
 });
 ?>
