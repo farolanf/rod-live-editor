@@ -22,7 +22,6 @@ function Instance(instance) {
   }
 
   const module = store.modules.modules()[instance.name];
-  const renderer = store.createRenderer();
 
   return Object.assign(this, {
     getContainers,
@@ -117,6 +116,7 @@ function Instance(instance) {
    * @public
    */
   function render() {
+    const renderer = store.createRenderer(app.getLanguage());
     return renderer.renderModule(instance);
   }
 
@@ -128,6 +128,7 @@ function Instance(instance) {
    * @public
    */
   function renderContainerChildren(name) {
+    const renderer = store.createRenderer(app.getLanguage());
     return renderer.getPropertyValue(name, instance, module, true);
   }
 
