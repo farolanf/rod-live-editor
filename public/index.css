@@ -178,24 +178,36 @@ html, body, #app, #editor, .editor-container, .preview {
   border-color: transparent;
 }
 .property-view .list-group .list-group-item {
-  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  padding-right: 4px;
+  overflow: hidden;
 }
-.property-view .list-group .list-group-item input,
-.property-view .list-group .list-group-item .del-prop-btn {
-  position: absolute;
-  top: 50%;
-  right: 4px;
-  transform: translateY(-50%);
+.property-view .list-group .list-group-item .name {
+  padding-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.property-view .list-group .list-group-item .language-info {
+  color: #aaa;
+}
+.property-view .list-group .list-group-item .property-controls {
+  white-space: nowrap;
+}
+.property-view .list-group .list-group-item .property-controls > * {
+  display: inline-block;
 }
 .property-view .list-group .list-group-item input {
-  right: 20px;
-  width: 40%;
+  width: unset;
+  max-width: 120px;
 }
-.property-view .list-group .list-group-item .del-prop-btn {
+.property-view .list-group .list-group-item .prop-buttons > * {
   cursor: pointer;
+  padding: 4px;
 }
-.property-view .list-group .list-group-item .del-prop-btn:hover {
-  opacity: 0.5;
+.property-view .list-group .list-group-item .prop-buttons > *:hover {
+  opacity: 0.8;
 }
 .property-view .text-editor-btn {
   cursor: pointer;
