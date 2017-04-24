@@ -62,12 +62,12 @@ html, body, #app, #editor, .editor-container, .preview {
 .module-view .module-groups {
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 1;
 }
 .module-view .module-search {
   position: sticky;
   top: 34px;
-  z-index: 1000;
+  z-index: 1;
 }
 .module-view .list-group-item {
   cursor: move;
