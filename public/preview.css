@@ -16,11 +16,11 @@ body * {
   cursor: text;
   box-shadow: 0 0 22px -2px #555;
 }
-[data-name="block-include"] a {
+[data-name="block-include-div"] a, [data-name="block-include-tr"] a {
   pointer-events: auto;
   color: #44b;
 }
-[data-name="block-include"] a:hover {
+[data-name="block-include-div"] a:hover, [data-name="block-include-tr"] a:hover {
   color: #ebe;
 }
 

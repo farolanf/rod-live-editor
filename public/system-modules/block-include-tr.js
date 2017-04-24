@@ -1,12 +1,14 @@
 {
-  name: 'block-include',
+  name: 'block-include-tr',
   output: `
-    <div style="background: black; color: white; text-align: center;   
-    padding: 50px; line-height: 1.4em">
-      <small>%title%</small><br>
-      %info%
-      %button%
-    </div>`,
+    <tr>
+      <td style="background: black; color: white; text-align: center;   
+      padding: 50px; line-height: 1.4em">
+        <small>%title%</small><br>
+        %info%
+        %button%
+      </td>
+    </tr>`,
   properties: {
     title: {
       type: 'text',
