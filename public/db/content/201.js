@@ -8,10 +8,14 @@
         "hiddenPreheader": { type: 'text', value: "test" },
         "gift": { 
             type: 'text', 
+            value: 'new Mac',
+        },
+        "thing": { 
+            type: 'text', 
             value: {
-                en: 'new Mac',
-                id: 'Mac baru'
-            } 
+                en: 'A bow',
+                id: 'Sebuah busur'
+            }
         },
         "color1": {
             "type": "color",
@@ -56,10 +60,9 @@
             "hiddenPreheader": "test",
             "body": [
                 {
-                    name: 'block-include',
+                    name: 'block-include-tr',
                     contentId: 202,
                     instanceId: 2,
-                    title: 'Example of invalid placement (&lt;div&gt; in &lt;tbody&gt;)',
                 },
                 {
                     name: '1-column',
@@ -89,7 +92,7 @@
                         },
                         {
                             name: 'block-text',
-                            text: '%gift%'
+                            text: '%thing%'
                         }
                     ]
                 },
@@ -112,10 +115,9 @@
                         "text": " are here!"
                     },
                     {
-                        name: 'block-include',
+                        name: 'block-include-div',
                         contentId: 202,
                         instanceId: 2,
-                        title: 'Example of valid placement (&lt;div&gt; in &lt;td&gt;)',
                     },
                 ]
             },
