@@ -356,6 +356,7 @@ function Renderer(modules, globalProperties, language) {
    * @param {string} conditionErr - Error to display when condition not found.
    * @param {string} conditionTypeErr - Error for invalid condition type.
    * @param {string} resultErr - Error for result not found. %result% will be replaced with the result of condition function.
+   * @param {object} instance - The instance.
    */
   function replace(property, value, conditionErr, conditionTypeErr, resultErr, instance) {
     if (property.hasOwnProperty("replace")) {
