@@ -284,10 +284,14 @@ function PropertyView(editor, content) {
    * @private
    */
   function onTextBtnClick() {
-    const input = $(this).next();
+    const input = $(this).parent().find('input');
     const prop = input.data('name');
     const isGlobal = !!input.data('global');
-    const value = isGlobal ? getGlobalProperty(prop) : getInstanceProperty(prop);
+    let value = isGlobal ? getGlobalProperty(prop) : getInstanceProperty(prop);
+    if (typeof value === 'object') {
+      value = value[app.getLanguage()];
+    }
+    value = value || '';
     acedit.setValue(value);
     $('#text-editor-modal').modal().off('hide.bs.modal').on('hide.bs.modal', function() {
       const newValue = acedit.getValue();
