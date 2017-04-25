@@ -246,7 +246,7 @@ function PropertyView(editor, content) {
       const eventName = 'discard-i18n-property';
       events.removeListener(eventName);
       events.once(eventName, function() {
-        const newValue = value[language];
+        const newValue = value[language] || '';
         setProperty(isGlobal, prop, newValue, false);
         load(true);
       });
