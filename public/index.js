@@ -75,6 +75,7 @@ function App() {
     loadContent();
     initLanguage();
     initTooltips();
+    initAutofocus();
   }
 
   /**
@@ -101,6 +102,7 @@ function App() {
   function getLanguages() {
     if (!store.content.isEmpty()) {
       const langs = [];
+      query.language && langs.push(query.language);
       scanGlobal(store.content.globalProperties());
       scanContent(store.content.content());
       return langs;
@@ -158,12 +160,15 @@ function App() {
    * Update language menu.
    */
   function initLanguage() {
-    const html = getLanguages().map(function(value) {
+    let html = getLanguages().map(function(value) {
       return `
       <li>
         <a data-language-choice data-language="${value}">${value}</a>
       </li>`;
     }).join('');
+    html += `
+      <li role="separator" class="divider"></li>
+      <li><a class="new-language-btn">New Language</a></li>`;
     $('.language-menu').toggleClass('hidden', !useLanguage());
     $('.language-menu .language-list').html(html);
     $('[data-language-choice]').on('click', function() {
@@ -172,7 +177,27 @@ function App() {
       renderPreview();
       events.emit('language-changed');
     });
+    $('.new-language-btn').on('click', showAddLanguageModal);
+    events.removeListener('add-language', onAddLanguage);
+    events.addListener('add-language', onAddLanguage);
     updateLanguageButton(getLanguage());
+  }
+
+  /**
+   * Handle add-language event.
+   */
+  function onAddLanguage() {
+    query.language = $('#add-language-modal__name').val();
+    initLanguage();
+    refresh();
+  }
+
+  /**
+   * Show add language modal.
+   */
+  function showAddLanguageModal() {
+    $('#add-language-modal__name').val('');
+    $('#add-language-modal').modal();
   }
 
   /**
@@ -180,6 +205,15 @@ function App() {
    */
   function initTooltips() {
     $('[data-toggle="tooltip"]').tooltip();
+  }
+
+  /**
+   * Autofucs modal control.
+   */
+  function initAutofocus() {
+    $(document).on('shown.bs.modal', function(e) {
+      $('[autofocus]', e.target).focus();
+    });
   }
 
   /**
