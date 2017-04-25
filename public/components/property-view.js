@@ -250,7 +250,12 @@ function PropertyView(editor, content) {
         setProperty(isGlobal, prop, newValue, false);
         load(true);
       });
-      uiutils.showConfirmModal('Discard i18n', 'Discard i18n for this property and use current value for all languages?', 'Discard', `events.emit("${eventName}")`, 'danger');
+      const html = `<p>Discard i18n for this property and use current value for all    languages?</p><table class="discard-list"><tbody>` + _.map(value, function(val, key) {
+        val = val.substr(0, 255);
+        const currentCls = key === language ? 'discard-list__current' : '';
+        return `<tr class="${currentCls}"><td>${key}</td><td>${val}</td></tr>`;
+      }).join('') + '</tbody></table>';
+      uiutils.showConfirmModal('Discard i18n', html, 'Discard', `events.emit("${eventName}")`, 'danger');
     }
     else {
       // use i18n

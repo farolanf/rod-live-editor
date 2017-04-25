@@ -280,3 +280,13 @@ html, body, #app, #editor, .editor-container, .preview {
 .json-view .json-save-btn.disabled {
   pointer-events: none;
 }
+
+.discard-list tr td {
+  padding: 4px 8px;
+}
+.discard-list tr td:first-child {
+  color: #aaa;
+}
+.discard-list__current {
+  background-color: #eee;
+}
