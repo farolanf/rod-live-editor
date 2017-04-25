@@ -168,6 +168,14 @@ html, body, #app, #editor, .editor-container, .preview {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
+.property-view {
+  display: flex;
+  flex-flow: column nowrap;
+}
+.property-view .list-group {
+  flex-grow: 1;
+  overflow: auto;
+}
 .property-view .module-name .btn-group {
   position: absolute;
   right: 8px;
