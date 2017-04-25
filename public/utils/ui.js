@@ -28,11 +28,11 @@ function UIUtils() {
    * @param {string} onclick - The code to be executed on click.
    * @param {string} type - Type of message <undefined|danger>.
    */
-  this.showConfirmModal = function(title, msg, actionTitle, onclick, type, 
+  this.showConfirmModal = function(title, body, actionTitle, onclick, type, 
   actionTitle2, onclick2, type2) {
     const modal = $('#confirm-modal');
     $('.modal-title', modal).text(title);
-    $('.confirm-msg', modal).text(msg);
+    $('.modal-body', modal).html(body);
     $('[data-primary-btn]', modal).text(actionTitle).attr('onclick', onclick);
     if (type === 'danger') {
       $('[data-primary-btn]', modal).removeClass('btn-primary').addClass('btn-danger');
