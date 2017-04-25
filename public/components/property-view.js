@@ -165,7 +165,8 @@ function PropertyView(editor, content) {
    * @private
    */
   function _render(name, props, onChange, canDelete) {
-    let html = `<div class="list-group-item module-name">${name}</div>`;
+    const idHtml = instanceId ? `<span class="pull-right property-view__instance-id">id: ${instanceId}</span>` : '';
+    let html = `<div class="list-group-item module-name">${name} ${idHtml}</div>`;
     _.forOwn(props, function(prop, key) {
       if (prop.hasOwnProperty('alias') || !prop.type) {
         return;

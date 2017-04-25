@@ -215,6 +215,9 @@ html, body, #app, #editor, .editor-container, .preview {
 .property-view .text-editor-btn:hover {
   opacity: 0.8;
 }
+.property-view__instance-id {
+  padding-right: 8px;
+}
 
 .instance-map {
   width: 300px;
