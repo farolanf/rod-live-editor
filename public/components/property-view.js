@@ -361,9 +361,15 @@ function PropertyView(editor, content) {
     if (app.useLanguage()) {
       if (typeof curValue === 'object') {
         const language = app.getLanguage();
-        newValue = Object.assign({}, curValue, { 
-          [language]: newValue,
-        });
+        if (newValue === '') {
+          newValue = curValue;
+          delete newValue[language];
+        }
+        else {
+          newValue = Object.assign({}, curValue, { 
+            [language]: newValue,
+          });
+        }
       }
     }
     return newValue;
