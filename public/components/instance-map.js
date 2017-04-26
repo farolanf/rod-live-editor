@@ -124,8 +124,10 @@ function InstanceMap(content, propertyView, preview) {
    * @return {string} - The rendered HTML.
    */
   function renderInstance(instance) {
+    const warningCls = log.hasi18nWarning(instance.id) ? 'instance-map__instance--has-warning' : '';
+    const tooltip = warningCls ? 'title="This instance has property with missing translation on selected language"' : '';
     const html = `
-      <div class="instance-map__instance" data-id="${instance.id}">
+      <div class="instance-map__instance ${warningCls}" data-id="${instance.id}" ${tooltip}>
         <span>${instance.name}</span>
         ${renderContainers(instance)}
       </div>

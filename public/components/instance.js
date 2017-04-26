@@ -15,9 +15,10 @@ function Instance(instance) {
   
   // load the instance if an id is given
   if (typeof instance === 'string' || typeof instance === 'number') {
-    instance = editor.findInstance(instance);
+    const id = instance;
+    instance = editor.findInstance(id);
     if (!instance) {
-      throw new Error('invalid instance id');
+      throw new Error('invalid instance id', id);
     }
   }
 

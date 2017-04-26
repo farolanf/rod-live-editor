@@ -10,6 +10,7 @@ if (typeof require !== 'undefined') {
  * 
  * @param {object} modules - The modules object.
  * @param {object} globalProperties - The global properties object.
+ * @param {string} language - Current language.
  */
 function Renderer(modules, globalProperties, language) {
 
@@ -233,12 +234,15 @@ function Renderer(modules, globalProperties, language) {
         }
         // i18n
         if (typeof value === 'object') {
-          if (value.hasOwnProperty(language)) {
+          if (value.hasOwnProperty(language) && value[language] !== '') {
             value = value[language];
           }
           else {
             value = '[?]';
-            console.error(`Missing value for <${language}> on global property <${name}>`);
+            events.emit('i18n-warning', {
+              property: name,
+              language,
+            });
           }
         }
         // only use replace from the original property
@@ -299,10 +303,23 @@ function Renderer(modules, globalProperties, language) {
       //There is no alias, use this property's values
       if (instance.hasOwnProperty(property)) {
         value = instance[property];
-        value = getValue(value, `Missing value for <${language}> on instance #${instance.id} property <${property}>`);
+        value = getValue(value, `Missing value for <${language}> on instance #${instance.id} property <${property}>`, function() {
+          events.emit('i18n-warning', {
+            instanceId: instance.id,
+            property,
+            language,
+          });
+        });
       } else if (moduleProperty.hasOwnProperty("default")) {
         value = moduleProperty.default;
-        value = getValue(value, `Missing default value for <${language}> on module <${module.name}> property <${property}>`);
+        value = getValue(value, `Missing default value for <${language}> on module <${module.name}> property <${property}>`, function() {
+          events.emit('i18n-warning', {
+            module: module.name,
+            moduleGroup: store.modules.group(),
+            property,
+            language,
+          });
+        });
       } else if (!moduleProperty.type) {
         // default is optional for internal property
       } else {
@@ -311,13 +328,14 @@ function Renderer(modules, globalProperties, language) {
     }
 
     // i18n
-    function getValue(value, err) {
+    function getValue(value, err, errorFn) {
       if (moduleProperty.type !== 'container' && typeof value === 'object') {
-        if (value.hasOwnProperty(language)) {
+        if (value.hasOwnProperty(language) && value[language] !== '') {
           return value[language];
         }
         else {
-          console.error(err);
+          // console.error(err);
+          errorFn && errorFn();
           return '[?]';
         }
       }

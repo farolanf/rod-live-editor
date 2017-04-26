@@ -226,6 +226,9 @@ html, body, #app, #editor, .editor-container, .preview {
 .property-view__instance-id {
   padding-right: 8px;
 }
+.property-view__item--has-warning {
+  background-color: #ffeedd;
+}
 
 .instance-map {
   width: 300px;
@@ -236,6 +239,9 @@ html, body, #app, #editor, .editor-container, .preview {
   padding: 8px 16px;
   cursor: pointer;
   user-select: none;
+}
+.instance-map__instance--has-warning {
+  background-color: #ffeedd;
 }
 .instance-map__container__name {
   margin-top: 4px;

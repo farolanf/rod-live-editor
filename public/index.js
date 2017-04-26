@@ -24,7 +24,11 @@ window.undo = new Undo(store.content);
 // editor only need a content store so no need to pass the whole store
 window.editor = new Editor(store.content);
 
+// init log after editor injects helper properties
+window.log = new Log();
+
 window.app = new App();
+
 
 /**
  * Main application logic.

@@ -15,9 +15,11 @@ function PropertyView(editor, content) {
   events.addListener('instance-deleted', instanceDeleted);
   events.addListener('preview-loaded', load);
   events.addListener('language-changed', load.bind(null, true));
+  events.addListener('warnings-changed', load.bind(null, true));
   events.addListener('preview-element-selected', setInstance);
   events.addListener('add-global-property', addGlobalProperty);
   events.addListener('delete-global-property', deleteGlobalProperty);
+  events.addListener('property-changed', onPropertyChanged);
 
   const acedit = ace.edit('text-editor-modal__text-editor');
   acedit.setFontSize(14);
@@ -198,9 +200,15 @@ function PropertyView(editor, content) {
       const textBtn = prop.type === 'text' ? '<i class="fa fa-pencil"></i>' : '';
       
       const style = prop.type === 'color' ? `style="box-shadow: inset 0 0 0 4px #${value}"` : '';
+
+      const hasWarning = instanceId ? log.propHasi18nWarning(instanceId, key) :
+        log.globalHasi18nWarning(key);
+      const warningCls = hasWarning ? 'property-view__item--has-warning' : '';
+
+      const tooltip = warningCls ? 'data-toggle="tooltip" title="This property is missing translation for selected language"' : '';
       
       html += `
-        <div class="list-group-item">
+        <div class="list-group-item ${warningCls}" ${tooltip}>
           <span class="name ${textCls}">${key}<span class="language-info">${lang}</span> ${textBtn}</span>
           <div class="property-controls">
             <input class="form-control" value="${value}" ${dataGlobal} data-name="${key}" data-type="${prop.type}" ${style}>
@@ -233,6 +241,13 @@ function PropertyView(editor, content) {
     });
     $('.property-view .text-editor-btn').on('click', onTextBtnClick);
     $('.property-view .i18n-btn').on('click', oni18nClick);
+    $('.property-view [data-toggle="tooltip"]').tooltip();
+  }
+
+  function onPropertyChanged(name, text, value) {
+    const hasWarning = !text && typeof value === 'object';
+    $(`.property-view [data-name="${name}"]`).closest('.list-group-item')
+      .toggleClass('property-view__item--has-warning', hasWarning);
   }
 
   function oni18nClick() {
@@ -366,6 +381,7 @@ function PropertyView(editor, content) {
     noLoad = true;
     app.precompileOff(function() {
       undo.push();
+      const textValue = value;
       if (usei18n) {
         value = geti18nValue(prop, value, getGlobalProperty(prop));
       }
@@ -393,6 +409,7 @@ function PropertyView(editor, content) {
       const instance = new Instance(instanceId);
       instance.setProperty(prop, value);
       events.emit('instance-changed', instance);
+      events.emit('property-changed', prop, textValue, value, instanceId);
       reloaded && updatePropertyUi(prop, textValue);
     });
   }
