@@ -695,5 +695,6 @@ function App() {
     // reinitialize drag events
     initDrag();
     renderPreview();
+    initLanguage();
   }
 }
