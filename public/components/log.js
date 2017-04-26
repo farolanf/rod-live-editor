@@ -15,6 +15,7 @@ function Log() {
 
   return Object.assign(this, {
     hasi18nWarning,
+    moduleHasi18nWarning,
     propHasi18nWarning,
     globalHasi18nWarning,
     geti18nWarnings,
@@ -29,6 +30,19 @@ function Log() {
   function hasi18nWarning(id) {
     return warnings.findIndex(function(value) {
       return value.instanceId && value.instanceId == id;
+    }) !== -1;
+  }
+
+  /**
+   * Check if module has warning.
+   * 
+   * @param {string} name - Module name.
+   * @param {string} moduleGroup - Module group name.
+   * @return {boolean} - True if has warning.
+   */
+  function moduleHasi18nWarning(name, moduleGroup) {
+    return warnings.findIndex(function(value) {
+      return value.module && value.module === name && value.moduleGroup === moduleGroup;
     }) !== -1;
   }
 

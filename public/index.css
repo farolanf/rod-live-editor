@@ -243,6 +243,9 @@ html, body, #app, #editor, .editor-container, .preview {
 .instance-map__instance--has-warning {
   background-color: #ffeedd;
 }
+.instance-map__instance--has-module-warning {
+  background-color: #ff5544;
+}
 .instance-map__container__name {
   margin-top: 4px;
   color: #aaa;

@@ -124,8 +124,15 @@ function InstanceMap(content, propertyView, preview) {
    * @return {string} - The rendered HTML.
    */
   function renderInstance(instance) {
-    const warningCls = log.hasi18nWarning(instance.id) ? 'instance-map__instance--has-warning' : '';
-    const tooltip = warningCls ? 'title="This instance has property with missing translation on selected language"' : '';
+    let warningCls = '', tooltip = '';
+    if (log.hasi18nWarning(instance.id)) {
+      warningCls = 'instance-map__instance--has-warning';
+      tooltip = 'title="This instance has property with missing translation on selected language"';
+    }
+    else if (log.moduleHasi18nWarning(instance.name, store.modules.group())) {
+      warningCls = 'instance-map__instance--has-module-warning';
+      tooltip = 'title="This instance is using a module which has a missing translation for default value in the selected language and current module group"';
+    }
     const html = `
       <div class="instance-map__instance ${warningCls}" data-id="${instance.id}" ${tooltip}>
         <span>${instance.name}</span>
