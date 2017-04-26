@@ -37,6 +37,7 @@ function Log() {
    * 
    * @param {string} id - Instance id.
    * @param {string} property - Property name.
+   * @return {boolean} - True if has warning.
    */
   function propHasi18nWarning(id, property) {
     return geti18nWarnings(id).findIndex(function(value) {
@@ -44,6 +45,12 @@ function Log() {
     }) !== -1;    
   }
 
+  /**
+   * Check if global property has warning.
+   * 
+   * @param {string} property - The property name.
+   * @return {boolean} - True if has warning.
+   */
   function globalHasi18nWarning(property) {
     return warnings.findIndex(function(value) {
       return !value.hasOwnProperty('instanceId') && !value.hasOwnProperty('module') && value.property === property;
