@@ -165,9 +165,11 @@ function App() {
    */
   function initLanguage() {
     let html = getLanguages().map(function(value) {
+      const warnings = log.getLanguageWarnings(value);
+      const status = warnings.length === 0 ? '<i class="fa fa-check"></i>' : `<i class="fa fa-exclamation-triangle"> ${warnings.length} missing translation${warnings.length > 1 ? 's' : ''}</i>`;
       return `
       <li>
-        <a data-language-choice data-language="${value}">${value}</a>
+        <a data-language-choice data-language="${value}">${value} ${status}</a>
       </li>`;
     }).join('');
     html += `
@@ -251,6 +253,9 @@ function App() {
 
     // register handler for instance deleted event
     events.addListener('instance-deleted', instanceDeleted);
+
+    events.addListener('property-changed', initLanguage);
+    events.addListener('global-property-changed', initLanguage);
   }
 
   /**

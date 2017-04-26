@@ -19,6 +19,7 @@ function Log() {
     propHasi18nWarning,
     globalHasi18nWarning,
     geti18nWarnings,
+    getLanguageWarnings,
   });
 
   /**
@@ -84,6 +85,19 @@ function Log() {
   }
 
   /**
+   * Get all warnings for a language.
+   * 
+   * @param {string} language - Language code.
+   * @return {array} - Array of warnings for the language.
+   */
+  function getLanguageWarnings(language) {
+    reset(language);
+    return warnings.filter(function(value) {
+      return value.language === language;
+    });
+  }
+
+  /**
    * Add warning.
    * 
    * @param {object} data - Warning info.
@@ -95,10 +109,10 @@ function Log() {
   /**
    * Repopulate logs.
    */
-  function reset() {
+  function reset(language) {
     warnings = [];
     enableLog = true;
-    store.createRenderer(app.getLanguage()).render(store.content.content());
+    store.createRenderer(language || app.getLanguage()).render(store.content.content());
     enableLog = false;
     events.emit('warnings-changed');
   }

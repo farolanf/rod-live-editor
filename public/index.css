@@ -310,3 +310,9 @@ html, body, #app, #editor, .editor-container, .preview {
 .discard-list__current {
   background-color: #eee;
 }
+.language-list .fa-check {
+  color: #4f4;
+}
+.language-list .fa-exclamation-triangle {
+  color: #f74;
+}
