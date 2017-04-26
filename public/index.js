@@ -185,6 +185,7 @@ function App() {
     events.removeListener('add-language', onAddLanguage);
     events.addListener('add-language', onAddLanguage);
     updateLanguageButton(getLanguage());
+    events.emit('language-changed');
   }
 
   /**
