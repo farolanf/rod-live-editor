@@ -39,6 +39,8 @@ function App() {
 
   const propertyView = new PropertyView(editor, store.content);
 
+  const errorsView = new ErrorsView();
+
   const moduleView = new ModuleView(store, query.moduleGroup);
 
   const preview = new Preview(propertyView);
