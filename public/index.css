@@ -172,6 +172,9 @@ html, body, #app, #editor, .editor-container, .preview {
   display: flex;
   flex-flow: column nowrap;
 }
+.property-view .fa-exclamation-triangle {
+  color: red;
+}
 .property-view .list-group {
   flex-grow: 1;
   overflow: auto;

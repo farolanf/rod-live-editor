@@ -161,7 +161,10 @@ function Renderer(modules, globalProperties, language) {
 
     var module = getModule(instance.name);
     if (!module) {
-      console.error("cannot find module definition for ", instance);
+      log.error({
+        instanceId: instance.id,
+        msg: 'Cannot find module definition for ' + instance,
+      });
       return '';
     }
 

@@ -16,6 +16,7 @@ function PropertyView(editor, content) {
   events.addListener('preview-loaded', load);
   events.addListener('language-changed', load.bind(null, true));
   events.addListener('warnings-changed', load.bind(null, true));
+  events.addListener('errors-changed', onErrorsChanged);
   events.addListener('preview-element-selected', setInstance);
   events.addListener('add-global-property', addGlobalProperty);
   events.addListener('delete-global-property', deleteGlobalProperty);
@@ -26,12 +27,32 @@ function PropertyView(editor, content) {
   acedit.getSession().setMode('ace/mode/html');
   acedit.getSession().setUseWrapMode(true);
 
+  initLogButton();
+
   return {
     setInstance,
     editGlobals,
     addGlobalProperty,
     deleteGlobalProperty,
   };
+
+  function showPropertyList() {
+    $('.property-view .property-list').show();
+    $('.property-view .errors-log').hide();
+  }
+
+  function initLogButton() {
+    $('.property-view .log-btn').on('click', function() {
+      $('.property-view .property-list').hide();
+      $('.property-view .errors-log').show();
+    });
+  }
+
+  function onErrorsChanged() {
+    const hasError = log.hasError();
+    $('.property-view .log-btn').toggleClass('hidden', hasError);
+    !hasError && showPropertyList(); 
+  }
 
   /**
    * Load the last edited properties.

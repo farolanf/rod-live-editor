@@ -29,7 +29,6 @@ window.log = new Log();
 
 window.app = new App();
 
-
 /**
  * Main application logic.
  */
