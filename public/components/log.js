@@ -110,6 +110,9 @@ function Log() {
    * Repopulate logs.
    */
   function reset(language) {
+    if (store.modules.isEmpty() || store.content.isEmpty()) {
+      return;
+    }
     warnings = [];
     enableLog = true;
     store.createRenderer(language || app.getLanguage()).render(store.content.content());
