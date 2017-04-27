@@ -238,22 +238,16 @@ function App() {
    * Register event handlers.
    */
   function registerHandlers() {
-    // register handler for content changed event
     events.addListener('content-changed', renderPreview);
-    events.addListener('content-changed', initLanguage);
-
-    // register handler for modules changed event
     events.addListener('modules-changed', renderPreview);
-
-    // register handler for global property changed event
     events.addListener('global-property-changed', renderPreview);
 
-    // register handler for module list changed event
     events.addListener('module-list-changed', moduleListChanged);
 
-    // register handler for instance deleted event
     events.addListener('instance-deleted', instanceDeleted);
 
+    events.addListener('content-changed', initLanguage);
+    events.addListener('modules-changed', initLanguage);
     events.addListener('property-changed', initLanguage);
     events.addListener('global-property-changed', initLanguage);
   }
