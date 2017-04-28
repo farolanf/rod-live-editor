@@ -23,6 +23,10 @@ function ErrorsView() {
     const html = log.errors().map(function(err) {
       const data = err.instanceId ? `data-instance-id="${err.instanceId}"` : '';
       return `<div class="error-item" ${data}>${err.msg}</div>`;
+    }).join('') + log.warnings().map(function(warn) {
+      const data = warn.instanceId ? `data-instance-id="${warn.instanceId}"` : '' +
+        warn.property ? `data-property="${warn.property}"` : '';
+      return `<div class="warning-item" ${data}>${warn.msg}</div>`;
     }).join('');
     $('.property-view .errors-log').html(html);
     $('.property-view [data-instance-id]').css('cursor', 'pointer')
