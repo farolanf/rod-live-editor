@@ -94,7 +94,7 @@ function PropertyView(editor, content) {
     instanceId = id;
     showPropertyList();
     if (isNaN(String(instanceId))) {
-      $('.property-view .list-group').html('');
+      $('.property-view .property-list').html('');
     }
     else {
       render();
@@ -227,7 +227,7 @@ function PropertyView(editor, content) {
           </div>
         </div>`;
     });
-    $('#editor .property-view .list-group').html(html);
+    $('#editor .property-view .property-list').html(html);
     $('.property-view [data-type="color"]').colorpicker();
     $('.property-view input').on('change', function(e) {
       const prop = $(this).data('name');
