@@ -247,18 +247,19 @@ function Renderer(modules, globalProperties, language) {
           }
           else {
             value = '[?]';
-            events.emit('i18n-warning', {
+            log.warn({
               property: name,
               language,
+              msg: `Missing global property value for language ${language}`,
             });
           }
         }
         // only use replace from the original property
         if (!depth) {
           value = replace(property, value,
-            `replace <condition> not found for <${name}> global property`,
-            `Invalid condition type for <${name}> global property`,
-            `condition result <%result%> not found for <${name}> global property`
+            `Replace condition not found for global property ${name}`,
+            `Invalid condition type for global property ${name}`,
+            `Condition result %result% not found for global property ${name}`
           );
         }
         return value;
@@ -319,22 +320,27 @@ function Renderer(modules, globalProperties, language) {
     } else {
       //There is no alias, use this property's values
       if (instance.hasOwnProperty(property)) {
+        const msg = `Missing value for language ${language} on instance #${instance.id} property ${property}`;
         value = instance[property];
-        value = getValue(value, `Missing value for <${language}> on instance #${instance.id} property <${property}>`, function() {
-          events.emit('i18n-warning', {
+        value = getValue(value, msg, function() {
+          log.warn({
             instanceId: instance.id,
             property,
             language,
+            msg,
           });
         });
       } else if (moduleProperty.hasOwnProperty("default")) {
+        const msg = `Missing default value for language ${language} on module ${module.name} property ${property}`;
         value = moduleProperty.default;
-        value = getValue(value, `Missing default value for <${language}> on module <${module.name}> property <${property}>`, function() {
-          events.emit('i18n-warning', {
+        value = getValue(value, msg, function() {
+          log.warn({
+            instanceId: instance.id,
             module: module.name,
             moduleGroup: store.modules.group(),
             property,
             language,
+            msg,
           });
         });
       } else if (!moduleProperty.type) {
