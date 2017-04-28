@@ -62,15 +62,17 @@ function Instance(instance) {
    */
   function getContainers() {
     const props = {};
-    _.forOwn(module.properties, function(val, key) {
-      if (val.type === 'container' && !val.alias) {
-        props[key] = {
-          type: val.type,
-          value: instance.hasOwnProperty(key) ? instance[key] : val.default,
-          isDefault: !instance.hasOwnProperty(key),
-        };
-      }
-    });
+    if (module) {
+      _.forOwn(module.properties, function(val, key) {
+        if (val.type === 'container' && !val.alias) {
+          props[key] = {
+            type: val.type,
+            value: instance.hasOwnProperty(key) ? instance[key] : val.default,
+            isDefault: !instance.hasOwnProperty(key),
+          };
+        }
+      });
+    }
     return props;
   }
 
@@ -87,15 +89,17 @@ function Instance(instance) {
    */
   function getProperties() {
     const props = {};
-    _.forOwn(module.properties, function(val, key) {
-      if (val.type !== 'container' && !val.alias) {
-        props[key] = {
-          type: val.type,
-          value: instance.hasOwnProperty(key) ? instance[key] : val.default,
-          isDefault: !instance.hasOwnProperty(key),
-        };
-      }
-    });
+    if (module) {
+      _.forOwn(module.properties, function(val, key) {
+        if (val.type !== 'container' && !val.alias) {
+          props[key] = {
+            type: val.type,
+            value: instance.hasOwnProperty(key) ? instance[key] : val.default,
+            isDefault: !instance.hasOwnProperty(key),
+          };
+        }
+      });
+    }
     return props;
   }
 
