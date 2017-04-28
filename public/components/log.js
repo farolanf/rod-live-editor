@@ -89,7 +89,7 @@ function Log() {
    */
   function geti18nWarnings(id) {
     return warnings.filter(function(value) {
-      return value.instanceId && value.instanceId == id;
+      return !value.module && value.instanceId && value.instanceId == id;
     });
   }
 
