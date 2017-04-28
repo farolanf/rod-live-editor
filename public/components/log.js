@@ -6,6 +6,7 @@ function Log() {
 
   let enableLog;
   let warnings = [];
+  let errors = [];
 
   events.addListener('i18n-warning', oni18nWarning);
   events.addListener('content-changed', reset);
@@ -14,13 +15,20 @@ function Log() {
   events.addListener('language-changed', reset);
 
   return Object.assign(this, {
+    error,
+    hasError,
     hasi18nWarning,
     moduleHasi18nWarning,
     propHasi18nWarning,
     globalHasi18nWarning,
     geti18nWarnings,
     getLanguageWarnings,
+    errors() {return errors},
   });
+
+  function hasError() {
+    return errors.length > 0;
+  }
 
   /**
    * Check if instance has warning.
@@ -107,6 +115,15 @@ function Log() {
   }
 
   /**
+   * Add error.
+   * 
+   * @param {object} data - error info.
+   */
+  function error(data) {
+    enableLog && errors.push(data);
+  }
+
+  /**
    * Repopulate logs.
    */
   function reset(language) {
@@ -114,9 +131,11 @@ function Log() {
       return;
     }
     warnings = [];
+    errors = [];
     enableLog = true;
     store.createRenderer(language || app.getLanguage()).render(store.content.content());
     enableLog = false;
     events.emit('warnings-changed');
+    events.emit('errors-changed');
   }
 }

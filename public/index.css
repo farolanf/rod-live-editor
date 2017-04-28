@@ -172,6 +172,12 @@ html, body, #app, #editor, .editor-container, .preview {
   display: flex;
   flex-flow: column nowrap;
 }
+.property-view > .panel {
+  margin-bottom: 16px;
+}
+.property-view .fa-exclamation-triangle {
+  color: red;
+}
 .property-view .list-group {
   flex-grow: 1;
   overflow: auto;
@@ -228,6 +234,20 @@ html, body, #app, #editor, .editor-container, .preview {
 }
 .property-view__item--has-warning {
   background-color: #ffeedd;
+}
+
+.errors-log {
+  flex-grow: 1;
+  overflow: auto;
+}
+.errors-log .error-item {
+  background-color: #fdd;
+  color: #933;
+  padding: 4px 8px;
+  cursor: default;
+}
+.errors-log .error-item:not(:first-child) {
+  border-top: 1px solid #fcc;
 }
 
 .instance-map {

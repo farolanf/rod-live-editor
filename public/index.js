@@ -29,7 +29,6 @@ window.log = new Log();
 
 window.app = new App();
 
-
 /**
  * Main application logic.
  */
@@ -39,6 +38,8 @@ function App() {
   const query = uri.search(true);
 
   const propertyView = new PropertyView(editor, store.content);
+
+  const errorsView = new ErrorsView();
 
   const moduleView = new ModuleView(store, query.moduleGroup);
 

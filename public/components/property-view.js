@@ -20,6 +20,7 @@ function PropertyView(editor, content) {
   events.addListener('add-global-property', addGlobalProperty);
   events.addListener('delete-global-property', deleteGlobalProperty);
   events.addListener('property-changed', onPropertyChanged);
+  events.addListener('show-property-list', showPropertyList);
 
   const acedit = ace.edit('text-editor-modal__text-editor');
   acedit.setFontSize(14);
@@ -32,6 +33,11 @@ function PropertyView(editor, content) {
     addGlobalProperty,
     deleteGlobalProperty,
   };
+
+  function showPropertyList() {
+    $('.property-view .property-list').show();
+    $('.property-view .errors-log').hide();
+  }
 
   /**
    * Load the last edited properties.
@@ -86,8 +92,9 @@ function PropertyView(editor, content) {
   function _setInstance(id) {
     editingGlobal = false;
     instanceId = id;
+    showPropertyList();
     if (isNaN(String(instanceId))) {
-      $('.property-view .list-group').html('');
+      $('.property-view .property-list').html('');
     }
     else {
       render();
@@ -103,6 +110,7 @@ function PropertyView(editor, content) {
     editingGlobal = true;
     // reset instanceId so the same instance can be selected later
     instanceId = null;
+    showPropertyList();
     // render add global property button
     const btn = `
       <div class="btn-group">
@@ -219,7 +227,7 @@ function PropertyView(editor, content) {
           </div>
         </div>`;
     });
-    $('#editor .property-view .list-group').html(html);
+    $('#editor .property-view .property-list').html(html);
     $('.property-view [data-type="color"]').colorpicker();
     $('.property-view input').on('change', function(e) {
       const prop = $(this).data('name');

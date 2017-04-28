@@ -60,6 +60,12 @@
             "hiddenPreheader": "test",
             "body": [
                 {
+                    name: 'non-existing-module',
+                },
+                {
+                    name: 'error-module',
+                },
+                {
                     name: 'block-include-tr',
                     contentId: 202,
                     instanceId: 2,
