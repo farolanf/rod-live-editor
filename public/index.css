@@ -243,6 +243,18 @@ html, body, #app, #editor, .editor-container, .preview {
 .errors-log .error-item {
   background-color: #fdd;
   color: #933;
+}
+.errors-log .warning-item {
+  background-color: #fec;
+  color: #943;
+}
+.errors-log > .error-item:hover {
+  color: #b55;
+}
+.errors-log > .warning-item:hover {
+  color: #b65;
+}
+.errors-log .error-item, .errors-log .warning-item {
   padding: 4px 8px;
   cursor: default;
 }
