@@ -17,6 +17,7 @@ function PropertyView(editor, content) {
   events.addListener('language-changed', load.bind(null, true));
   events.addListener('warnings-changed', load.bind(null, true));
   events.addListener('preview-element-selected', setInstance);
+  events.addListener('log-item-clicked', _setInstance);
   events.addListener('add-global-property', addGlobalProperty);
   events.addListener('delete-global-property', deleteGlobalProperty);
   events.addListener('property-changed', onPropertyChanged);

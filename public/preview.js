@@ -9,7 +9,7 @@ function Preview(propertyView) {
   let selectedElement;
 
   events.addListener('instance-changed', renderInstance);
-  events.addListener('select-instance-by-id', selectInstanceById);
+  events.addListener('log-item-clicked', selectInstanceById);
 
   return Object.assign(this, {
     editInstanceContent() {editInstanceContent(selectedElement)},

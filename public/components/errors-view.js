@@ -32,7 +32,7 @@ function ErrorsView() {
     $('.property-view [data-instance-id]').css('cursor', 'pointer')
     .on('click', function() {
       const instanceId = $(this).data('instance-id');
-      events.emit('select-instance-by-id', instanceId);
+      events.emit('log-item-clicked', instanceId);
     });
   }
 }
