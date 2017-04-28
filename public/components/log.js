@@ -8,7 +8,6 @@ function Log() {
   let warnings = [];
   let errors = [];
 
-  events.addListener('i18n-warning', oni18nWarning);
   events.addListener('content-changed', reset);
   events.addListener('property-changed', reset);
   events.addListener('global-property-changed', reset);
@@ -16,6 +15,7 @@ function Log() {
 
   return Object.assign(this, {
     error,
+    warn,
     hasError,
     hasi18nWarning,
     moduleHasi18nWarning,
@@ -24,6 +24,7 @@ function Log() {
     geti18nWarnings,
     getLanguageWarnings,
     errors() {return errors},
+    warnings() {return warnings},
   });
 
   function hasError() {
@@ -38,7 +39,7 @@ function Log() {
    */
   function hasi18nWarning(id) {
     return warnings.findIndex(function(value) {
-      return value.instanceId && value.instanceId == id;
+      return !value.module && value.instanceId && value.instanceId == id;
     }) !== -1;
   }
 
@@ -110,7 +111,7 @@ function Log() {
    * 
    * @param {object} data - Warning info.
    */
-  function oni18nWarning(data) {
+  function warn(data) {
     enableLog && warnings.push(data);
   }
 
