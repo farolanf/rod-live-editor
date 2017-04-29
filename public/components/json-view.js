@@ -6,23 +6,57 @@
  */
 function JsonView(content) {
 
-  let readOnly;
-  let js = $('.json-view .json-js-btn').is('.active');
+  let readOnly, acedit, moduleName;
+  let js = true;//$('.json-view .json-js-btn').is('.active');
+  $('.json-view .json-js-btn').hide();
 
-  const acedit = ace.edit('content-json');
+  $('.json-view .modal-close-btn').on('click', hide);
+  $('.json-view .json-save-btn').on('click', save);
+  $('.json-view .json-js-btn').on('click', onToggleFormat);
+
+  acedit = ace.edit('content-json');
+  acedit.setAutoScrollEditorIntoView(true);
   acedit.setFontSize(14);
   acedit.getSession().setMode('ace/mode/javascript');
   acedit.getSession().setUseWrapMode(true);
 
   acedit.on('change', setDirty);
 
-  $('.json-view .modal-close-btn').on('click', hide);
-  $('.json-view .json-save-btn').on('click', save);
-  $('.json-view .json-js-btn').on('click', onToggleFormat);
+  events.addListener('activate-content-editor', function() {
+    $('.json-view .modal-close-btn').show();
+    resize();
+  });
+
+  events.addListener('activate-module-editor', function() {
+    $('.json-view .modal-close-btn').hide();
+    resize();
+  });
+
+  events.addListener('module-selected', onModuleSelected);
+  events.addListener('module-property-changed', show.bind(null, false));
 
   return Object.assign(this, {
     show,
+    resize,
+    clear,
   });
+
+  function clear() {
+    acedit.setValue('');
+  }
+
+  function getModule() {
+    return store.modules.modules()[moduleName];
+  }
+
+  function onModuleSelected(name) {
+    moduleName = name;
+    show(false);
+  }
+
+  function resize() {
+    acedit.resize();
+  }
 
   /**
    * Toggle between JSON and JS format.
@@ -71,15 +105,24 @@ function JsonView(content) {
     return acedit.getValue().replace(/^\(([^]*)\)$/, '$1');    
   }
 
+  function getContent(js) {
+    if (isContentEditor) {
+      // enclose js with parenthesis to fix ace syntax error
+      return js ? `(${content.getJs()})` : content.getJSON();
+    }
+    else {
+      const json = contentUtils.getJSON(getModule());
+      return js ? `(${contentUtils.toJs(json)})` : json;
+    }
+  }
+
   /**
    * Load content JSON onto editor.
    * 
    * @param {boolean} js - Format in javascript if true else json.
    */
   function load(js) {
-    // enclose js with parenthesis to fix ace syntax error
-    const str = js ? `(${content.getJs()})` : content.getJSON();
-    acedit.setValue(str);
+    acedit.setValue(getContent(js));
     acedit.getSession().getSelection().clearSelection();
     acedit.getSession().setScrollTop(0);
     acedit.setReadOnly(readOnly || !js);
@@ -90,8 +133,14 @@ function JsonView(content) {
    * Save the JSON to content and disable save button.
    */
   function save() {
-    undo.push();
-    content.fromJSON(getValue());
+    if (isContentEditor) {
+      undo.push();
+      content.fromJSON(getValue());
+    }
+    else {
+      eval(`store.modules.modules()[moduleName] = ${getValue()}`);
+      events.emit('module-changed');      
+    }
     $('.json-view .json-save-btn').addClass('disabled');
   }
 
