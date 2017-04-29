@@ -1,10 +1,17 @@
 
+/**
+ * Handles errors view.
+ */
 function ErrorsView() {
   events.addListener('errors-changed', onErrorsChanged);
+  events.addListener('warnings-changed', onErrorsChanged);
 
   initLogButton();
   return;
 
+  /**
+   * Initialize the log button.
+   */
   function initLogButton() {
     $('.property-view .log-btn').on('click', function() {
       $('.property-view .property-list').hide();
