@@ -111,7 +111,16 @@ function ModuleView(store, initialGroup) {
     }).on('click dragstart', function() {
       $(this).popover('hide');
     });
+    if (!isContentEditor) {
+      $('.module-view .list-group-item').on('click', onItemClick);
+    }
     events.emit('module-list-changed');
+  }
+
+  function onItemClick() {
+    const name = $(this).data('name');
+    store.content.setContent([{name}]);
+    events.emit('module-selected', name);
   }
 
   /**
