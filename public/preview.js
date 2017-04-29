@@ -25,18 +25,17 @@ function Preview(propertyView) {
     scrollToInstance,
   });
 
+  /**
+   * Initialize preview.
+   * 
+   * @param {window} win - The iframe window.
+   */
   function init(win) {
     iframeWindow = win;
     initElement(iframeWindow.document.body);
     initEvents(iframeWindow);
     reselectElement();
     injectCss();
-    initRootContainer();
-  }
-
-  function initRootContainer() {
-    // TODO: make body a root container if the root instance is not\
-    // an html document
   }
 
   /**
@@ -151,6 +150,12 @@ function Preview(propertyView) {
     });
   }
 
+  /**
+   * Select instance element specified by id.
+   * 
+   * @param {string} id - The instance id.
+   * @param {boolean} noEvent - Don't emit event if true.
+   */
   function selectInstanceById(id, noEvent) {
     const el = $$(`[data-id="${id}"]`)[0];
     el && selectInstance(el, noEvent);
@@ -163,6 +168,7 @@ function Preview(propertyView) {
    * and init the property view to show its properties.
    * 
    * @param {element} el - The element.
+   * @param {boolean} noEvent - Don't emit event if true.
    */
   function selectInstance(el, noEvent) {
     if (el !== selectedElement) {
@@ -183,18 +189,34 @@ function Preview(propertyView) {
     scrollToElement(el);
   }
 
+  /**
+   * Scroll to make element visible.
+   * 
+   * @param {element} el - The element.
+   */
   function scrollToElement(el) {
     $$('body').scrollTop($(el).offset().top - 100);
   }
 
+  /**
+   * Deselect the instance.
+   * 
+   * @param {element} el - The instance element.
+   */
   function deselectInstance(el) {
     $(el).removeClass('active').attr('contenteditable', false);
   }
 
+  /**
+   * TODO:
+   */
   function stopContentEditing() {
     $$('[contenteditable="true"]').attr('contenteditable', false);
   }
 
+  /**
+   * TODO:
+   */
   function editInstanceContent(el) {
     $(el).attr('contenteditable', true);
     setTimeout(function() {
@@ -218,6 +240,11 @@ function Preview(propertyView) {
     selectInstance($$(`[data-id=${id}]`)[0]);
   }
 
+  /**
+   * Delete the element and the referenced module instance.
+   * 
+   * @param {element} el - The element of the instance.
+   */
   function deleteInstance(el) {
     const con = $(el).closest('.instance-container');
     const conel = new ContainerElement(con);

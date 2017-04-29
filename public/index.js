@@ -69,6 +69,9 @@ function App() {
     _save,
   });
 
+  /**
+   * Change interface to function as content editor.
+   */
   function activateContentEditor() {
     isContentEditor = true;
     propertyView.clear();
@@ -83,6 +86,9 @@ function App() {
     events.emit('activate-content-editor');
   }
 
+  /**
+   * Change interface to function as module editor.
+   */
   function activateModuleEditor() {
     isContentEditor = false;
     dragond.destroy();
@@ -157,6 +163,11 @@ function App() {
       }
       return langs;
 
+      /**
+       * Scan modules for languages.
+       * 
+       * @param {object} modules - The modules object.
+       */
       function scanModules(modules) {
         _.forOwn(modules, function(module, moduleName) {
           module.properties && _.forOwn(module.properties, function(prop, propName) {
@@ -167,6 +178,11 @@ function App() {
         });
       }
 
+      /**
+       * Scan global properties for languages.
+       * 
+       * @param {object} props - The global properties object.
+       */
       function scanGlobal(props) {
         _.forOwn(props, function(value, key) {
           if (value.value && typeof value.value === 'object') {
@@ -175,6 +191,11 @@ function App() {
         });
       }
 
+      /**
+       * Scan content for languages.
+       * 
+       * @param {object} content - The content.
+       */
       function scanContent(content) {
         if (Array.isArray(content)) {
           content.forEach(function(value) {
@@ -195,7 +216,12 @@ function App() {
           }
         }
       }
-
+      
+      /**
+       * Get the language keys.
+       * 
+       * @param {object} prop - The object containing the keys.
+       */
       function getLanguages(prop) {
         _.forOwn(prop, function(value, key) {
           if (!langs.includes(key)) {
@@ -524,6 +550,9 @@ function App() {
       .on('click', onPrecompileToggle);
   }
 
+  /**
+   * Update undo and redo button states.
+   */
   function updateUndoButtons() {
     $('.undo-btn').toggleClass('disabled', !undo.canUndo());
     $('.redo-btn').toggleClass('disabled', !undo.canRedo());

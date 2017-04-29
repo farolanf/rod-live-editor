@@ -41,19 +41,35 @@ function JsonView(content) {
     clear,
   });
 
+  /**
+   * Clear ace editor.
+   */
   function clear() {
     acedit.setValue('');
   }
 
+  /**
+   * Get the edited module.
+   * 
+   * @return {object} - The module.
+   */
   function getModule() {
     return store.modules.modules()[moduleName];
   }
 
+  /**
+   * Handles module-selected event.
+   * 
+   * @param {string} name - The name of the selected module.
+   */
   function onModuleSelected(name) {
     moduleName = name;
     show(false);
   }
 
+  /**
+   * Resize the ace editor.
+   */
   function resize() {
     acedit.resize();
   }
@@ -72,6 +88,9 @@ function JsonView(content) {
     }
   }
 
+  /**
+   * Toggle js or json format.
+   */
   function toggleFormat() {
     js = !js;
     const btn = $('.json-view .json-js-btn');
@@ -105,6 +124,11 @@ function JsonView(content) {
     return acedit.getValue().replace(/^\(([^]*)\)$/, '$1');    
   }
 
+  /**
+   * Get the content or current module definition.
+   * 
+   * @param {boolean} js - Get the javascript if true, otherwise json.
+   */
   function getContent(js) {
     if (isContentEditor) {
       // enclose js with parenthesis to fix ace syntax error
