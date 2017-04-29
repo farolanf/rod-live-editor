@@ -10,6 +10,8 @@ function ModuleView(store, initialGroup) {
 
   const modules = store.modules;
 
+  events.addListener('activate-module-editor', onActivateModuleEditor);
+
   init();
 
   return Object.assign(this, {
@@ -24,6 +26,10 @@ function ModuleView(store, initialGroup) {
   function init() {
     initSearch();
     fillGroups();
+  }
+
+  function onActivateModuleEditor() {
+    fillModules(store.modules.group());    
   }
 
   /**
