@@ -28,7 +28,19 @@
               </button>
             </div>
             <div id="navbar" class="collapse navbar-collapse">
-              <ul class="nav navbar-nav">
+              <ul class="nav navbar-nav hidden" data-module-editor>
+                <li>
+                  <a class="content-editor-btn" data-toggle="tooltip" data-placement="bottom" title="Show Content Editor">
+                    Content Editor
+                  </a>
+                </li>
+              </ul>
+              <ul class="nav navbar-nav" data-content-editor>
+                <li>
+                  <a class="module-editor-btn" data-toggle="tooltip" data-placement="bottom" title="Show Module Editor">
+                    Module Editor
+                  </a>
+                </li>
                 <li>
                   <a class="save-btn" data-toggle="tooltip" data-placement="bottom" title="Save the document">
                     <i class="fa fa-save"></i>
@@ -86,10 +98,10 @@
             <div class="panel panel-default">
               <div class="btn-toolbar text-right">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-default instance-map-btn" data-toggle="tooltip" title="Instances">
+                  <button type="button" class="btn btn-default instance-map-btn" data-toggle="tooltip" title="Instances" data-content-editor>
                     <i class="fa fa-sitemap"></i>
                   </button>
-                  <button type="button" class="btn btn-default globals-btn" data-toggle="tooltip" title="Global Properties">
+                  <button type="button" class="btn btn-default globals-btn" data-toggle="tooltip" title="Global Properties" data-content-editor>
                     <i class="fa fa-globe"></i>
                   </button>
                   <button type="button" class="btn btn-default log-btn hidden" data-toggle="tooltip" title="Errors">
