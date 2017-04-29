@@ -409,7 +409,12 @@ function App() {
       },
       start(e, el, src) {
         if (usePrecompileParameters) {
-          $(src).is('.module-list .list-group') && clearPreview();
+          if ($(src).is('.module-list, .module-list .list-group')) {
+            clearPreview();
+          }
+          else {
+            dragond.cancel();
+          }
           precompileOff();
         }
       },
