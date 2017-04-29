@@ -613,7 +613,7 @@ function App() {
     }
     dragond.removeIframe('.preview');
     let html = store.createRenderer(getLanguage()).render(store.content.content());
-    $('.preview').attr('srcdoc', html).off('load').on('load', function() {
+    $('.preview').attr('srcdoc', html).off('load').one('load', function() {
       dragond.addIframe('.preview');
       preview.init(this.contentWindow);
       events.emit('preview-loaded');
