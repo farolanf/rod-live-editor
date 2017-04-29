@@ -29,11 +29,17 @@ function PropertyView(editor, content) {
   acedit.getSession().setUseWrapMode(true);
 
   return {
+    clear,
     setInstance,
     editGlobals,
     addGlobalProperty,
     deleteGlobalProperty,
   };
+
+  function clear() {
+    instanceId = null;
+    $('.property-list').html('');
+  }
 
   function showPropertyList() {
     $('.property-view .property-list').show();
