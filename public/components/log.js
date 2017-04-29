@@ -14,18 +14,27 @@ function Log() {
   events.addListener('language-changed', reset);
 
   return Object.assign(this, {
+    clear,
     error,
     warn,
     hasError,
     hasi18nWarning,
     moduleHasi18nWarning,
     propHasi18nWarning,
+    modulePropHasi18nWarning,
     globalHasi18nWarning,
     geti18nWarnings,
     getLanguageWarnings,
     errors() {return errors},
     warnings() {return warnings},
   });
+
+  function clear() {
+    warnings = [];
+    errors = [];
+    events.emit('warnings-changed');
+    events.emit('errors-changed');
+  }
 
   function hasError() {
     return errors.length > 0;
@@ -53,6 +62,12 @@ function Log() {
   function moduleHasi18nWarning(name, moduleGroup) {
     return warnings.findIndex(function(value) {
       return value.module && value.module === name && value.moduleGroup === moduleGroup;
+    }) !== -1;
+  }
+
+  function modulePropHasi18nWarning(moduleName, property) {
+    return warnings.findIndex(function(value) {
+      return value.module && value.module === moduleName && value.property === property;
     }) !== -1;
   }
 
