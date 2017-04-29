@@ -20,15 +20,20 @@ function ErrorsView() {
   }
 
   /**
+   * Handles errors-changed and warnings-changed events.
    * 
+   * Show errors pane on errors or warnings.
    */
   function onErrorsChanged() {
     const show = !log.empty();
     $('.property-view .log-btn').toggleClass('hidden', !show);
     !show && events.emit('show-property-list');
-    render();
+    show && render();
   }
 
+  /**
+   * Render errors list.
+   */
   function render() {
     const html = log.errors().map(function(err) {
       const data = err.instanceId ? `data-instance-id="${err.instanceId}"` : '';

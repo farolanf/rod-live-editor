@@ -28,6 +28,9 @@ function ModuleView(store, initialGroup) {
     fillGroups();
   }
 
+  /**
+   * Handles activate-module-editor event.
+   */
   function onActivateModuleEditor() {
     fillModules(store.modules.group());    
   }
@@ -123,6 +126,9 @@ function ModuleView(store, initialGroup) {
     events.emit('module-list-changed');
   }
 
+  /**
+   * Handles module item click.
+   */
   function onItemClick() {
     const name = $(this).data('name');
     store.content.setContent([{name}]);

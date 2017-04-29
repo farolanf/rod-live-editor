@@ -46,6 +46,9 @@ function PropertyView(editor, content) {
     deleteGlobalProperty,
   };
 
+  /**
+   * Clear rendered properties.
+   */
   function clear() {
     editingGlobal = false;
     instanceId = null;
@@ -53,6 +56,9 @@ function PropertyView(editor, content) {
     $('.property-list').html('');
   }
 
+  /**
+   * Show the property list.
+   */
   function showPropertyList() {
     $('.property-view .property-list').show();
     $('.property-view .errors-log').hide();
@@ -127,10 +133,20 @@ function PropertyView(editor, content) {
     }
   }
 
+  /**
+   * Get the edited module.
+   * 
+   * @return {object} - The module object. 
+   */
   function getModule() {
     return store.modules.modules()[moduleName];
   }
 
+  /**
+   * Edit a module.
+   * 
+   * @param {string} name - Name of the module.
+   */
   function editModule(name) {
     moduleName = name;
     instanceId = null;
@@ -286,12 +302,24 @@ function PropertyView(editor, content) {
     $('.property-view [data-toggle="tooltip"]').tooltip();
   }
 
+  /**
+   * Handles property changed.
+   * 
+   * Determines if property has warning.
+   * 
+   * @param {string} name - The name of property.
+   * @param {string} text - The input text.
+   * @param {(string|object)} value - Current value.
+   */
   function onPropertyChanged(name, text, value) {
     const hasWarning = !text && typeof value === 'object';
     $(`.property-view [data-name="${name}"]`).closest('.list-group-item')
       .toggleClass('property-view__item--has-warning', hasWarning);
   }
 
+  /**
+   * Toggle i18n for the property.
+   */
   function oni18nClick() {
     const btn = $(this);
     const usei18n = btn.is('.fa-flag');
@@ -366,6 +394,13 @@ function PropertyView(editor, content) {
     return instance.getProperties()[prop].value;
   }
 
+  /**
+   * Get module property value.
+   * 
+   * @param {string} prop - The property name.
+   * 
+   * @return {string} - The property value.
+   */
   function getModuleProperty(prop) {
     return getModule().properties[prop].default;
   }
@@ -441,6 +476,13 @@ function PropertyView(editor, content) {
     });
   }
 
+  /**
+   * Set the module property value.
+   * 
+   * @param {string} prop - The property name.
+   * @param {string} value - The property value.
+   * @param {boolean} usei18n - Add to i18n object if true.
+   */
   function setModuleProperty(prop, value, usei18n) {
     usei18n = usei18n || typeof usei18n === 'undefined';
     undo.push();
