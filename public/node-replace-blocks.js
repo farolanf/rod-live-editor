@@ -1,3 +1,4 @@
+
 const fs = require('fs');
 const _ = require('./libs/js/lodash.min');
 const utils = require('./utils/content');
@@ -22,7 +23,7 @@ function replaceBlocks(content) {
     });
   }
   else {
-    if (content.name === 'block-include') {
+    if (content.name && content.name.startsWith('block-include')) {
       return loadContent(content.contentId, content.instanceId);
     }
     else {
