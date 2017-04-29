@@ -38,6 +38,8 @@ function PropertyView(editor, content) {
   acedit.getSession().setMode('ace/mode/html');
   acedit.getSession().setUseWrapMode(true);
 
+  $('.property-view .property-list').hide();
+
   return {
     clear,
     setInstance,
