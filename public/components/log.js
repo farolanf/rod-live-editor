@@ -17,7 +17,7 @@ function Log() {
     clear,
     error,
     warn,
-    hasError,
+    empty,
     hasi18nWarning,
     moduleHasi18nWarning,
     propHasi18nWarning,
@@ -29,6 +29,9 @@ function Log() {
     warnings() {return warnings},
   });
 
+  /**
+   * Clear logs.
+   */
   function clear() {
     warnings = [];
     errors = [];
@@ -36,8 +39,13 @@ function Log() {
     events.emit('errors-changed');
   }
 
-  function hasError() {
-    return errors.length > 0;
+  /**
+   * Check if log is empty.
+   * 
+   * @return {boolean} - True if it's empty.
+   */
+  function empty() {
+    return errors.length <= 0 && warnings.length <= 0;
   }
 
   /**
@@ -65,6 +73,13 @@ function Log() {
     }) !== -1;
   }
 
+  /**
+   * Check if module property has i18n warning.
+   * 
+   * @param {string} moduleName - Name of the module.
+   * @param {string} property - Name of the property.
+   * @return {boolean} - True if it has warning.
+   */
   function modulePropHasi18nWarning(moduleName, property) {
     return warnings.findIndex(function(value) {
       return value.module && value.module === moduleName && value.property === property;

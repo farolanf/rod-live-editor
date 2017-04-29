@@ -19,10 +19,13 @@ function ErrorsView() {
     });
   }
 
+  /**
+   * 
+   */
   function onErrorsChanged() {
-    const hasError = log.hasError();
-    $('.property-view .log-btn').toggleClass('hidden', !hasError);
-    !hasError && events.emit('show-property-list');
+    const show = !log.empty();
+    $('.property-view .log-btn').toggleClass('hidden', !show);
+    !show && events.emit('show-property-list');
     render();
   }
 
