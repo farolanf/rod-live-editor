@@ -409,7 +409,7 @@ function App() {
       },
       start(e, el, src) {
         if (usePrecompileParameters) {
-          clearPreview();
+          $(src).is('.module-list .list-group') && clearPreview();
           precompileOff();
         }
       },
