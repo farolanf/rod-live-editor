@@ -10,8 +10,11 @@ if (typeof require !== 'undefined') {
  * 
  * @param {object} modules - The modules object.
  * @param {object} globalProperties - The global properties object.
+ * @param {string} language - Current language.
  */
-function Renderer(modules, globalProperties) {
+function Renderer(modules, globalProperties, language) {
+
+  language = language || config.defaultLanguage;
 
   return {
     render,
@@ -158,12 +161,17 @@ function Renderer(modules, globalProperties) {
 
     var module = getModule(instance.name);
     if (!module) {
-      console.error("cannot find module definition for ", instance);
+      log.error({
+        msg: 'Cannot find module definition for ' + instance.name,
+      });
       return '';
     }
 
     if (!module.hasOwnProperty("output")) {
-      console.error("no output defined for module ", instance.name);
+      log.error({
+        instanceId: instance.id,
+        msg: 'No output defined for module ' + instance.name,
+      });
       return '';
     }
 
@@ -184,7 +192,10 @@ function Renderer(modules, globalProperties) {
     output = Renderer.prettify(output);
 
     if (!module.properties) {
-      console.info("no properties in the module ", instance.name, " defined");
+      log.error({
+        instanceId: instance.id,
+        msg: `No properties in the module ${instance.name} defined`,
+      });
       return clean ? output :
         Editor.injectInstanceData(output, instance.id, instance.name);
     }
@@ -204,10 +215,10 @@ function Renderer(modules, globalProperties) {
       output = output.replace(new RegExp('%' + property + '%', 'g'),
         getPropertyValue(property, instance, module, customReplace, clean));
 
-    //Replace Global Variables with their values
-    for (var key in globalProperties) {
-      output = output.replace(new RegExp('%' + key + '%', 'g'), getGlobalValue(key));
-    }
+    // substitute global properties
+    output = output.replace(/%([a-zA-Z0-9_-]+?)%/g, function(m0, m1) {
+      return getGlobalValue(m1);
+    });
 
     return clean ? output :
       Editor.injectInstanceData(output, instance.id, instance.name, visible);
@@ -229,18 +240,35 @@ function Renderer(modules, globalProperties) {
         else {
           value = property.value;
         }
+        // i18n
+        if (typeof value === 'object') {
+          if (value.hasOwnProperty(language) && value[language] !== '') {
+            value = value[language];
+          }
+          else {
+            value = '[?]';
+            log.warn({
+              property: name,
+              language,
+              msg: `Missing global property value for language ${language}`,
+            });
+          }
+        }
         // only use replace from the original property
         if (!depth) {
           value = replace(property, value,
-            `replace <condition> not found for <${name}> global property`,
-            `Invalid condition type for <${name}> global property`,
-            `condition result <%result%> not found for <${name}> global property`
+            `Replace condition not found for global property ${name}`,
+            `Invalid condition type for global property ${name}`,
+            `Condition result %result% not found for global property ${name}`
           );
         }
         return value;
       }
       else {
-        console.error('Invalid global property <%s>', name);
+        log.error({
+          instanceId: instance.id,
+          msg: `Invalid global property ${name} on instance ${instance.id}`,
+        });
       }
     }
   }
@@ -267,7 +295,10 @@ function Renderer(modules, globalProperties) {
         // visible property defaults to true if not present
         return true;
       }
-      console.error("module ", instance.name, " doesn't have a property ", property);
+      log.error({
+        instanceId: instance.id,
+        msg: `Module ${instance.name} doesn't have a property ${property}`,
+      });
       return value;
     }
 
@@ -280,20 +311,61 @@ function Renderer(modules, globalProperties) {
         // There is an alias, use values from a different property, but do not use the customReplace so we get the raw value.
         value = getPropertyValue(alias, instance, module, false, clean);
       } else {
-        console.error("Invalid alias in ", property, " in module ", instance.name, ". There is no property named ", alias);
+        log.error({
+          instanceId: instance.id,
+          msg: `Invalid alias ${property} in module ${instance.name}. There is no property named ${alias}.`,
+        });
       }
 
     } else {
       //There is no alias, use this property's values
       if (instance.hasOwnProperty(property)) {
+        const msg = `Missing value for language ${language} on instance #${instance.id} property ${property}`;
         value = instance[property];
+        value = getValue(value, msg, function() {
+          log.warn({
+            instanceId: instance.id,
+            property,
+            language,
+            msg,
+          });
+        });
       } else if (moduleProperty.hasOwnProperty("default")) {
+        const msg = `Missing default value for language ${language} on module ${module.name} property ${property}`;
         value = moduleProperty.default;
+        value = getValue(value, msg, function() {
+          log.warn({
+            instanceId: instance.id,
+            module: module.name,
+            moduleGroup: store.modules.group(),
+            property,
+            language,
+            msg,
+          });
+        });
       } else if (!moduleProperty.type) {
         // default is optional for internal property
       } else {
-        console.error("property ", property, " in module ", instance.name, " doesn't have a default value");
+        log.error({
+          instanceId: instance.id,
+          msg: `Property ${property} in module ${instance.name} doesn't have a default value.`,
+        });
       }
+    }
+
+    // i18n
+    function getValue(value, err, errorFn) {
+      if (moduleProperty.type !== 'container' && typeof value === 'object') {
+        if (value.hasOwnProperty(language) && value[language] !== '') {
+          return value[language];
+        }
+        else {
+          // console.error(err);
+          errorFn && errorFn();
+          return '[?]';
+        }
+      }
+      return value;
     }
 
     //If property is of type text do replacements 
@@ -307,8 +379,7 @@ function Renderer(modules, globalProperties) {
         
         `Incorrect type for child "condition"  on "replace" parameter of property ${property} in module ${instance.name}: it should be a function.`,
 
-        `Missing result child %result% for "replace" parameter of ${property} in module ${instance.name}. Add a child element under "
-        "replace" parent with name %result% and sample value containing %value%. E.g: 'Some Content %value%'.`,
+        `Missing property %result% on replace object of property ${property} in module ${instance.name}. Add property %result% on replace object and sample value containing %value%. E.g: 'Some content %value%'.`,
 
         instance
       );
@@ -328,6 +399,7 @@ function Renderer(modules, globalProperties) {
    * @param {string} conditionErr - Error to display when condition not found.
    * @param {string} conditionTypeErr - Error for invalid condition type.
    * @param {string} resultErr - Error for result not found. %result% will be replaced with the result of condition function.
+   * @param {object} instance - The instance.
    */
   function replace(property, value, conditionErr, conditionTypeErr, resultErr, instance) {
     if (property.hasOwnProperty("replace")) {
@@ -345,13 +417,22 @@ function Renderer(modules, globalProperties) {
               value = newOutput.replace(new RegExp('%value%', 'g'), value);
             }
           } else {
-            console.error(resultErr.replace(/%result%/g, conditionResult));
+            log.error({
+              instanceId: instance.id,
+              msg: resultErr.replace(/%result%/g, conditionResult),
+            });
           }
         } else {
-          console.error(conditionTypeErr);
+          log.error({
+            instanceId: instance.id,
+            msg: conditionTypeErr,
+          });
         }
       } else {
-        console.error(conditionErr);
+        log.error({
+          instanceId: instance.id,
+          msg: conditionErr,
+        });
       }
     }
     return value;

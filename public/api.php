@@ -26,6 +26,12 @@ Flight::route('/api/module/group', function() {
   Flight::json(array_values($entries));
 });
 
+/**
+ * Load modules from a folder.
+ *
+ * @param string dir The folder name.
+ * @return array The modules array.
+ */
 function _load_modules($dir) {
   $entries = array_filter(scandir($dir), function($val) {
     return $val !== '.' && $val !== '..';
@@ -34,6 +40,12 @@ function _load_modules($dir) {
   return $modules;
 }
 
+/**
+ * Load modules in a module group folder.
+ *
+ * @param string name The module group name.
+ * @return array The modules array.
+ */
 function load_modules($name) {
   $modules = _load_modules(join('/', [__DIR__, 'modules', $name]));
   $system_modules = _load_modules(join('/', [__DIR__, 'system-modules']));
@@ -60,7 +72,7 @@ Flight::route('/api/module/group/@name', function($name) {
 function precompile($content, $precompileParameters) {
   // PRECOMPILE TEST
   if ($precompileParameters) {
-    $content = replace_blocks($content);
+    $content = NodeJsUtils::replaceBlocks($content);
   }
   else {
     // test without php comment
@@ -118,6 +130,13 @@ Flight::route('POST /api/precompile', function() {
   Flight::json(json_decode($content));
 });
 
+/**
+ * Save content to database.
+ *
+ * @param string id The content id.
+ * @param string content The content code.
+ * @param string moduleGroup The module group name.
+ */
 function save($id, $content, $moduleGroup) {
   // TEST
   // file_put_contents(join('/', [__DIR__, 'db', $id.'-'.time().'.js']), $content);
@@ -163,6 +182,7 @@ Flight::route('POST /api/render', function() {
   $req = Flight::request();
   $content = $req->data->content;
   $moduleGroup = $req->data->moduleGroup;
-  echo renderContent($content, $moduleGroup);
+  $language = $req->data->language;
+  echo NodeJsUtils::renderContent($content, $moduleGroup, $language);
 });
 ?>

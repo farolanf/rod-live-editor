@@ -16,7 +16,7 @@ function Store() {
   /**
    * Create renderer using current state.
    */
-  function createRenderer() {
-    return new Renderer(modules.modules(), content.globalProperties());
+  function createRenderer(language) {
+    return new Renderer(modules.modules(), content.globalProperties(), language);
   }
 }

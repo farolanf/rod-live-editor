@@ -44,11 +44,14 @@ html, body, #app, #editor, .editor-container, .preview {
 .gutter {
   background-color: #ddd;
 }
+.gutter:hover {
+  background-color: #ccc;
+}
 .gutter-horizontal {
   cursor: col-resize;
 }
-.gutter-horizontal:hover {
-  background-color: #ccc;
+.gutter-vertical {
+  cursor: row-resize;
 }
 
 .editor-container {
@@ -62,12 +65,12 @@ html, body, #app, #editor, .editor-container, .preview {
 .module-view .module-groups {
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 1;
 }
 .module-view .module-search {
   position: sticky;
   top: 34px;
-  z-index: 1000;
+  z-index: 1;
 }
 .module-view .list-group-item {
   cursor: move;
@@ -117,6 +120,13 @@ html, body, #app, #editor, .editor-container, .preview {
 .empty-container.dg-dragover::before {
   color: #ccc;
 }
+.module-editor-container {
+  display: flex;
+  flex-direction: column;
+}
+.module-editor-container .preview {
+  height: 70%;
+}
 
 .json-view {
   position: fixed;
@@ -125,6 +135,7 @@ html, body, #app, #editor, .editor-container, .preview {
   width: 100%;
   height: 100%;
   z-index: 2000;
+  margin-bottom: 0;
   display: flex;
   flex-flow: column nowrap;
 }
@@ -137,6 +148,10 @@ html, body, #app, #editor, .editor-container, .preview {
   flex-grow: 1;
   position: relative;
   padding: 0;
+}
+.json-view.module-editor {
+  position: relative;
+  z-index: unset;
 }
 #content-json {
   position: absolute;
@@ -168,6 +183,20 @@ html, body, #app, #editor, .editor-container, .preview {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
+.property-view {
+  display: flex;
+  flex-flow: column nowrap;
+}
+.property-view > .panel {
+  margin-bottom: 16px;
+}
+.property-view .fa-exclamation-triangle {
+  color: red;
+}
+.property-view .list-group {
+  flex-grow: 1;
+  overflow: auto;
+}
 .property-view .module-name .btn-group {
   position: absolute;
   right: 8px;
@@ -178,30 +207,77 @@ html, body, #app, #editor, .editor-container, .preview {
   border-color: transparent;
 }
 .property-view .list-group .list-group-item {
-  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  padding-right: 4px;
+  overflow: hidden;
 }
-.property-view .list-group .list-group-item input,
-.property-view .list-group .list-group-item .del-prop-btn {
-  position: absolute;
-  top: 50%;
-  right: 4px;
-  transform: translateY(-50%);
+.property-view .list-group .list-group-item .name {
+  padding-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.property-view .list-group .list-group-item .language-info {
+  color: #aaa;
+}
+.property-view .list-group .list-group-item .property-controls {
+  white-space: nowrap;
+}
+.property-view .list-group .list-group-item .property-controls > * {
+  display: inline-block;
 }
 .property-view .list-group .list-group-item input {
-  right: 20px;
-  width: 40%;
+  width: unset;
+  max-width: 120px;
 }
-.property-view .list-group .list-group-item .del-prop-btn {
+.property-view .list-group .list-group-item .prop-buttons > * {
   cursor: pointer;
+  padding: 4px;
 }
-.property-view .list-group .list-group-item .del-prop-btn:hover {
-  opacity: 0.5;
+.property-view .list-group .list-group-item .prop-buttons > *:hover {
+  opacity: 0.8;
 }
 .property-view .text-editor-btn {
   cursor: pointer;
 }
 .property-view .text-editor-btn:hover {
   opacity: 0.8;
+}
+.property-view__instance-id {
+  padding-right: 8px;
+}
+.property-view__item--has-warning {
+  background-color: #ffeedd;
+}
+
+.errors-log {
+  flex-grow: 1;
+  overflow: auto;
+}
+.errors-log .error-item {
+  background-color: #fdd;
+  color: #933;
+}
+.errors-log .warning-item {
+  background-color: #fec;
+  color: #943;
+}
+.errors-log > .error-item:hover {
+  color: #b55;
+}
+.errors-log > .warning-item:hover {
+  color: #b65;
+}
+.errors-log .error-item, .errors-log .warning-item {
+  padding: 4px 8px;
+  cursor: default;
+}
+.errors-log .error-item:not(:first-child) {
+  border-top: 1px solid #fcc;
+}
+.errors-log .warning-item:not(:first-child) {
+  border-top: 1px solid #fdb;
 }
 
 .instance-map {
@@ -213,6 +289,12 @@ html, body, #app, #editor, .editor-container, .preview {
   padding: 8px 16px;
   cursor: pointer;
   user-select: none;
+}
+.instance-map__instance--has-warning {
+  background-color: #ffeedd;
+}
+.instance-map__instance--has-module-warning {
+  background-color: #ff5544;
 }
 .instance-map__container__name {
   margin-top: 4px;
@@ -267,4 +349,20 @@ html, body, #app, #editor, .editor-container, .preview {
 
 .json-view .json-save-btn.disabled {
   pointer-events: none;
+}
+
+.discard-list tr td {
+  padding: 4px 8px;
+}
+.discard-list tr td:first-child {
+  color: #aaa;
+}
+.discard-list__current {
+  background-color: #eee;
+}
+.language-list .fa-check {
+  color: #4c4;
+}
+.language-list .fa-exclamation-triangle {
+  color: #f74;
 }

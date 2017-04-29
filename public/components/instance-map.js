@@ -81,7 +81,7 @@ function InstanceMap(content, propertyView, preview) {
         <div class="arrow"></div>
         <h3 class="popover-title">
         </h3>
-        <i class="fa fa-lock lock-btn lock-btn--disabled"></i>
+        <i class="fa fa-lock lock-btn lock-btn--disabled" title="Enable lock to prevent popover nagivation from closing on select"></i>
         <div class="popover-content"></div>
       </div>
     `; 
@@ -124,8 +124,17 @@ function InstanceMap(content, propertyView, preview) {
    * @return {string} - The rendered HTML.
    */
   function renderInstance(instance) {
+    let warningCls = '', tooltip = '';
+    if (log.hasi18nWarning(instance.id)) {
+      warningCls = 'instance-map__instance--has-warning';
+      tooltip = 'title="This instance has property with missing translation on selected language"';
+    }
+    else if (log.moduleHasi18nWarning(instance.name, store.modules.group())) {
+      warningCls = 'instance-map__instance--has-module-warning';
+      tooltip = 'title="This instance is using a module which has a missing translation for default value in the selected language and current module group"';
+    }
     const html = `
-      <div class="instance-map__instance" data-id="${instance.id}">
+      <div class="instance-map__instance ${warningCls}" data-id="${instance.id}" ${tooltip}>
         <span>${instance.name}</span>
         ${renderContainers(instance)}
       </div>

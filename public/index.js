@@ -1,5 +1,7 @@
 'use strict';
 
+window.isContentEditor = true;
+
 // uri eases uri parts extraction, used to form ajax url
 window.uri = URI(window.location.href);
 
@@ -24,6 +26,9 @@ window.undo = new Undo(store.content);
 // editor only need a content store so no need to pass the whole store
 window.editor = new Editor(store.content);
 
+// init log after editor injects helper properties
+window.log = new Log();
+
 window.app = new App();
 
 /**
@@ -35,6 +40,8 @@ function App() {
   const query = uri.search(true);
 
   const propertyView = new PropertyView(editor, store.content);
+
+  const errorsView = new ErrorsView();
 
   const moduleView = new ModuleView(store, query.moduleGroup);
 
@@ -55,10 +62,56 @@ function App() {
     precompileOff,
     togglePrecompile,
     togglePrecompileSafe,
+    useLanguage,
+    getLanguage,
     
     // expose the save function to be called by save confirmation modal
     _save,
   });
+
+  /**
+   * Change interface to function as content editor.
+   */
+  function activateContentEditor() {
+    isContentEditor = true;
+    propertyView.clear();
+    $('.preview-container').removeClass('module-editor-container');
+    $('.json-view').removeClass('module-editor').hide().insertAfter('#editor');
+    $('.preview').attr('style', '');
+    $('.navbar-brand').text('Live Editor');
+    $('[data-content-editor]').removeClass('hidden');
+    $('[data-module-editor]').addClass('hidden');
+    initDrag();
+    loadContent();
+    events.emit('activate-content-editor');
+  }
+
+  /**
+   * Change interface to function as module editor.
+   */
+  function activateModuleEditor() {
+    isContentEditor = false;
+    dragond.destroy();
+    propertyView.clear();
+    store.content.setContent([]);
+    hideInstanceControls();
+    log.clear();
+    $('.preview').attr('srcdoc', '');
+    $('.navbar-brand').text('Module Editor');
+    $('[data-content-editor]').addClass('hidden');
+    $('[data-module-editor]').removeClass('hidden');
+    $('.preview-container').addClass('module-editor-container');
+    $('.json-view').addClass('module-editor').show().insertAfter('.empty-container');
+    const previewSplit = Split(['.preview', '.json-view'], {
+      sizes: [70, 30],
+      minSize: 0,
+      direction: 'vertical',
+      onDragEnd: jsonView.resize.bind(jsonView),
+    });
+    jsonView.clear();
+    events.once('activate-content-editor', previewSplit.destroy);
+    events.emit('activate-module-editor');
+  }
 
   /**
    * Main initialization function.
@@ -71,13 +124,195 @@ function App() {
     initInstanceControls();
     initActions();
     loadContent();
+    initLanguage();
+    initTooltips();
+    initAutofocus();
   }
 
+  /**
+   * Determines i18n usage.
+   * 
+   * @return {boolean} - True if using i18n.
+   */
+  function useLanguage() {
+    return !!query.language || getLanguages().length > 0;
+  }
+
+  /**
+   * Return active language.
+   */
+  function getLanguage() {
+    return query.language || config.defaultLanguage;
+  }
+
+  /**
+   * Scan content to collect languages.
+   * 
+   * @return {array} - Array of found languages.
+   */
+  function getLanguages() {
+    if (!store.content.isEmpty()) {
+      const langs = [];
+      query.language && langs.push(query.language);
+      if (isContentEditor) {
+        scanGlobal(store.content.globalProperties());
+        scanContent(store.content.content());
+      }
+      else {
+        scanModules(store.modules.modules());
+      }
+      return langs;
+
+      /**
+       * Scan modules for languages.
+       * 
+       * @param {object} modules - The modules object.
+       */
+      function scanModules(modules) {
+        _.forOwn(modules, function(module, moduleName) {
+          module.properties && _.forOwn(module.properties, function(prop, propName) {
+            if (prop.default && typeof prop.default === 'object') {
+              getLanguages(prop.default);
+            }
+          });
+        });
+      }
+
+      /**
+       * Scan global properties for languages.
+       * 
+       * @param {object} props - The global properties object.
+       */
+      function scanGlobal(props) {
+        _.forOwn(props, function(value, key) {
+          if (value.value && typeof value.value === 'object') {
+            getLanguages(value.value);
+          }
+        });
+      }
+
+      /**
+       * Scan content for languages.
+       * 
+       * @param {object} content - The content.
+       */
+      function scanContent(content) {
+        if (Array.isArray(content)) {
+          content.forEach(function(value) {
+            scanContent(value);
+          });
+        }
+        else if (typeof content === 'object') {
+          if (content.name) {
+            _.forOwn(content, function(value, key) {
+              if (key !== 'parent' && typeof value === 'object') {
+                scanContent(value);
+              }
+            });
+          }
+          // if not an instance then assume it's an i18n object
+          else {
+            getLanguages(content);
+          }
+        }
+      }
+      
+      /**
+       * Get the language keys.
+       * 
+       * @param {object} prop - The object containing the keys.
+       */
+      function getLanguages(prop) {
+        _.forOwn(prop, function(value, key) {
+          if (!langs.includes(key)) {
+            langs.push(key);
+          }
+        });
+      }
+    }
+    return [];
+  }
+
+  /**
+   * Show active language.
+   * 
+   * @param {string} language - The language.
+   */
+  function updateLanguageButton(language) {
+    $('.language-menu .language-code').text(`Language (${language})`);
+  }
+
+  /**
+   * Update language menu.
+   */
+  function initLanguage() {
+    let html = getLanguages().map(function(value) {
+      const warnings = log.getLanguageWarnings(value);
+      const status = warnings.length === 0 ? '<i class="fa fa-check"></i>' : `<i class="fa fa-exclamation-triangle"> ${warnings.length} missing translation${warnings.length > 1 ? 's' : ''}</i>`;
+      return `
+      <li>
+        <a data-language-choice data-language="${value}">${value} ${status}</a>
+      </li>`;
+    }).join('');
+    html += `
+      <li role="separator" class="divider"></li>
+      <li><a class="new-language-btn">New Language</a></li>`;
+    $('.language-menu').toggleClass('hidden', !useLanguage());
+    $('.language-menu .language-list').html(html);
+    $('[data-language-choice]').on('click', function() {
+      query.language = $(this).data('language');
+      updateLanguageButton(query.language);
+      renderPreview();
+      events.emit('language-changed');
+    });
+    $('.new-language-btn').on('click', showAddLanguageModal);
+    events.removeListener('add-language', onAddLanguage);
+    events.addListener('add-language', onAddLanguage);
+    updateLanguageButton(getLanguage());
+    events.emit('language-changed');
+  }
+
+  /**
+   * Handle add-language event.
+   */
+  function onAddLanguage() {
+    query.language = $('#add-language-modal__name').val();
+    initLanguage();
+    refresh();
+  }
+
+  /**
+   * Show add language modal.
+   */
+  function showAddLanguageModal() {
+    $('#add-language-modal__name').val('');
+    $('#add-language-modal').modal();
+  }
+
+  /**
+   * Init bootstrap tooltips.
+   */
+  function initTooltips() {
+    $('[data-toggle="tooltip"]').tooltip();
+  }
+
+  /**
+   * Autofucs modal control.
+   */
+  function initAutofocus() {
+    $(document).on('shown.bs.modal', function(e) {
+      $('[autofocus]', e.target).focus();
+    });
+  }
+
+  /**
+   * Load content with specified id.
+   */
   function loadContent() {
     if (query.id) {
       const precompileParameters = usePrecompileParameters ? 
         query.precompileParameters : false;
-      store.content.loadContent(query.id, precompileParameters);  
+      store.content.loadContent(query.id, precompileParameters);
     }
   }
 
@@ -85,20 +320,22 @@ function App() {
    * Register event handlers.
    */
   function registerHandlers() {
-    // register handler for content changed event
     events.addListener('content-changed', renderPreview);
-
-    // register handler for modules changed event
     events.addListener('modules-changed', renderPreview);
-
-    // register handler for global property changed event
+    events.addListener('module-changed', renderPreview);
     events.addListener('global-property-changed', renderPreview);
+    events.addListener('module-property-changed', renderPreview);
 
-    // register handler for module list changed event
     events.addListener('module-list-changed', moduleListChanged);
 
-    // register handler for instance deleted event
     events.addListener('instance-deleted', instanceDeleted);
+
+    events.addListener('content-changed', initLanguage);
+    events.addListener('modules-changed', initLanguage);
+    events.addListener('module-changed', initLanguage);
+    events.addListener('property-changed', initLanguage);
+    events.addListener('module-property-changed', initLanguage);
+    events.addListener('global-property-changed', initLanguage);
   }
 
   /**
@@ -123,7 +360,7 @@ function App() {
 
       // handle /preview
       new senna.Route(uri.path()+'preview', function() {
-        const renderer = store.createRenderer();
+        const renderer = store.createRenderer(getLanguage());
         const html = renderer.render(store.content.content(), true);
         hideInstanceControls();
         $('#app > *').hide();
@@ -291,6 +528,8 @@ function App() {
    * Init toolbar buttons.
    */
   function initActions() {
+    $('.content-editor-btn').on('click', activateContentEditor);
+    $('.module-editor-btn').on('click', activateModuleEditor);
     $('.save-btn').on('click', save);
     $('.refresh-btn').on('click', refresh);
 
@@ -311,6 +550,9 @@ function App() {
       .on('click', onPrecompileToggle);
   }
 
+  /**
+   * Update undo and redo button states.
+   */
   function updateUndoButtons() {
     $('.undo-btn').toggleClass('disabled', !undo.canUndo());
     $('.redo-btn').toggleClass('disabled', !undo.canRedo());
@@ -441,14 +683,14 @@ function App() {
   function moduleListChanged() {
     // a check is needed in case modules have been fetched before
     // dragond is ready
-    dragond && dragond.initContainers();
+    isContentEditor && dragond && dragond.initContainers();
   }
 
   /**
    * Render the preview.
    */
   function renderPreview() {
-    if (store.content.isEmpty()) {
+    if (isContentEditor && store.content.isEmpty()) {
       // render a container that only accepts root modules
       renderEmptyPreview();
       return;
@@ -460,10 +702,12 @@ function App() {
       return;
     }
     dragond.removeIframe('.preview');
-    let html = store.createRenderer().render(store.content.content());
-    $('.preview').attr('srcdoc', html).off('load').on('load', function() {
-      dragond.addIframe('.preview');
-      preview.init(this.contentWindow);
+    let html = store.createRenderer(getLanguage()).render(store.content.content());
+    $('.preview').attr('srcdoc', html).off('load').one('load', function() {
+      if (isContentEditor) {
+        dragond.addIframe('.preview');
+        preview.init(this.contentWindow);
+      }
       events.emit('preview-loaded');
     });
   }
@@ -543,5 +787,6 @@ function App() {
     // reinitialize drag events
     initDrag();
     renderPreview();
+    initLanguage();
   }
 }

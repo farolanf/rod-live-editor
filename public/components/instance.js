@@ -15,14 +15,14 @@ function Instance(instance) {
   
   // load the instance if an id is given
   if (typeof instance === 'string' || typeof instance === 'number') {
-    instance = editor.findInstance(instance);
+    const id = instance;
+    instance = editor.findInstance(id);
     if (!instance) {
-      throw new Error('invalid instance id');
+      throw new Error('invalid instance id', id);
     }
   }
 
   const module = store.modules.modules()[instance.name];
-  const renderer = store.createRenderer();
 
   return Object.assign(this, {
     getContainers,
@@ -62,15 +62,17 @@ function Instance(instance) {
    */
   function getContainers() {
     const props = {};
-    _.forOwn(module.properties, function(val, key) {
-      if (val.type === 'container' && !val.alias) {
-        props[key] = {
-          type: val.type,
-          value: instance.hasOwnProperty(key) ? instance[key] : val.default,
-          isDefault: !instance.hasOwnProperty(key),
-        };
-      }
-    });
+    if (module) {
+      _.forOwn(module.properties, function(val, key) {
+        if (val.type === 'container' && !val.alias) {
+          props[key] = {
+            type: val.type,
+            value: instance.hasOwnProperty(key) ? instance[key] : val.default,
+            isDefault: !instance.hasOwnProperty(key),
+          };
+        }
+      });
+    }
     return props;
   }
 
@@ -87,15 +89,17 @@ function Instance(instance) {
    */
   function getProperties() {
     const props = {};
-    _.forOwn(module.properties, function(val, key) {
-      if (val.type !== 'container' && !val.alias) {
-        props[key] = {
-          type: val.type,
-          value: instance.hasOwnProperty(key) ? instance[key] : val.default,
-          isDefault: !instance.hasOwnProperty(key),
-        };
-      }
-    });
+    if (module) {
+      _.forOwn(module.properties, function(val, key) {
+        if (val.type !== 'container' && !val.alias) {
+          props[key] = {
+            type: val.type,
+            value: instance.hasOwnProperty(key) ? instance[key] : val.default,
+            isDefault: !instance.hasOwnProperty(key),
+          };
+        }
+      });
+    }
     return props;
   }
 
@@ -117,6 +121,7 @@ function Instance(instance) {
    * @public
    */
   function render() {
+    const renderer = store.createRenderer(app.getLanguage());
     return renderer.renderModule(instance);
   }
 
@@ -128,6 +133,7 @@ function Instance(instance) {
    * @public
    */
   function renderContainerChildren(name) {
+    const renderer = store.createRenderer(app.getLanguage());
     return renderer.getPropertyValue(name, instance, module, true);
   }
 

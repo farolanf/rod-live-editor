@@ -28,15 +28,58 @@
               </button>
             </div>
             <div id="navbar" class="collapse navbar-collapse">
-              <ul class="nav navbar-nav">
-                <li><a class="save-btn"><i class="fa fa-save"></i></a></li>
-                <li><a href="preview" class="preview-btn">Preview</a></li>
-                <li><a class="content-json-btn">JSON</a></li>
-                <li><a class="refresh-btn"><i class="fa fa-refresh"></i></a></li>
-                <li><a class="precompile-btn"><input type="checkbox" data-toggle="toggle" data-on="Precompiled" data-off="Raw" data-size="mini"></a></li>
-                <li><a class="undo-btn"><i class="fa fa-undo"></i></a></li>
-                <li><a class="redo-btn"><i class="fa fa-undo fa-flip-horizontal"></i></a></li>
+              <ul class="nav navbar-nav hidden" data-module-editor>
+                <li>
+                  <a class="content-editor-btn" data-toggle="tooltip" data-placement="bottom" title="Show Content Editor">
+                    Content Editor
+                  </a>
+                </li>
               </ul>
+              <ul class="nav navbar-nav" data-content-editor>
+                <li>
+                  <a class="module-editor-btn" data-toggle="tooltip" data-placement="bottom" title="Show Module Editor">
+                    Module Editor
+                  </a>
+                </li>
+                <li>
+                  <a class="save-btn" data-toggle="tooltip" data-placement="bottom" title="Save the document">
+                    <i class="fa fa-save"></i>
+                  </a>
+                </li>
+                <li>
+                  <a href="preview" class="preview-btn" data-toggle="tooltip" data-placement="bottom" title="Preview the current document">Preview</a>
+                </li>
+                <li>
+                  <a class="content-json-btn" data-toggle="tooltip" data-placement="bottom" title="Edit the content object">JSON</a>
+                </li>
+                <li>
+                  <a class="refresh-btn" data-toggle="tooltip" data-placement="bottom" title="Redraw the document">
+                    <i class="fa fa-refresh"></i>
+                  </a>
+                </li>
+                <li>
+                  <a class="precompile-btn" data-toggle="tooltip" data-placement="bottom" title="Change precompile state">
+                    <input type="checkbox" data-toggle="toggle" data-on="Precompiled" data-off="Raw" data-size="mini">
+                  </a>
+                </li>
+                <li>
+                  <a class="undo-btn" data-toggle="tooltip" data-placement="bottom" title="Undo the last action">
+                    <i class="fa fa-undo"></i>
+                  </a>
+                </li>
+                <li>
+                  <a class="redo-btn" data-toggle="tooltip" data-placement="bottom" title="Redo the last action">
+                    <i class="fa fa-undo fa-flip-horizontal"></i>
+                  </a>
+                </li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown language-menu hidden" data-toggle="tooltip" data-placement="left" title="Set current language">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" ><span class="language-code">Language</span> <span class="caret"></span></a>
+                  <ul class="dropdown-menu language-list">
+                  </ul>
+                </li>
+              </ul>            
             </div>
           </div>
         </nav>
@@ -55,22 +98,29 @@
             <div class="panel panel-default">
               <div class="btn-toolbar text-right">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-default instance-map-btn">
+                  <button type="button" class="btn btn-default instance-map-btn" data-toggle="tooltip" title="Instances" data-content-editor>
                     <i class="fa fa-sitemap"></i>
                   </button>
-                  <button type="button" class="btn btn-default globals-btn">
+                  <button type="button" class="btn btn-default globals-btn" data-toggle="tooltip" title="Global Properties" data-content-editor>
                     <i class="fa fa-globe"></i>
+                  </button>
+                  <button type="button" class="btn btn-default log-btn hidden" data-toggle="tooltip" title="Errors">
+                    <i class="fa fa-exclamation-triangle"></i>
                   </button>
                 </div>
               </div>
             </div>
-            <div class="list-group"></div>
+            <div class="list-group property-list"></div>
+            <div class="errors-log"></div>
           </div>
         </div>
       </div>
       <div class="panel panel-default json-view" style="display: none">
         <div class="panel-heading">
-          <h3 class="panel-title">Content JSON</h3>
+          <h3 class="panel-title" data-content-editor>Content JSON</h3>
+          <h3 class="panel-title" data-module-editor>Module Definition
+            <small>(Apply changes to &lt;module-group&gt;/&lt;module-name&gt;.js to make changes permanent)</small>
+          </h3>
           <div class="btn-group">
             <button type="button" class="btn btn-default btn-sm json-js-btn active">
               JS
@@ -106,12 +156,34 @@
             <h4 class="modal-title"></h4>
           </div>
           <div class="modal-body">
-            <p class="confirm-msg"></p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="button" class="btn btn-primary" data-primary-btn data-dismiss="modal"></button>
             <button type="button" class="btn btn-primary hidden" data-third-btn data-dismiss="modal"></button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="add-language-modal">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Add Language</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="add-language-modal__name">Language Code</label>
+              <input class="form-control" placeholder="en | es | pt etc.." id="add-language-modal__name" autofocus>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="events.emit('add-language')">Add</button>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
@@ -186,15 +258,18 @@
     <script src="utils/ui.js"></script>
     <script src="utils/content.js"></script>
 
+    <script src="config.js"></script>
     <script src="modules.js"></script>
     <script src="content.js"></script>
     <script src="renderer.js"></script>
     <script src="store.js"></script>
 
+    <script src="components/log.js"></script>
     <script src="components/instance-element.js"></script>
     <script src="components/container-element.js"></script>
     <script src="components/instance.js"></script>
     <script src="components/property-view.js"></script>
+    <script src="components/errors-view.js"></script>
     <script src="components/instance-map.js"></script>
     <script src="components/module-view.js"></script>
     <script src="components/json-view.js"></script>

@@ -10,6 +10,8 @@ function ModuleView(store, initialGroup) {
 
   const modules = store.modules;
 
+  events.addListener('activate-module-editor', onActivateModuleEditor);
+
   init();
 
   return Object.assign(this, {
@@ -24,6 +26,13 @@ function ModuleView(store, initialGroup) {
   function init() {
     initSearch();
     fillGroups();
+  }
+
+  /**
+   * Handles activate-module-editor event.
+   */
+  function onActivateModuleEditor() {
+    fillModules(store.modules.group());    
   }
 
   /**
@@ -111,7 +120,19 @@ function ModuleView(store, initialGroup) {
     }).on('click dragstart', function() {
       $(this).popover('hide');
     });
+    if (!isContentEditor) {
+      $('.module-view .list-group-item').on('click', onItemClick);
+    }
     events.emit('module-list-changed');
+  }
+
+  /**
+   * Handles module item click.
+   */
+  function onItemClick() {
+    const name = $(this).data('name');
+    store.content.setContent([{name}]);
+    events.emit('module-selected', name);
   }
 
   /**
@@ -123,7 +144,7 @@ function ModuleView(store, initialGroup) {
    * @private
    */
   function getPreview(name, large) {
-    const renderer = store.createRenderer();
+    const renderer = store.createRenderer(app.getLanguage());
     const style = large ? 'style="width: 800px; height: 600px"' : '';
     const html = `
       <html>
@@ -145,7 +166,7 @@ function ModuleView(store, initialGroup) {
    * @public
    */
   function getElement(el) {
-    const renderer = store.createRenderer();
+    const renderer = store.createRenderer(app.getLanguage());
     // extract data from the preview element
     const name = $(el).data('name');
     const content = {name: name, id: -1};

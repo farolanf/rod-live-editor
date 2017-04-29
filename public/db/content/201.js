@@ -6,7 +6,17 @@
         "backgroundColorFooter": { type: 'color', value: "blue" },
         "backgroundColor": { type: 'color', value: "#fff" },
         "hiddenPreheader": { type: 'text', value: "test" },
-        "gift": { type: 'text', value: 'mac' },
+        "gift": { 
+            type: 'text', 
+            value: 'new Mac',
+        },
+        "thing": { 
+            type: 'text', 
+            value: {
+                en: 'A bow',
+                id: 'Sebuah busur'
+            }
+        },
         "color1": {
             "type": "color",
             "value": "#00ff00"
@@ -50,10 +60,47 @@
             "hiddenPreheader": "test",
             "body": [
                 {
-                    name: 'block-include',
+                    name: 'non-existing-module',
+                },
+                {
+                    name: 'error-module',
+                },
+                {
+                    name: 'block-include-tr',
                     contentId: 202,
                     instanceId: 2,
-                    title: 'Example of invalid placement (&lt;div&gt; in &lt;tbody&gt;)',
+                },
+                {
+                    name: '1-column',
+                    content: [
+                        {
+                            "name": "block-text",
+                            "text": 'i18n on instance: '
+                        },
+                        {
+                            "name": "block-text",
+                            "text": {
+                                "en": "Headline",
+                                "es": "Titular",
+                                "pt": "Manchete" 
+                            }
+                        },
+                        {
+                            name: 'block-text',
+                            text: '<br>i18n on default value: '
+                        },
+                        {
+                            name: 'block-text-i18n',
+                        },
+                        {
+                            name: 'block-text',
+                            text: '<br>i18n on global: '
+                        },
+                        {
+                            name: 'block-text',
+                            text: '%thing%'
+                        }
+                    ]
                 },
                 {
                 "name": "1-column",
@@ -74,10 +121,9 @@
                         "text": " are here!"
                     },
                     {
-                        name: 'block-include',
+                        name: 'block-include-div',
                         contentId: 202,
                         instanceId: 2,
-                        title: 'Example of valid placement (&lt;div&gt; in &lt;td&gt;)',
                     },
                 ]
             },

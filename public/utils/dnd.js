@@ -504,6 +504,7 @@ function Dragond(initialContainers, options) {
         const win = this.ownerDocument.defaultView;
         eventsOff(win);
       });
+      deinitContainers();
     }
 
     /**
@@ -685,6 +686,17 @@ function Dragond(initialContainers, options) {
     function initContainers() {
       containers.forEach(function(c) {
         $(c).children().prop('draggable', 'true');
+      });
+    }
+
+    /**
+     * Deinitialize the containers children.
+     * 
+     * @private
+     */
+    function deinitContainers() {
+      containers.forEach(function(c) {
+        $(c).children().prop('draggable', 'false');
       });
     }
 
