@@ -48,14 +48,29 @@ function Content() {
 		isEmpty,
 	});
 
+	/**
+	 * Get the content js code.
+	 * 
+	 * @return {string} - The content javascript code.
+	 */
 	function getJs() {
 		return contentUtils.toJs(contentUtils.getJSON(content));
 	}
 
+	/**
+	 * Get the content JSON.
+	 * 
+	 * @return {string} - The content JSON.
+	 */
 	function getJSON() {
 		return contentUtils.getJSON(content);
 	}
 
+	/**
+	 * Build content from a json.
+	 * 
+	 * @param {string} - The content JSON.
+	 */
 	function fromJSON(json) {
 		// update the content with new data
 		eval(`content = ${json}`);

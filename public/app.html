@@ -28,7 +28,19 @@
               </button>
             </div>
             <div id="navbar" class="collapse navbar-collapse">
-              <ul class="nav navbar-nav">
+              <ul class="nav navbar-nav hidden" data-module-editor>
+                <li>
+                  <a class="content-editor-btn" data-toggle="tooltip" data-placement="bottom" title="Show Content Editor">
+                    Content Editor
+                  </a>
+                </li>
+              </ul>
+              <ul class="nav navbar-nav" data-content-editor>
+                <li>
+                  <a class="module-editor-btn" data-toggle="tooltip" data-placement="bottom" title="Show Module Editor">
+                    Module Editor
+                  </a>
+                </li>
                 <li>
                   <a class="save-btn" data-toggle="tooltip" data-placement="bottom" title="Save the document">
                     <i class="fa fa-save"></i>
@@ -86,10 +98,10 @@
             <div class="panel panel-default">
               <div class="btn-toolbar text-right">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-default instance-map-btn" data-toggle="tooltip" title="Instances">
+                  <button type="button" class="btn btn-default instance-map-btn" data-toggle="tooltip" title="Instances" data-content-editor>
                     <i class="fa fa-sitemap"></i>
                   </button>
-                  <button type="button" class="btn btn-default globals-btn" data-toggle="tooltip" title="Global Properties">
+                  <button type="button" class="btn btn-default globals-btn" data-toggle="tooltip" title="Global Properties" data-content-editor>
                     <i class="fa fa-globe"></i>
                   </button>
                   <button type="button" class="btn btn-default log-btn hidden" data-toggle="tooltip" title="Errors">
@@ -105,7 +117,10 @@
       </div>
       <div class="panel panel-default json-view" style="display: none">
         <div class="panel-heading">
-          <h3 class="panel-title">Content JSON</h3>
+          <h3 class="panel-title" data-content-editor>Content JSON</h3>
+          <h3 class="panel-title" data-module-editor>Module Definition
+            <small>(Apply changes to &lt;module-group&gt;/&lt;module-name&gt;.js to make changes permanent)</small>
+          </h3>
           <div class="btn-group">
             <button type="button" class="btn btn-default btn-sm json-js-btn active">
               JS

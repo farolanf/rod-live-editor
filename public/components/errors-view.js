@@ -1,10 +1,17 @@
 
+/**
+ * Handles errors view.
+ */
 function ErrorsView() {
   events.addListener('errors-changed', onErrorsChanged);
+  events.addListener('warnings-changed', onErrorsChanged);
 
   initLogButton();
   return;
 
+  /**
+   * Initialize the log button.
+   */
   function initLogButton() {
     $('.property-view .log-btn').on('click', function() {
       $('.property-view .property-list').hide();
@@ -12,13 +19,21 @@ function ErrorsView() {
     });
   }
 
+  /**
+   * Handles errors-changed and warnings-changed events.
+   * 
+   * Show errors pane on errors or warnings.
+   */
   function onErrorsChanged() {
-    const hasError = log.hasError();
-    $('.property-view .log-btn').toggleClass('hidden', !hasError);
-    !hasError && events.emit('show-property-list');
-    render();
+    const show = !log.empty();
+    $('.property-view .log-btn').toggleClass('hidden', !show);
+    !show && events.emit('show-property-list');
+    show && render();
   }
 
+  /**
+   * Render errors list.
+   */
   function render() {
     const html = log.errors().map(function(err) {
       const data = err.instanceId ? `data-instance-id="${err.instanceId}"` : '';
@@ -32,7 +47,7 @@ function ErrorsView() {
     $('.property-view [data-instance-id]').css('cursor', 'pointer')
     .on('click', function() {
       const instanceId = $(this).data('instance-id');
-      events.emit('select-instance-by-id', instanceId);
+      events.emit('log-item-clicked', instanceId);
     });
   }
 }

@@ -1,5 +1,7 @@
 'use strict';
 
+window.isContentEditor = true;
+
 // uri eases uri parts extraction, used to form ajax url
 window.uri = URI(window.location.href);
 
@@ -68,6 +70,50 @@ function App() {
   });
 
   /**
+   * Change interface to function as content editor.
+   */
+  function activateContentEditor() {
+    isContentEditor = true;
+    propertyView.clear();
+    $('.preview-container').removeClass('module-editor-container');
+    $('.json-view').removeClass('module-editor').hide().insertAfter('#editor');
+    $('.preview').attr('style', '');
+    $('.navbar-brand').text('Live Editor');
+    $('[data-content-editor]').removeClass('hidden');
+    $('[data-module-editor]').addClass('hidden');
+    initDrag();
+    loadContent();
+    events.emit('activate-content-editor');
+  }
+
+  /**
+   * Change interface to function as module editor.
+   */
+  function activateModuleEditor() {
+    isContentEditor = false;
+    dragond.destroy();
+    propertyView.clear();
+    store.content.setContent([]);
+    hideInstanceControls();
+    log.clear();
+    $('.preview').attr('srcdoc', '');
+    $('.navbar-brand').text('Module Editor');
+    $('[data-content-editor]').addClass('hidden');
+    $('[data-module-editor]').removeClass('hidden');
+    $('.preview-container').addClass('module-editor-container');
+    $('.json-view').addClass('module-editor').show().insertAfter('.empty-container');
+    const previewSplit = Split(['.preview', '.json-view'], {
+      sizes: [70, 30],
+      minSize: 0,
+      direction: 'vertical',
+      onDragEnd: jsonView.resize.bind(jsonView),
+    });
+    jsonView.clear();
+    events.once('activate-content-editor', previewSplit.destroy);
+    events.emit('activate-module-editor');
+  }
+
+  /**
    * Main initialization function.
    */
   function init() {
@@ -108,10 +154,35 @@ function App() {
     if (!store.content.isEmpty()) {
       const langs = [];
       query.language && langs.push(query.language);
-      scanGlobal(store.content.globalProperties());
-      scanContent(store.content.content());
+      if (isContentEditor) {
+        scanGlobal(store.content.globalProperties());
+        scanContent(store.content.content());
+      }
+      else {
+        scanModules(store.modules.modules());
+      }
       return langs;
 
+      /**
+       * Scan modules for languages.
+       * 
+       * @param {object} modules - The modules object.
+       */
+      function scanModules(modules) {
+        _.forOwn(modules, function(module, moduleName) {
+          module.properties && _.forOwn(module.properties, function(prop, propName) {
+            if (prop.default && typeof prop.default === 'object') {
+              getLanguages(prop.default);
+            }
+          });
+        });
+      }
+
+      /**
+       * Scan global properties for languages.
+       * 
+       * @param {object} props - The global properties object.
+       */
       function scanGlobal(props) {
         _.forOwn(props, function(value, key) {
           if (value.value && typeof value.value === 'object') {
@@ -120,6 +191,11 @@ function App() {
         });
       }
 
+      /**
+       * Scan content for languages.
+       * 
+       * @param {object} content - The content.
+       */
       function scanContent(content) {
         if (Array.isArray(content)) {
           content.forEach(function(value) {
@@ -140,7 +216,12 @@ function App() {
           }
         }
       }
-
+      
+      /**
+       * Get the language keys.
+       * 
+       * @param {object} prop - The object containing the keys.
+       */
       function getLanguages(prop) {
         _.forOwn(prop, function(value, key) {
           if (!langs.includes(key)) {
@@ -231,7 +312,7 @@ function App() {
     if (query.id) {
       const precompileParameters = usePrecompileParameters ? 
         query.precompileParameters : false;
-      store.content.loadContent(query.id, precompileParameters);  
+      store.content.loadContent(query.id, precompileParameters);
     }
   }
 
@@ -241,7 +322,9 @@ function App() {
   function registerHandlers() {
     events.addListener('content-changed', renderPreview);
     events.addListener('modules-changed', renderPreview);
+    events.addListener('module-changed', renderPreview);
     events.addListener('global-property-changed', renderPreview);
+    events.addListener('module-property-changed', renderPreview);
 
     events.addListener('module-list-changed', moduleListChanged);
 
@@ -249,7 +332,9 @@ function App() {
 
     events.addListener('content-changed', initLanguage);
     events.addListener('modules-changed', initLanguage);
+    events.addListener('module-changed', initLanguage);
     events.addListener('property-changed', initLanguage);
+    events.addListener('module-property-changed', initLanguage);
     events.addListener('global-property-changed', initLanguage);
   }
 
@@ -443,6 +528,8 @@ function App() {
    * Init toolbar buttons.
    */
   function initActions() {
+    $('.content-editor-btn').on('click', activateContentEditor);
+    $('.module-editor-btn').on('click', activateModuleEditor);
     $('.save-btn').on('click', save);
     $('.refresh-btn').on('click', refresh);
 
@@ -463,6 +550,9 @@ function App() {
       .on('click', onPrecompileToggle);
   }
 
+  /**
+   * Update undo and redo button states.
+   */
   function updateUndoButtons() {
     $('.undo-btn').toggleClass('disabled', !undo.canUndo());
     $('.redo-btn').toggleClass('disabled', !undo.canRedo());
@@ -593,14 +683,14 @@ function App() {
   function moduleListChanged() {
     // a check is needed in case modules have been fetched before
     // dragond is ready
-    dragond && dragond.initContainers();
+    isContentEditor && dragond && dragond.initContainers();
   }
 
   /**
    * Render the preview.
    */
   function renderPreview() {
-    if (store.content.isEmpty()) {
+    if (isContentEditor && store.content.isEmpty()) {
       // render a container that only accepts root modules
       renderEmptyPreview();
       return;
@@ -613,9 +703,11 @@ function App() {
     }
     dragond.removeIframe('.preview');
     let html = store.createRenderer(getLanguage()).render(store.content.content());
-    $('.preview').attr('srcdoc', html).off('load').on('load', function() {
-      dragond.addIframe('.preview');
-      preview.init(this.contentWindow);
+    $('.preview').attr('srcdoc', html).off('load').one('load', function() {
+      if (isContentEditor) {
+        dragond.addIframe('.preview');
+        preview.init(this.contentWindow);
+      }
       events.emit('preview-loaded');
     });
   }

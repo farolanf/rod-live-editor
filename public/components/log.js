@@ -14,12 +14,14 @@ function Log() {
   events.addListener('language-changed', reset);
 
   return Object.assign(this, {
+    clear,
     error,
     warn,
-    hasError,
+    empty,
     hasi18nWarning,
     moduleHasi18nWarning,
     propHasi18nWarning,
+    modulePropHasi18nWarning,
     globalHasi18nWarning,
     geti18nWarnings,
     getLanguageWarnings,
@@ -27,8 +29,23 @@ function Log() {
     warnings() {return warnings},
   });
 
-  function hasError() {
-    return errors.length > 0;
+  /**
+   * Clear logs.
+   */
+  function clear() {
+    warnings = [];
+    errors = [];
+    events.emit('warnings-changed');
+    events.emit('errors-changed');
+  }
+
+  /**
+   * Check if log is empty.
+   * 
+   * @return {boolean} - True if it's empty.
+   */
+  function empty() {
+    return errors.length <= 0 && warnings.length <= 0;
   }
 
   /**
@@ -53,6 +70,19 @@ function Log() {
   function moduleHasi18nWarning(name, moduleGroup) {
     return warnings.findIndex(function(value) {
       return value.module && value.module === name && value.moduleGroup === moduleGroup;
+    }) !== -1;
+  }
+
+  /**
+   * Check if module property has i18n warning.
+   * 
+   * @param {string} moduleName - Name of the module.
+   * @param {string} property - Name of the property.
+   * @return {boolean} - True if it has warning.
+   */
+  function modulePropHasi18nWarning(moduleName, property) {
+    return warnings.findIndex(function(value) {
+      return value.module && value.module === moduleName && value.property === property;
     }) !== -1;
   }
 
@@ -89,7 +119,7 @@ function Log() {
    */
   function geti18nWarnings(id) {
     return warnings.filter(function(value) {
-      return value.instanceId && value.instanceId == id;
+      return !value.module && value.instanceId && value.instanceId == id;
     });
   }
 
