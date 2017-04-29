@@ -9,19 +9,29 @@
 function PropertyView(editor, content) {
 
   let instanceId;
+  let moduleName;
   let editingGlobal;
   let noLoad;
 
+  let setProperty, getProperty;
+
   events.addListener('instance-deleted', instanceDeleted);
+  
   events.addListener('preview-loaded', load);
   events.addListener('language-changed', load.bind(null, true));
   events.addListener('warnings-changed', load.bind(null, true));
+
   events.addListener('preview-element-selected', setInstance);
   events.addListener('log-item-clicked', _setInstance);
+  
   events.addListener('add-global-property', addGlobalProperty);
   events.addListener('delete-global-property', deleteGlobalProperty);
   events.addListener('property-changed', onPropertyChanged);
+  events.addListener('module-property-changed', onPropertyChanged);
+  
   events.addListener('show-property-list', showPropertyList);
+  
+  events.addListener('module-selected', editModule);
 
   const acedit = ace.edit('text-editor-modal__text-editor');
   acedit.setFontSize(14);
@@ -37,7 +47,9 @@ function PropertyView(editor, content) {
   };
 
   function clear() {
+    editingGlobal = false;
     instanceId = null;
+    moduleName = null;
     $('.property-list').html('');
   }
 
@@ -64,6 +76,9 @@ function PropertyView(editor, content) {
     }
     else if (instanceId !== null) {
       _setInstance(instanceId);
+    }
+    else if (moduleName) {
+      editModule(moduleName);
     }
   }
 
@@ -97,15 +112,35 @@ function PropertyView(editor, content) {
    * @param {string} id - Id of instance to be edited.
    */
   function _setInstance(id) {
-    editingGlobal = false;
     instanceId = id;
+    moduleName = null;
+    editingGlobal = false;
+    getProperty = getInstanceProperty;
+    setProperty = setInstanceProperty;
     showPropertyList();
     if (isNaN(String(instanceId))) {
       $('.property-view .property-list').html('');
     }
     else {
-      render();
+      const instance = new Instance(instanceId);
+      _render(instance.name, instance.getProperties(), setInstanceProperty);
     }
+  }
+
+  function getModule() {
+    return store.modules.modules()[moduleName];
+  }
+
+  function editModule(name) {
+    moduleName = name;
+    instanceId = null;
+    editingGlobal = false;
+    getProperty = getModuleProperty;
+    setProperty = setModuleProperty;
+    const props = _.mapValues(getModule().properties, function(value, key) {
+      return {type: value.type, value: value.default};
+    });
+    _render('Module Properties', props, setModuleProperty, false);
   }
 
   /**
@@ -117,6 +152,9 @@ function PropertyView(editor, content) {
     editingGlobal = true;
     // reset instanceId so the same instance can be selected later
     instanceId = null;
+    moduleName = null;
+    getProperty = getGlobalProperty;
+    setProperty = setGlobalProperty;
     showPropertyList();
     // render add global property button
     const btn = `
@@ -163,16 +201,6 @@ function PropertyView(editor, content) {
   }
 
   /**
-   * Renders controls for editing the instance.
-   * 
-   * @private
-   */
-  function render() {
-    const instance = new Instance(instanceId);
-    _render(instance.name, instance.getProperties(), setInstanceProperty);
-  }
-
-  /**
    * The general rendering code.
    * 
    * @param {string} name - The display name of edited entity.
@@ -189,8 +217,6 @@ function PropertyView(editor, content) {
         return;
       }
 
-      const dataGlobal = instanceId === null ? 'data-global="true"' : '';
-
       let value = prop.value;
 
       // i18n
@@ -200,7 +226,7 @@ function PropertyView(editor, content) {
       const lang = useLanguage && typeof value === 'object' ? ` (${language})` : '';
 
       const flag = typeof value === 'object' ? 'fa-flag' : 'fa-flag-o';
-      const langBtnHtml = useLanguage ? `<i class="fa ${flag} i18n-btn" data-name="${key}" ${dataGlobal}></i>` : '';
+      const langBtnHtml = useLanguage ? `<i class="fa ${flag} i18n-btn" data-name="${key}"></i>` : '';
 
       if (typeof value === 'object') {
         value = value[language] || '';
@@ -217,6 +243,7 @@ function PropertyView(editor, content) {
       const style = prop.type === 'color' ? `style="box-shadow: inset 0 0 0 4px #${value}"` : '';
 
       const hasWarning = instanceId ? log.propHasi18nWarning(instanceId, key) :
+        moduleName ? log.modulePropHasi18nWarning(moduleName, key) :
         log.globalHasi18nWarning(key);
       const warningCls = hasWarning ? 'property-view__item--has-warning' : '';
 
@@ -226,7 +253,7 @@ function PropertyView(editor, content) {
         <div class="list-group-item ${warningCls}" ${tooltip}>
           <span class="name ${textCls}">${key}<span class="language-info">${lang}</span> ${textBtn}</span>
           <div class="property-controls">
-            <input class="form-control" value="${value}" ${dataGlobal} data-name="${key}" data-type="${prop.type}" ${style}>
+            <input class="form-control" value="${value}" data-name="${key}" data-type="${prop.type}" ${style}>
             <div class="prop-buttons">
               ${langBtnHtml}
               ${delBtnHtml}
@@ -269,8 +296,7 @@ function PropertyView(editor, content) {
     const btn = $(this);
     const usei18n = btn.is('.fa-flag');
     const prop = btn.data('name');
-    const isGlobal = !!btn.data('global');
-    const value = isGlobal ? getGlobalProperty(prop) : getInstanceProperty(prop);
+    const value = getProperty(prop);
     const language = app.getLanguage();
     if (usei18n) {
       // discard i18n 
@@ -278,7 +304,7 @@ function PropertyView(editor, content) {
       events.removeListener(eventName);
       events.once(eventName, function() {
         const newValue = value[language] || '';
-        setProperty(isGlobal, prop, newValue, false);
+        setProperty(prop, newValue, false);
         load(true);
       });
       const html = `<p>Discard i18n for this property and use current value for all    languages?</p><table class="discard-list"><tbody>` + _.map(value, function(val, key) {
@@ -291,26 +317,8 @@ function PropertyView(editor, content) {
     else {
       // use i18n
       const newValue = {[language]: value};
-      setProperty(isGlobal, prop, newValue, false);
+      setProperty(prop, newValue, false);
       load(true);
-    }
-  }
-
-  /**
-   * Set global or instance property.
-   * 
-   * @param {boolean} isGlobal - Set global property if true otherwise 
-   * set instance property.
-   * @param {string} prop - The property name.
-   * @param {string} value - The property value.
-   * @param {boolean} usei18n - Integrate the value to i18n object.
-   */
-  function setProperty(isGlobal, prop, value, usei18n) {
-    if (isGlobal) {
-      setGlobalProperty(prop, value, usei18n);
-    }
-    else {
-      setInstanceProperty(prop, value, usei18n);
     }
   }
 
@@ -322,8 +330,7 @@ function PropertyView(editor, content) {
   function onTextBtnClick() {
     const input = $(this).parent().find('input');
     const prop = input.data('name');
-    const isGlobal = !!input.data('global');
-    let value = isGlobal ? getGlobalProperty(prop) : getInstanceProperty(prop);
+    let value = getProperty(prop);
     if (typeof value === 'object') {
       value = value[app.getLanguage()];
     }
@@ -331,12 +338,7 @@ function PropertyView(editor, content) {
     acedit.setValue(value);
     $('#text-editor-modal').modal().off('hide.bs.modal').on('hide.bs.modal', function() {
       const newValue = acedit.getValue();
-      if (isGlobal) {
-        setGlobalProperty(prop, newValue);
-      }
-      else {
-        setInstanceProperty(prop, newValue);
-      }
+      setProperty(prop, newValue);
       input.val(newValue);
     });;
   }
@@ -362,6 +364,10 @@ function PropertyView(editor, content) {
   function getInstanceProperty(prop) {
     const instance = new Instance(instanceId);
     return instance.getProperties()[prop].value;
+  }
+
+  function getModuleProperty(prop) {
+    return getModule().properties[prop].default;
   }
 
   /**
@@ -433,6 +439,17 @@ function PropertyView(editor, content) {
       events.emit('property-changed', prop, textValue, value, instanceId);
       reloaded && updatePropertyUi(prop, textValue);
     });
+  }
+
+  function setModuleProperty(prop, value, usei18n) {
+    usei18n = usei18n || typeof usei18n === 'undefined';
+    undo.push();
+    const textValue = value;
+    if (usei18n) {
+      value = geti18nValue(prop, value, getModuleProperty(prop));
+    }
+    getModule().properties[prop].default = value;
+    events.emit('module-property-changed', prop, textValue, value);
   }
 
   /**
