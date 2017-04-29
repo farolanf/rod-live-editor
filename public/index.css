@@ -44,11 +44,14 @@ html, body, #app, #editor, .editor-container, .preview {
 .gutter {
   background-color: #ddd;
 }
+.gutter:hover {
+  background-color: #ccc;
+}
 .gutter-horizontal {
   cursor: col-resize;
 }
-.gutter-horizontal:hover {
-  background-color: #ccc;
+.gutter-vertical {
+  cursor: row-resize;
 }
 
 .editor-container {
@@ -117,6 +120,13 @@ html, body, #app, #editor, .editor-container, .preview {
 .empty-container.dg-dragover::before {
   color: #ccc;
 }
+.module-editor-container {
+  display: flex;
+  flex-direction: column;
+}
+.module-editor-container .preview {
+  height: 70%;
+}
 
 .json-view {
   position: fixed;
@@ -125,6 +135,7 @@ html, body, #app, #editor, .editor-container, .preview {
   width: 100%;
   height: 100%;
   z-index: 2000;
+  margin-bottom: 0;
   display: flex;
   flex-flow: column nowrap;
 }
@@ -137,6 +148,10 @@ html, body, #app, #editor, .editor-container, .preview {
   flex-grow: 1;
   position: relative;
   padding: 0;
+}
+.json-view.module-editor {
+  position: relative;
+  z-index: unset;
 }
 #content-json {
   position: absolute;
@@ -260,6 +275,9 @@ html, body, #app, #editor, .editor-container, .preview {
 }
 .errors-log .error-item:not(:first-child) {
   border-top: 1px solid #fcc;
+}
+.errors-log .warning-item:not(:first-child) {
+  border-top: 1px solid #fdb;
 }
 
 .instance-map {
