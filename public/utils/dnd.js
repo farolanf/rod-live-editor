@@ -443,6 +443,7 @@ function Dragond(initialContainers, options) {
     let containers = initialContainers || [];
     let draggedElement, lastContainer, sourceContainer;
     let $body = $();
+    let canceled;
 
     const defaultOptions = {
       copy: false,
@@ -463,6 +464,7 @@ function Dragond(initialContainers, options) {
       removeFoundContainers,
       replaceBody,
       destroy,
+      cancel() {canceled = true},
       set containers(c) {containers = c; initContainers()},
     };
 
@@ -573,6 +575,7 @@ function Dragond(initialContainers, options) {
      * @private
      */
     function dragstart(event) {
+      canceled = false;
       // console.log('dragstart');
       const e = event.originalEvent;
       findContainer(e.target, function(container) {
@@ -654,6 +657,10 @@ function Dragond(initialContainers, options) {
     function dragover(event) {
       // console.log('dragover');
       const e = event.originalEvent;
+      if (canceled) {
+        e.preventDefault();
+        return false;
+      }
       findContainer(e.target, function(container) {
         if (options.accepts(draggedElement, container, sourceContainer)) {
           e.preventDefault();
@@ -671,6 +678,10 @@ function Dragond(initialContainers, options) {
     function drop(event) {
       // console.log('drop');
       const e = event.originalEvent;
+      if (canceled) {
+        e.preventDefault();
+        return false;
+      }
       findContainer(e.target, function(container) {
         options.drop && options.drop.call(container, e, draggedElement, container, sourceContainer);
       });

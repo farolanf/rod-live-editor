@@ -38,6 +38,8 @@ function PropertyView(editor, content) {
   acedit.getSession().setMode('ace/mode/html');
   acedit.getSession().setUseWrapMode(true);
 
+  $('.property-view .property-list').hide();
+
   return {
     clear,
     setInstance,
@@ -80,7 +82,7 @@ function PropertyView(editor, content) {
     if (editingGlobal) {
       editGlobals();
     }
-    else if (instanceId !== null) {
+    else if (instanceId) {
       _setInstance(instanceId);
     }
     else if (moduleName) {
