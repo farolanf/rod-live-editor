@@ -80,7 +80,7 @@ function PropertyView(editor, content) {
     if (editingGlobal) {
       editGlobals();
     }
-    else if (instanceId !== null) {
+    else if (instanceId) {
       _setInstance(instanceId);
     }
     else if (moduleName) {
