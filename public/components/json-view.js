@@ -46,6 +46,8 @@ function JsonView(content) {
    */
   function clear() {
     acedit.setValue('');
+    acedit.setReadOnly(true);
+    disableSave();
   }
 
   /**
@@ -104,8 +106,22 @@ function JsonView(content) {
   /**
    * Enable save button.
    */
-  function setDirty() {
+  function enableSave() {
     $('.json-view .json-save-btn').removeClass('disabled');
+  }
+
+  /**
+   * Disable save button.
+   */
+  function disableSave() {
+    $('.json-view .json-save-btn').addClass('disabled');
+  }
+
+  /**
+   * Enable save button.
+   */
+  function setDirty() {
+    enableSave();
   }
 
   /**
@@ -165,7 +181,7 @@ function JsonView(content) {
       eval(`store.modules.modules()[moduleName] = ${getValue()}`);
       events.emit('module-changed');      
     }
-    $('.json-view .json-save-btn').addClass('disabled');
+    disableSave();
   }
 
   /**
