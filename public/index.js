@@ -103,7 +103,7 @@ function App() {
     $('.preview-container').addClass('module-editor-container');
     $('.json-view').addClass('module-editor').show().insertAfter('.empty-container');
     const previewSplit = Split(['.preview', '.json-view'], {
-      sizes: [70, 30],
+      sizes: [50, 50],
       minSize: 0,
       direction: 'vertical',
       onDragEnd: jsonView.resize.bind(jsonView),
