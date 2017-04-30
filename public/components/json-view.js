@@ -24,11 +24,14 @@ function JsonView(content) {
 
   events.addListener('activate-content-editor', function() {
     $('.json-view .modal-close-btn').show();
+    $('.json-view .json-save-btn').removeAttr('data-toggle').removeAttr('title');
     resize();
   });
 
   events.addListener('activate-module-editor', function() {
     $('.json-view .modal-close-btn').hide();
+    $('.json-view .json-save-btn').attr('data-toggle', 'tooltip')
+      .attr('title', 'Save to preview changes').tooltip();
     resize();
   });
 
