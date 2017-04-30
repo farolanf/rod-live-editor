@@ -368,7 +368,9 @@ Editor.injectInstanceData = function(str, id, name, visible) {
         wrapper = 'table';
       }
     }
-    str = `<${wrapper} style="width: 100%">${str}</${wrapper}>`;
+    if (wrapper) {
+      str = `<${wrapper} style="width: 100%">${str}</${wrapper}>`;
+    }
   }
   return str.replace(/((?:<!DOCTYPE [^]*?>\s*)?<[^]+?)>/i, 
     `$1 data-id="${id}" data-name="${name}" data-visible="${visible}">`);
