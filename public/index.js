@@ -555,6 +555,17 @@ function App() {
     // when updating button state
     $('.precompile-btn').toggleClass('hidden', !usePrecompileParameters)
       .on('click', onPrecompileToggle);
+
+    $('.module-wrapper').on('change', onModuleWrapperChanged);
+  }
+
+  /**
+   * Handles module wrapper change.
+   */
+  function onModuleWrapperChanged() {
+    const wrapper = $(this).val();
+    Editor.wrapper = wrapper === 'auto' ? null : wrapper;
+    renderPreview();
   }
 
   /**
@@ -709,11 +720,21 @@ function App() {
       return;
     }
     dragond.removeIframe('.preview');
+    Editor.useWrapper = !isContentEditor;
     let html = store.createRenderer(getLanguage()).render(store.content.content());
     $('.preview').attr('srcdoc', html).off('load').one('load', function() {
       if (isContentEditor) {
         dragond.addIframe('.preview');
         preview.init(this.contentWindow);
+      }
+      else {
+        $('.preview').contents().find('head').append(`
+          <style>
+            body > * {
+              width: 100%;
+            }
+          </style>
+        `);
       }
       events.emit('preview-loaded');
     });

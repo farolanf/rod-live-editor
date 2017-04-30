@@ -43,6 +43,7 @@ function HtmlView() {
       clear();
       return;
     }
+    Editor.useWrapper = false;
     const str = store.createRenderer(app.getLanguage())
       .render(store.content.content());
     acedit.setValue(str);
