@@ -145,6 +145,7 @@ function ModuleView(store, initialGroup) {
    * @private
    */
   function getPreview(name, large) {
+    Editor.useWrapper = true;
     const renderer = store.createRenderer(app.getLanguage());
     const style = large ? 'style="width: 800px; height: 600px"' : '';
     const html = `
