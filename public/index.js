@@ -727,7 +727,7 @@ function App() {
         dragond.addIframe('.preview');
         preview.init(this.contentWindow);
       }
-      else {
+      else if (Editor.wrapper) {
         $('.preview').contents().find('head').append(`
           <style>
             body > * {
