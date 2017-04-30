@@ -34,6 +34,9 @@
                     Content Editor
                   </a>
                 </li>
+                <li>
+                  <a class="html-btn" data-toggle="tooltip" data-placement="bottom" title="Check the rendered HTML">HTML</a>
+                </li>
               </ul>
               <ul class="nav navbar-nav" data-content-editor>
                 <li>
@@ -51,6 +54,9 @@
                 </li>
                 <li>
                   <a class="content-json-btn" data-toggle="tooltip" data-placement="bottom" title="Edit the content object">JSON</a>
+                </li>
+                <li>
+                  <a class="html-btn" data-toggle="tooltip" data-placement="bottom" title="Check the rendered HTML">HTML</a>
                 </li>
                 <li>
                   <a class="refresh-btn" data-toggle="tooltip" data-placement="bottom" title="Redraw the document">
@@ -138,6 +144,19 @@
         </div>
         <div class="panel-body">
           <div id="content-json"></div>
+        </div>
+      </div>
+      <div class="panel panel-default html-view" style="display: none">
+        <div class="panel-heading">
+          <h3 class="panel-title">Rendered HTML</h3>
+          <div class="btn-group">
+            <button type="button" class="btn btn-default btn-sm modal-close-btn">
+              <i class="fa fa-close"></i>
+            </button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="rendered-html"></div>
         </div>
       </div>
       <iframe style="display: none"></iframe>
@@ -276,6 +295,7 @@
     <script src="components/instance-map.js"></script>
     <script src="components/module-view.js"></script>
     <script src="components/json-view.js"></script>
+    <script src="components/html-view.js"></script>
     <script src="components/undo.js"></script>
     <script src="preview.js"></script>
     <script src="index.js"></script>

@@ -50,6 +50,7 @@ function App() {
   const instanceMap = new InstanceMap(store.content, propertyView, preview);
  
   const jsonView = new JsonView(store.content);
+  const htmlView = new HtmlView();
 
   let dragond, 
     usePrecompileParameters = false;
@@ -546,6 +547,7 @@ function App() {
     $('.content-json-btn').on('click', function() {
       jsonView.show(usePrecompileParameters);
     });
+    $('.html-btn').on('click', htmlView.show);
 
     setPrecompile(!!query.precompileParameters);
 
