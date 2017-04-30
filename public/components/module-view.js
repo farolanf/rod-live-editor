@@ -10,6 +10,7 @@ function ModuleView(store, initialGroup) {
 
   const modules = store.modules;
 
+  events.addListener('activate-content-editor', render);
   events.addListener('activate-module-editor', render);
   events.addListener('module-changed', render);
 
