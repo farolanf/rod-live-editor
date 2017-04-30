@@ -32,6 +32,7 @@ function JsonView(content) {
     $('.json-view .modal-close-btn').hide();
     $('.json-view .json-save-btn').attr('data-toggle', 'tooltip')
       .attr('title', 'Save to preview changes').tooltip();
+    $('#json-view__module-file').text('');
     resize();
   });
 
@@ -69,6 +70,7 @@ function JsonView(content) {
    */
   function onModuleSelected(name) {
     moduleName = name;
+    $('#json-view__module-file').text(`Apply changes to ${store.modules.group()}/${name}.js to make changes permanent.`);
     show(false);
   }
 
