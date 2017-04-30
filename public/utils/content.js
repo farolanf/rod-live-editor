@@ -65,6 +65,8 @@ const contentUtils = {
 
     function unescape(str) {
       return str.replace(/\\n/g, "\n")
+        .replace(/\\r/g, "\r")
+        .replace(/\\t/g, "\t")
         .replace(/\\"/g, '"')
         .replace(/\\'/g, "'");
     }
