@@ -727,15 +727,6 @@ function App() {
         dragond.addIframe('.preview');
         preview.init(this.contentWindow);
       }
-      else if (Editor.wrapper) {
-        $('.preview').contents().find('head').append(`
-          <style>
-            body > * {
-              width: 100%;
-            }
-          </style>
-        `);
-      }
       events.emit('preview-loaded');
     });
   }

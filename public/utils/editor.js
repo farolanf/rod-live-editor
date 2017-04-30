@@ -361,8 +361,14 @@ Editor.useWrapper = false;
  */
 Editor.injectInstanceData = function(str, id, name, visible) {
   str = Editor.wrapText(str);
-  if (Editor.useWrapper && Editor.wrapper) {
-    str = `<${Editor.wrapper}>${str}</${Editor.wrapper}>`;
+  if (Editor.useWrapper) {
+    let wrapper = Editor.wrapper;
+    if (!wrapper) {
+      if (/^\s*<(?:thead|tbody|tr|td|th)[^]*?>/i.test(str)) {
+        wrapper = 'table';
+      }
+    }
+    str = `<${wrapper} style="width: 100%">${str}</${wrapper}>`;
   }
   return str.replace(/((?:<!DOCTYPE [^]*?>\s*)?<[^]+?)>/i, 
     `$1 data-id="${id}" data-name="${name}" data-visible="${visible}">`);
