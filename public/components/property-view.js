@@ -40,6 +40,8 @@ function PropertyView(editor, content) {
 
   $('.property-view .property-list').hide();
 
+  $('.property-view .properties-btn').on('click', showPropertyList);
+
   return {
     clear,
     setInstance,
