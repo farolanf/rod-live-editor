@@ -9,7 +9,7 @@ function Preview(propertyView) {
   let selectedElement;
 
   events.addListener('instance-changed', renderInstance);
-  events.addListener('log-item-clicked', selectInstanceById);
+  events.addListener('log-item-clicked', onLogItemClicked);
 
   return Object.assign(this, {
     editInstanceContent() {editInstanceContent(selectedElement)},
@@ -43,6 +43,16 @@ function Preview(propertyView) {
    */
   function injectCss() {
     $$('head').append('<link href="preview.css" rel="stylesheet">');
+  }
+
+  /**
+   * Handles log-item-clicked event.
+   * 
+   * @param {string} id - The clicked instance's id.
+   */
+  function onLogItemClicked(id) {
+    selectInstanceById(id);
+    scrollToInstance(id);
   }
 
   /**
