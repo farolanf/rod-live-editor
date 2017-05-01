@@ -63,6 +63,12 @@ const contentUtils = {
       return `: \`${m1}\`${m2}`;
     }
 
+    /**
+     * Unescape a string.
+     * 
+     * @param {string} str - The string
+     * @return {string} - The unescaped string.
+     */
     function unescape(str) {
       return str.replace(/\\n/g, "\n")
         .replace(/\\r/g, "\r")
