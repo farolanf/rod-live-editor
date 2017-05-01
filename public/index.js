@@ -337,6 +337,7 @@ function App() {
     events.addListener('property-changed', initLanguage);
     events.addListener('module-property-changed', initLanguage);
     events.addListener('global-property-changed', initLanguage);
+    events.addListener('instance-deleted', initLanguage);
   }
 
   /**
