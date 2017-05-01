@@ -162,7 +162,7 @@ function App() {
       else {
         scanModules(store.modules.modules());
       }
-      return langs;
+      return langs.sort();
 
       /**
        * Scan modules for languages.
