@@ -169,6 +169,7 @@ function ModuleView(store, initialGroup) {
    * @public
    */
   function getElement(el) {
+    Editor.useWrapper = false;
     const renderer = store.createRenderer(app.getLanguage());
     // extract data from the preview element
     const name = $(el).data('name');
