@@ -50,6 +50,7 @@ function App() {
   const instanceMap = new InstanceMap(store.content, propertyView, preview);
  
   const jsonView = new JsonView(store.content);
+  const htmlView = new HtmlView();
 
   let dragond, 
     usePrecompileParameters = false;
@@ -103,7 +104,7 @@ function App() {
     $('.preview-container').addClass('module-editor-container');
     $('.json-view').addClass('module-editor').show().insertAfter('.empty-container');
     const previewSplit = Split(['.preview', '.json-view'], {
-      sizes: [70, 30],
+      sizes: [50, 50],
       minSize: 0,
       direction: 'vertical',
       onDragEnd: jsonView.resize.bind(jsonView),
@@ -546,6 +547,7 @@ function App() {
     $('.content-json-btn').on('click', function() {
       jsonView.show(usePrecompileParameters);
     });
+    $('.html-btn').on('click', htmlView.show);
 
     setPrecompile(!!query.precompileParameters);
 
@@ -553,6 +555,17 @@ function App() {
     // when updating button state
     $('.precompile-btn').toggleClass('hidden', !usePrecompileParameters)
       .on('click', onPrecompileToggle);
+
+    $('.module-wrapper').on('change', onModuleWrapperChanged);
+  }
+
+  /**
+   * Handles module wrapper change.
+   */
+  function onModuleWrapperChanged() {
+    const wrapper = $(this).val();
+    Editor.wrapper = wrapper === 'auto' ? null : wrapper;
+    renderPreview();
   }
 
   /**
@@ -707,6 +720,7 @@ function App() {
       return;
     }
     dragond.removeIframe('.preview');
+    Editor.useWrapper = !isContentEditor;
     let html = store.createRenderer(getLanguage()).render(store.content.content());
     $('.preview').attr('srcdoc', html).off('load').one('load', function() {
       if (isContentEditor) {

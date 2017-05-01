@@ -10,7 +10,9 @@ function ModuleView(store, initialGroup) {
 
   const modules = store.modules;
 
-  events.addListener('activate-module-editor', onActivateModuleEditor);
+  events.addListener('activate-content-editor', render);
+  events.addListener('activate-module-editor', render);
+  events.addListener('module-changed', render);
 
   init();
 
@@ -29,10 +31,10 @@ function ModuleView(store, initialGroup) {
   }
 
   /**
-   * Handles activate-module-editor event.
+   * Render current group.
    */
-  function onActivateModuleEditor() {
-    fillModules(store.modules.group());    
+  function render() {
+    fillModuleList(store.modules.modules());    
   }
 
   /**
@@ -144,6 +146,7 @@ function ModuleView(store, initialGroup) {
    * @private
    */
   function getPreview(name, large) {
+    Editor.useWrapper = true;
     const renderer = store.createRenderer(app.getLanguage());
     const style = large ? 'style="width: 800px; height: 600px"' : '';
     const html = `

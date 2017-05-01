@@ -45,15 +45,13 @@ const contentUtils = {
   toJs(json) {
     return json.replace(/"([\w]+)":/g, '$1:')
       .replace(/"(function [^]+?})"(,?\n)/g, functionStr)
-      .replace(/: "([^"]*)"(,?\n)/g, valueStr);
+      .replace(/: "([^]*?)"(,?\n)/g, valueStr);
     
     /**
      * Unescape new lines and quotes.
      */
     function functionStr(m0, m1, m2) {
-      m1 = m1.replace(/\\n/g, "\n")
-        .replace(/\\"/g, '"')
-        .replace(/\\'/g, "'");
+      m1 = unescape(m1);
       return m1 + m2;
     }
 
@@ -61,8 +59,22 @@ const contentUtils = {
      * Use single quotes and escape the nested ones.
      */
     function valueStr(m0, m1, m2) {
-      m1 = m1.replace(/'/g, "\\'");
-      return `: '${m1}'${m2}`;
+      m1 = unescape(m1);
+      return `: \`${m1}\`${m2}`;
+    }
+
+    /**
+     * Unescape a string.
+     * 
+     * @param {string} str - The string
+     * @return {string} - The unescaped string.
+     */
+    function unescape(str) {
+      return str.replace(/\\n/g, "\n")
+        .replace(/\\r/g, "\r")
+        .replace(/\\t/g, "\t")
+        .replace(/\\"/g, '"')
+        .replace(/\\'/g, "'");
     }
   },
 

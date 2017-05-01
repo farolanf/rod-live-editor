@@ -24,11 +24,15 @@ function JsonView(content) {
 
   events.addListener('activate-content-editor', function() {
     $('.json-view .modal-close-btn').show();
+    $('.json-view .json-save-btn').removeAttr('data-toggle').removeAttr('title');
     resize();
   });
 
   events.addListener('activate-module-editor', function() {
     $('.json-view .modal-close-btn').hide();
+    $('.json-view .json-save-btn').attr('data-toggle', 'tooltip')
+      .attr('title', 'Save to preview changes').tooltip();
+    $('#json-view__module-file').text('');
     resize();
   });
 
@@ -66,6 +70,7 @@ function JsonView(content) {
    */
   function onModuleSelected(name) {
     moduleName = name;
+    $('#json-view__module-file').text(`Apply changes to ${store.modules.group()}/${name}.js to make changes permanent.`);
     show(false);
   }
 

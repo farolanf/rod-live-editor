@@ -340,6 +340,18 @@ Editor.getContainerPlaceholder = function(name, parentId, children) {
 }
 
 /**
+ * The module wrapper.
+ * 
+ * (null/auto | div | table | tbody)
+ */
+Editor.wrapper = null;
+
+/**
+ * Use the module wrapper.
+ */
+Editor.useWrapper = false;
+
+/**
  * Inject instance data to the rendererd HTML.
  * 
  * @param {string} str - The HTML to be injected.
@@ -349,6 +361,17 @@ Editor.getContainerPlaceholder = function(name, parentId, children) {
  */
 Editor.injectInstanceData = function(str, id, name, visible) {
   str = Editor.wrapText(str);
+  if (Editor.useWrapper) {
+    let wrapper = Editor.wrapper;
+    if (!wrapper) {
+      if (/^\s*<(?:thead|tbody|tr|td|th)[^]*?>/i.test(str)) {
+        wrapper = 'table';
+      }
+    }
+    if (wrapper) {
+      str = `<${wrapper} style="width: 100%">${str}</${wrapper}>`;
+    }
+  }
   return str.replace(/((?:<!DOCTYPE [^]*?>\s*)?<[^]+?)>/i, 
     `$1 data-id="${id}" data-name="${name}" data-visible="${visible}">`);
 }

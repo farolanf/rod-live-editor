@@ -34,6 +34,16 @@
                     Content Editor
                   </a>
                 </li>
+                <li>
+                  <a class="html-btn" data-toggle="tooltip" data-placement="bottom" title="Check the rendered HTML">HTML</a>
+                </li>
+                <li class="navbar-form">
+                  <select class="form-control module-wrapper" data-toggle="tooltip" data-placement="bottom" title="Module element wrapper">
+                    <option value="auto">Auto</option>
+                    <option value="div">div</option>
+                    <option value="table">table</option>
+                  </select>
+                </li>
               </ul>
               <ul class="nav navbar-nav" data-content-editor>
                 <li>
@@ -51,6 +61,9 @@
                 </li>
                 <li>
                   <a class="content-json-btn" data-toggle="tooltip" data-placement="bottom" title="Edit the content object">JSON</a>
+                </li>
+                <li>
+                  <a class="html-btn" data-toggle="tooltip" data-placement="bottom" title="Check the rendered HTML">HTML</a>
                 </li>
                 <li>
                   <a class="refresh-btn" data-toggle="tooltip" data-placement="bottom" title="Redraw the document">
@@ -104,6 +117,9 @@
                   <button type="button" class="btn btn-default globals-btn" data-toggle="tooltip" title="Global Properties" data-content-editor>
                     <i class="fa fa-globe"></i>
                   </button>
+                  <button type="button" class="btn btn-default properties-btn hidden" data-toggle="tooltip" title="Properties" data-module-editor>
+                    <i class="fa fa-list-ul"></i>
+                  </button>
                   <button type="button" class="btn btn-default log-btn hidden" data-toggle="tooltip" title="Errors">
                     <i class="fa fa-exclamation-triangle"></i>
                   </button>
@@ -118,8 +134,8 @@
       <div class="panel panel-default json-view" style="display: none">
         <div class="panel-heading">
           <h3 class="panel-title" data-content-editor>Content JSON</h3>
-          <h3 class="panel-title" data-module-editor>Module Definition
-            <small>(Apply changes to &lt;module-group&gt;/&lt;module-name&gt;.js to make changes permanent)</small>
+          <h3 class="panel-title hidden" data-module-editor>Module Definition
+            <small id="json-view__module-file"></small>
           </h3>
           <div class="btn-group">
             <button type="button" class="btn btn-default btn-sm json-js-btn active">
@@ -135,6 +151,19 @@
         </div>
         <div class="panel-body">
           <div id="content-json"></div>
+        </div>
+      </div>
+      <div class="panel panel-default html-view" style="display: none">
+        <div class="panel-heading">
+          <h3 class="panel-title">Rendered HTML</h3>
+          <div class="btn-group">
+            <button type="button" class="btn btn-default btn-sm modal-close-btn">
+              <i class="fa fa-close"></i>
+            </button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="rendered-html"></div>
         </div>
       </div>
       <iframe style="display: none"></iframe>
@@ -273,6 +302,7 @@
     <script src="components/instance-map.js"></script>
     <script src="components/module-view.js"></script>
     <script src="components/json-view.js"></script>
+    <script src="components/html-view.js"></script>
     <script src="components/undo.js"></script>
     <script src="preview.js"></script>
     <script src="index.js"></script>
