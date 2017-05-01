@@ -405,9 +405,10 @@ function App() {
       accepts(el, con, src) {
         return !$(con).is('.module-view *') && $(el).is('[data-id]');
       },
-      // prevent insertion to .empty-container
       inserts(el, con, src) {
-        return !$(con).is('.empty-container');
+        // prevent insertion to .empty-container
+        // prevent insertion of root element
+        return !$(con).is('.empty-container') && !$(el).is('[data-root]');
       },
       start(e, el, src) {
         if (usePrecompileParameters) {
