@@ -37,11 +37,11 @@ function ErrorsView() {
   function render() {
     const html = log.errors().map(function(err) {
       const data = err.instanceId ? `data-instance-id="${err.instanceId}"` : '';
-      return `<div class="error-item" ${data}>${err.msg}</div>`;
+      return `<div class="error-item" ${data}>${wrapVars(err.msg)}</div>`;
     }).join('') + log.warnings().map(function(warn) {
       const data = warn.instanceId ? `data-instance-id="${warn.instanceId}"` : '' +
         warn.property ? `data-property="${warn.property}"` : '';
-      return `<div class="warning-item" ${data}>${warn.msg}</div>`;
+      return `<div class="warning-item" ${data}>${wrapVars(warn.msg)}</div>`;
     }).join('');
     $('.property-view .errors-log').html(html);
     $('.property-view [data-instance-id]').css('cursor', 'pointer')
@@ -49,5 +49,15 @@ function ErrorsView() {
       const instanceId = $(this).data('instance-id');
       events.emit('log-item-clicked', instanceId);
     });
+    
+    /**
+     * Wrap important words in an error/warning message.
+     * 
+     * @param {string} str - The message containing quoted variables.
+     * @return {string} - The str with wrapped variables.
+     */
+    function wrapVars(str) {
+      return str.replace(/'([^]+?)'/g, '<span class="error-variable">$1</span>');
+    }
   }
 }

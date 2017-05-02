@@ -279,6 +279,9 @@ html, body, #app, #editor, .editor-container, .preview {
 .errors-log .warning-item:not(:first-child) {
   border-top: 1px solid #fdb;
 }
+.errors-log .error-variable {
+  background-color: yellow;
+}
 
 .instance-map {
   width: 300px;
