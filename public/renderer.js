@@ -257,9 +257,9 @@ function Renderer(modules, globalProperties, language) {
         // only use replace from the original property
         if (!depth) {
           value = replace(property, value,
-            `Replace condition not found for global property ${name}`,
-            `Invalid condition type for global property ${name}`,
-            `Condition result %result% not found for global property ${name}`
+            `Replace condition not found for global property '${name}'`,
+            `Invalid condition type for global property '${name}'`,
+            `Condition result '%result%' not found for global property '${name}'`
           );
         }
         return value;
@@ -320,7 +320,7 @@ function Renderer(modules, globalProperties, language) {
     } else {
       //There is no alias, use this property's values
       if (instance.hasOwnProperty(property)) {
-        const msg = `Missing value for language '${language}' on instance #${instance.id} property '${property}'`;
+        const msg = `Missing value for language '${language}' on instance '#${instance.id}' property '${property}'`;
         value = instance[property];
         value = getValue(value, msg, function() {
           log.warn({
@@ -379,7 +379,7 @@ function Renderer(modules, globalProperties, language) {
         
         `Incorrect type for child "condition"  on "replace" parameter of property '${property}' in module '${instance.name}': it should be a function.`,
 
-        `Missing property %result% on replace object of property '${property}' in module '${instance.name}'. Add property %result% on replace object and sample value containing %value%. E.g: 'Some content %value%'.`,
+        `Missing property '%result%' on replace object of property '${property}' in module '${instance.name}'. Add property '%result%' on replace object and sample value with '%value%'. E.g: Some content '%value%'`,
 
         instance
       );
