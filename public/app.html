@@ -108,6 +108,25 @@
           <div class="preview-container">
             <iframe class="preview"></iframe>
             <div class="empty-container" style="display: none"></div>
+            <div class="panel panel-default json-view module-json-view" style="display: none">
+              <div class="panel-heading">
+                <h3 class="panel-title">
+                  Module Definition &lt;<span class="json-view__module-name"></span>&gt;<br>
+                  <small>(Apply changes to <span class="json-view__module-file"></span> to make changes permanent.)</small>
+                </h3>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default btn-sm json-save-btn">
+                    <i class="fa fa-save"></i>
+                  </button>
+                  <button type="button" class="btn btn-default btn-sm modal-close-btn">
+                    <i class="fa fa-close"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div id="module-json-view__editor" class="ace-editor-container"></div>
+              </div>
+            </div>
           </div>
           <div class="property-view">
             <div class="panel panel-default">
@@ -133,16 +152,10 @@
           </div>
         </div>
       </div>
-      <div class="panel panel-default json-view" style="display: none">
+      <div class="panel panel-default json-view content-json-view" style="display: none">
         <div class="panel-heading">
-          <h3 class="panel-title" data-content-editor>Content JSON</h3>
-          <h3 class="panel-title hidden" data-module-editor>Module Definition
-            <small id="json-view__module-file"></small>
-          </h3>
+          <h3 class="panel-title">Content JSON</h3>
           <div class="btn-group">
-            <button type="button" class="btn btn-default btn-sm json-js-btn active">
-              JS
-            </button>
             <button type="button" class="btn btn-default btn-sm json-save-btn">
               <i class="fa fa-save"></i>
             </button>
@@ -152,7 +165,7 @@
           </div>
         </div>
         <div class="panel-body">
-          <div id="content-json"></div>
+          <div id="content-json-view__editor" class="ace-editor-container"></div>
         </div>
       </div>
       <div class="panel panel-default html-view" style="display: none">
@@ -165,7 +178,7 @@
           </div>
         </div>
         <div class="panel-body">
-          <div id="rendered-html"></div>
+          <div id="rendered-html" class="ace-editor-container"></div>
         </div>
       </div>
       <iframe style="display: none"></iframe>
