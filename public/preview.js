@@ -11,6 +11,9 @@ function Preview(propertyView) {
   events.addListener('instance-changed', renderInstance);
   events.addListener('log-item-clicked', onLogItemClicked);
 
+  events.addListener('module-changed', renderModuleInstances);
+  events.addListener('module-property-changed', renderModuleInstances);
+
   return Object.assign(this, {
     editInstanceContent() {editInstanceContent(selectedElement)},
     cloneInstance() {cloneInstance(selectedElement)},
@@ -284,6 +287,17 @@ function Preview(propertyView) {
     const prev = $$(`[data-id="${instance.id}"]`);
     dragond.removeFoundContainers(prev[0]);
     replaceElement(prev, html);
+  }
+
+  function renderModuleInstances(name) {
+    if (!isContentEditor) {
+      return;
+    }
+    $$(`[data-name="${name}"]`).each(function() {
+      const id = $(this).data('id');
+      const instance = new Instance(id);
+      renderInstance(instance);
+    });
   }
 
   /**
