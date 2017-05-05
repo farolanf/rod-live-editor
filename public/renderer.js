@@ -21,7 +21,14 @@ function Renderer(modules, globalProperties, language) {
     renderModule,
     renderContainer,
     getPropertyValue,
+    removeJsComments,
   };
+
+  function removeJsComments(str) {
+    return str.replace(/\/\*[^*]*?\*\//g, '')
+      .replace(/(.+\s*)\/\/[^\n]*?(\n|$)/g, '$1$2') // keep new line
+      .replace(/$\s*\/\/[^\n]*?(\n|$)/g, ''); // eat new line
+  }
 
   /**
    * Remove javascript comments from a string.
@@ -29,7 +36,7 @@ function Renderer(modules, globalProperties, language) {
    * @param {string} str - The string to search for comments.
    * @private
    */
-  function removeJsComments(str) {
+  function _removeJsComments(str) {
     str = ('__' + str + '__').split('');
     var mode = {
       singleQuote: false,
