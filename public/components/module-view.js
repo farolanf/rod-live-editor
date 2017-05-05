@@ -108,7 +108,7 @@ function ModuleView(store, initialGroup) {
     const $list = $('<div class="list-group">');
     _.forOwn(modules, function(val, key) {
       const $item = $(`<div class="list-group-item" data-name="${key}">`);
-      $item.append(`<div class="module-name">${key}</div>`);
+      $item.append(`<div class="module-name">${key} <i class="fa fa-pencil"></i></div>`);
       $item.append(getPreview(key));
       $list.append($item);
     });
@@ -125,15 +125,18 @@ function ModuleView(store, initialGroup) {
     if (!isContentEditor) {
       $('.module-view .list-group-item').on('click', onItemClick);
     }
+    $('.module-view .list-group-item').on('click', '.fa-pencil', onItemClick);
     events.emit('module-list-changed');
   }
 
   /**
    * Handles module item click.
    */
-  function onItemClick() {
-    const name = $(this).data('name');
-    store.content.setContent([{name}]);
+  function onItemClick(e) {
+    const name = $(e.delegateTarget).data('name');
+    if (!isContentEditor) {
+      store.content.setContent({name});
+    }
     events.emit('module-selected', name);
   }
 

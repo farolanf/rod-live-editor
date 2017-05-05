@@ -1,10 +1,16 @@
 'use strict';
 
+const EventEmitter = require('../public/libs/js/EventEmitter.min');
 const assert = require('assert');
 const _ = require('../public/libs/js/lodash.min');
 const Renderer = require('../public/renderer');
 
 global._ = _;
+global.events = new EventEmitter();
+
+global.config = {
+  defaultLanguage: 'en',
+};
 
 describe('renderer', function() {
 
@@ -61,6 +67,20 @@ describe('renderer', function() {
   });
 
   it('should render meta correctly', function() {
-    assert.equal(renderer.render(content), '<span data-id="11" data-name="base">background: #eeeeee; background="#eeeeee" background: #eeeeee; background="#eeeeee"</span>');
+    assert.equal(renderer.render(content), '<span data-id="11" data-name="base" data-visible="true">background: #eeeeee; background="#eeeeee" background: #eeeeee; background="#eeeeee"</span>');
+  });
+
+  it('should remove js comments', function() {
+    const str = `some code /* some comments */ code following // comments
+    some content
+    // a comment
+    code
+    // another comment /* comments */`;
+    const expectedStr = `some code  code following 
+    some content
+    
+    code
+    `;
+    assert.equal(renderer.removeJsComments(str), expectedStr);
   });
 });

@@ -1,139 +1,70 @@
+'use strict';
 
 /**
- * Handles JSON view.
- * 
- * @param {object} content - The content store.
+ * JsonView core functionality.
  */
-function JsonView(content) {
+class JsonView {
 
-  let readOnly, acedit, moduleName;
-  let js = true;//$('.json-view .json-js-btn').is('.active');
-  $('.json-view .json-js-btn').hide();
+  constructor(selector) {
+    this.selector = selector;
+    $('.json-save-btn', selector).on('click', this.save.bind(this));
+    $('.modal-close-btn', selector).on('click', this.hide.bind(this));
+    this.initAce();
+  }
 
-  $('.json-view .modal-close-btn').on('click', hide);
-  $('.json-view .json-save-btn').on('click', save);
-  $('.json-view .json-js-btn').on('click', onToggleFormat);
-
-  acedit = ace.edit('content-json');
-  acedit.setAutoScrollEditorIntoView(true);
-  acedit.setFontSize(14);
-  acedit.getSession().setMode('ace/mode/javascript');
-  acedit.getSession().setUseWrapMode(true);
-
-  acedit.on('change', setDirty);
-
-  events.addListener('activate-content-editor', function() {
-    $('.json-view .modal-close-btn').show();
-    $('.json-view .json-save-btn').removeAttr('data-toggle').removeAttr('title');
-    resize();
-  });
-
-  events.addListener('activate-module-editor', function() {
-    $('.json-view .modal-close-btn').hide();
-    $('.json-view .json-save-btn').attr('data-toggle', 'tooltip')
-      .attr('title', 'Save to preview changes').tooltip();
-    $('#json-view__module-file').text('');
-    resize();
-  });
-
-  events.addListener('module-selected', onModuleSelected);
-  events.addListener('module-property-changed', show.bind(null, false));
-
-  return Object.assign(this, {
-    show,
-    resize,
-    clear,
-  });
+  initAce() {
+    this.editorId = $('.panel-body > *', this.selector).prop('id');
+    const acedit = ace.edit(this.editorId);
+    acedit.setAutoScrollEditorIntoView(true);
+    acedit.setFontSize(14);
+    acedit.getSession().setMode('ace/mode/javascript');
+    acedit.getSession().setUseWrapMode(true);
+    acedit.on('change', this.setDirty.bind(this));
+    this.acedit = acedit;
+  }
 
   /**
    * Clear ace editor.
    */
-  function clear() {
-    acedit.setValue('');
-    acedit.setReadOnly(true);
-    disableSave();
-  }
-
-  /**
-   * Get the edited module.
-   * 
-   * @return {object} - The module.
-   */
-  function getModule() {
-    return store.modules.modules()[moduleName];
-  }
-
-  /**
-   * Handles module-selected event.
-   * 
-   * @param {string} name - The name of the selected module.
-   */
-  function onModuleSelected(name) {
-    moduleName = name;
-    $('#json-view__module-file').text(`Apply changes to ${store.modules.group()}/${name}.js to make changes permanent.`);
-    show(false);
+  clear() {
+    this.acedit.setValue('');
+    this.acedit.setReadOnly(true);
+    this.disableSave();
   }
 
   /**
    * Resize the ace editor.
    */
-  function resize() {
-    acedit.resize();
-  }
-
-  /**
-   * Toggle between JSON and JS format.
-   */
-  function onToggleFormat() {
-    if (isDirty() && js) {
-      events.removeListener('switch-to-json', toggleFormat);
-      events.once('switch-to-json', toggleFormat);
-      uiutils.showConfirmModal('Switch to JSON', 'Changes will be discarded, proceed?', 'Proceed', 'events.emit("switch-to-json")', 'danger');
-    }
-    else {
-      toggleFormat();
-    }
-  }
-
-  /**
-   * Toggle js or json format.
-   */
-  function toggleFormat() {
-    js = !js;
-    const btn = $('.json-view .json-js-btn');
-    btn.toggleClass('active', js);
-    btn.text(js ? 'JS' : 'JSON');
-    const mode = js ? 'javascript' : 'json';
-    acedit.getSession().setMode(`ace/mode/${mode}`);
-    load(js);
+  resize() {
+    this.acedit.resize();
   }
 
   /**
    * Enable save button.
    */
-  function enableSave() {
-    $('.json-view .json-save-btn').removeClass('disabled');
+  enableSave() {
+    $('.json-save-btn', this.selector).removeClass('disabled');
   }
 
   /**
    * Disable save button.
    */
-  function disableSave() {
-    $('.json-view .json-save-btn').addClass('disabled');
+  disableSave() {
+    $('.json-save-btn', this.selector).addClass('disabled');
   }
 
   /**
    * Enable save button.
    */
-  function setDirty() {
-    enableSave();
+  setDirty() {
+    this.enableSave();
   }
 
   /**
-   * Get changed status.
+   * Disable save button. 
    */
-  function isDirty() {
-    return !$('.json-view .json-save-btn').is('.disabled');
+  save() {
+    this.disableSave();
   }
 
   /**
@@ -141,68 +72,129 @@ function JsonView(content) {
    * 
    * @return {string} - The value between parentheses or the original value.
    */
-  function getValue() {
-    return acedit.getValue().replace(/^\(([^]*)\)$/, '$1');    
-  }
-
-  /**
-   * Get the content or current module definition.
-   * 
-   * @param {boolean} js - Get the javascript if true, otherwise json.
-   */
-  function getContent(js) {
-    if (isContentEditor) {
-      // enclose js with parenthesis to fix ace syntax error
-      return js ? `(${content.getJs()})` : content.getJSON();
-    }
-    else {
-      const json = contentUtils.getJSON(getModule());
-      return js ? `(${contentUtils.toJs(json)})` : json;
-    }
+  getValue() {
+    return this.acedit.getValue().replace(/^\(([^]*)\)$/, '$1');    
   }
 
   /**
    * Load content JSON onto editor.
-   * 
-   * @param {boolean} js - Format in javascript if true else json.
    */
-  function load(js) {
-    acedit.setValue(getContent(js));
-    acedit.getSession().getSelection().clearSelection();
-    acedit.getSession().setScrollTop(0);
-    acedit.setReadOnly(readOnly || !js);
-    $('.json-view .json-save-btn').addClass('disabled');
-  }
-
-  /**
-   * Save the JSON to content and disable save button.
-   */
-  function save() {
-    if (isContentEditor) {
-      undo.push();
-      content.fromJSON(getValue());
-    }
-    else {
-      eval(`store.modules.modules()[moduleName] = ${getValue()}`);
-      events.emit('module-changed');      
-    }
-    disableSave();
+  load(readOnly) {
+    this.acedit.setValue(this.getContent());
+    this.acedit.getSession().getSelection().clearSelection();
+    this.acedit.getSession().setScrollTop(0);
+    this.acedit.setReadOnly(readOnly);
+    $('.json-save-btn', this.selector).addClass('disabled');
   }
 
   /**
    * Show the JSON view.
    */
-  function show(_readOnly) {
-    readOnly = _readOnly;
-    $('.json-view .json-save-btn').toggleClass('hidden', readOnly);
-    load($('.json-js-btn').is('.active'));
-    $('.json-view').show();
+  show() {
+    $(this.selector).show();
   }
 
   /**
    * Hide the JSON view.
    */
-  function hide() {
-    $('.json-view').hide();
+  hide() {
+    $(this.selector).hide();
+  }
+}
+
+class ContentJsonView extends JsonView {
+
+  /**
+   * Save the JSON to content and disable save button.
+   */
+  save() {
+    undo.push();
+    store.content.fromJSON(this.getValue());
+    super.save();
+  }
+
+  /**
+   * Get the content.
+   */
+  getContent() {
+    // enclose js with parenthesis to fix ace syntax error
+    return `(${store.content.getJs()})`;
+  }
+
+  /**
+   * Load and show the view.
+   * 
+   * @param {boolean} readOnly - Read only if true.
+   */
+  show(readOnly) {
+    super.load(readOnly);
+    super.show();
+  }
+}
+
+class ModuleJsonView extends JsonView {
+
+  constructor(selector) {
+    super(selector);
+    this.moduleName = null;
+    events.addListener('module-selected', this.onModuleSelected.bind(this));
+    events.addListener('module-property-changed', this.load.bind(this, false));
+  }
+
+  /**
+   * Save the JSON to content and disable save button.
+   */
+  save() {
+    eval(`store.modules.modules()[this.moduleName] = ${this.getValue()}`);
+    events.emit('module-changed', this.moduleName);      
+    super.save();
+  }
+
+  /**
+   * Get the edited module.
+   * 
+   * @return {object} - The module.
+   */
+  getModule() {
+    return store.modules.modules()[this.moduleName];
+  }
+
+  /**
+   * Handles module-selected event.
+   * 
+   * @param {string} name - The name of the selected module.
+   */
+  onModuleSelected(name) {
+    this.moduleName = name;
+    $('.json-view__module-name').text(name);
+    $('.json-view__module-file').text(`${store.modules.group()}/${name}.js`);
+    this.load(false);
+    this.show();
+  }
+
+  /**
+   * Get current module definition.
+   */
+  getContent() {
+    const json = contentUtils.getJSON(this.getModule());
+    return `(${contentUtils.toJs(json)})`;
+  }
+
+  show() {
+    if (this.split) {
+      return;
+    }
+    this.split = Split(['.preview', '.module-json-view'], {
+      sizes: [50, 50],
+      minSize: 0,
+      direction: 'vertical',
+      onDragEnd: this.resize.bind(this),
+    });
+    super.show();
+  }
+
+  hide() {
+    this.split.destroy();
+    this.split = null;
   }
 }

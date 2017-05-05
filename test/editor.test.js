@@ -108,10 +108,10 @@ describe('editor', function() {
         container,
         body: [
           {id: 4, name: '4', container: 'body'},
-          {id: 6, name: '4', container: 'body'},
+          {id: 5, name: '4', container: 'body'},
         ]
       },
-      {id: 5, name: '5', parent, container},
+      {id: 6, name: '5', parent, container},
     ];
     expected[2].body[0].parent = expected[2];
     expected[2].body[1].parent = expected[2];

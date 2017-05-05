@@ -361,7 +361,7 @@ Editor.useWrapper = false;
  */
 Editor.injectInstanceData = function(str, id, name, visible) {
   str = Editor.wrapText(str);
-  if (Editor.useWrapper) {
+  if (Editor.useWrapper && Editor.wrapper !== 'none') {
     let wrapper = Editor.wrapper;
     if (!wrapper) {
       if (/^\s*<(?:thead|tbody|tr|td|th)[^]*?>/i.test(str)) {
