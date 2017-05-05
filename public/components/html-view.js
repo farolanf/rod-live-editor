@@ -45,7 +45,7 @@ function HtmlView() {
     }
     Editor.useWrapper = false;
     const str = store.createRenderer(app.getLanguage())
-      .render(store.content.content());
+      .render(store.content.content(), true);
     acedit.setValue(str);
     acedit.getSession().getSelection().clearSelection();
     acedit.getSession().setScrollTop(0);
