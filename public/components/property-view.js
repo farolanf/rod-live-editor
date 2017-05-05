@@ -501,6 +501,7 @@ function PropertyView(editor, content) {
     }
     getModule().properties[prop].default = value;
     events.emit('module-property-changed', prop, textValue, value);
+    events.emit('module-changed', moduleName);
   }
 
   /**
