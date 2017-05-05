@@ -102,6 +102,7 @@ function PropertyView(editor, content) {
     if (instanceId === id) {
       _setInstance(null);
     }
+    showPropertyList();
   }
 
   /**
@@ -113,6 +114,9 @@ function PropertyView(editor, content) {
   function setInstance(id) {
     if (instanceId !== id) {
       _setInstance(id);
+    }
+    else {
+      showPropertyList();
     }
   }
 
@@ -161,6 +165,7 @@ function PropertyView(editor, content) {
       return {type: value.type, value: value.default};
     });
     _render('Module Properties', props, setModuleProperty, false);
+    showPropertyList();
   }
 
   /**
@@ -496,6 +501,7 @@ function PropertyView(editor, content) {
     }
     getModule().properties[prop].default = value;
     events.emit('module-property-changed', prop, textValue, value);
+    events.emit('module-changed', moduleName);
   }
 
   /**

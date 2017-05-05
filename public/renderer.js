@@ -162,7 +162,7 @@ function Renderer(modules, globalProperties, language) {
     var module = getModule(instance.name);
     if (!module) {
       log.error({
-        msg: 'Cannot find module definition for ' + instance.name,
+        msg: `Cannot find module definition for '${instance.name}'`,
       });
       return '';
     }
@@ -170,7 +170,7 @@ function Renderer(modules, globalProperties, language) {
     if (!module.hasOwnProperty("output")) {
       log.error({
         instanceId: instance.id,
-        msg: 'No output defined for module ' + instance.name,
+        msg: `No output defined for module '${instance.name}'`,
       });
       return '';
     }
@@ -194,7 +194,7 @@ function Renderer(modules, globalProperties, language) {
     if (!module.properties) {
       log.error({
         instanceId: instance.id,
-        msg: `No properties in the module ${instance.name} defined`,
+        msg: `No properties in the module '${instance.name}' defined`,
       });
       return clean ? output :
         Editor.injectInstanceData(output, instance.id, instance.name);
@@ -250,16 +250,16 @@ function Renderer(modules, globalProperties, language) {
             log.warn({
               property: name,
               language,
-              msg: `Missing global property value for language ${language}`,
+              msg: `Missing global property value for language '${language}'`,
             });
           }
         }
         // only use replace from the original property
         if (!depth) {
           value = replace(property, value,
-            `Replace condition not found for global property ${name}`,
-            `Invalid condition type for global property ${name}`,
-            `Condition result %result% not found for global property ${name}`
+            `Replace condition not found for global property '${name}'`,
+            `Invalid condition type for global property '${name}'`,
+            `Condition result '%result%' not found for global property '${name}'`
           );
         }
         return value;
@@ -267,7 +267,7 @@ function Renderer(modules, globalProperties, language) {
       else {
         log.error({
           instanceId: instance.id,
-          msg: `Invalid global property ${name} on instance ${instance.id}`,
+          msg: `Invalid global property '${name}' on instance '${instance.id}'`,
         });
       }
     }
@@ -297,7 +297,7 @@ function Renderer(modules, globalProperties, language) {
       }
       log.error({
         instanceId: instance.id,
-        msg: `Module ${instance.name} doesn't have a property ${property}`,
+        msg: `Module '${instance.name}' doesn't have a property '${property}'`,
       });
       return value;
     }
@@ -313,14 +313,14 @@ function Renderer(modules, globalProperties, language) {
       } else {
         log.error({
           instanceId: instance.id,
-          msg: `Invalid alias ${property} in module ${instance.name}. There is no property named ${alias}.`,
+          msg: `Invalid alias '${property}' in module '${instance.name}'. There is no property named '${alias}'.`,
         });
       }
 
     } else {
       //There is no alias, use this property's values
       if (instance.hasOwnProperty(property)) {
-        const msg = `Missing value for language ${language} on instance #${instance.id} property ${property}`;
+        const msg = `Missing value for language '${language}' on instance '#${instance.id}' property '${property}'`;
         value = instance[property];
         value = getValue(value, msg, function() {
           log.warn({
@@ -331,7 +331,7 @@ function Renderer(modules, globalProperties, language) {
           });
         });
       } else if (moduleProperty.hasOwnProperty("default")) {
-        const msg = `Missing default value for language ${language} on module ${module.name} property ${property}`;
+        const msg = `Missing default value for language '${language}' on module '${module.name}' property '${property}'`;
         value = moduleProperty.default;
         value = getValue(value, msg, function() {
           log.warn({
@@ -348,7 +348,7 @@ function Renderer(modules, globalProperties, language) {
       } else {
         log.error({
           instanceId: instance.id,
-          msg: `Property ${property} in module ${instance.name} doesn't have a default value.`,
+          msg: `Property '${property}' in module '${instance.name}' doesn't have a default value.`,
         });
       }
     }
@@ -375,11 +375,11 @@ function Renderer(modules, globalProperties, language) {
 
     if (alias || customReplace) {
       value = replace(moduleProperty, value,
-        `Missing "condition" child on "replace" parameter of property ${property}, in module ${instance.name}`,
+        `Missing "condition" child on "replace" parameter of property '${property}', in module '${instance.name}'`,
         
-        `Incorrect type for child "condition"  on "replace" parameter of property ${property} in module ${instance.name}: it should be a function.`,
+        `Incorrect type for child "condition"  on "replace" parameter of property '${property}' in module '${instance.name}': it should be a function.`,
 
-        `Missing property %result% on replace object of property ${property} in module ${instance.name}. Add property %result% on replace object and sample value containing %value%. E.g: 'Some content %value%'.`,
+        `Missing property '%result%' on replace object of property '${property}' in module '${instance.name}'. Add property '%result%' on replace object and sample value with '%value%'. E.g: Some content '%value%'`,
 
         instance
       );

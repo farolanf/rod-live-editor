@@ -49,7 +49,9 @@ function App() {
 
   const instanceMap = new InstanceMap(store.content, propertyView, preview);
  
-  const jsonView = new JsonView(store.content);
+  const contentJsonView = new ContentJsonView('.content-json-view');
+  const moduleJsonView = new ModuleJsonView('.module-json-view');
+
   const htmlView = new HtmlView();
 
   let dragond, 
@@ -76,14 +78,12 @@ function App() {
   function activateContentEditor() {
     isContentEditor = true;
     propertyView.clear();
-    $('.preview-container').removeClass('module-editor-container');
-    $('.json-view').removeClass('module-editor').hide().insertAfter('#editor');
-    $('.preview').attr('style', '');
     $('.navbar-brand').text('Live Editor');
     $('[data-content-editor]').removeClass('hidden');
     $('[data-module-editor]').addClass('hidden');
     initDrag();
     loadContent();
+    moduleJsonView.hide();
     events.emit('activate-content-editor');
   }
 
@@ -101,16 +101,6 @@ function App() {
     $('.navbar-brand').text('Module Editor');
     $('[data-content-editor]').addClass('hidden');
     $('[data-module-editor]').removeClass('hidden');
-    $('.preview-container').addClass('module-editor-container');
-    $('.json-view').addClass('module-editor').show().insertAfter('.empty-container');
-    const previewSplit = Split(['.preview', '.json-view'], {
-      sizes: [50, 50],
-      minSize: 0,
-      direction: 'vertical',
-      onDragEnd: jsonView.resize.bind(jsonView),
-    });
-    jsonView.clear();
-    events.once('activate-content-editor', previewSplit.destroy);
     events.emit('activate-module-editor');
   }
 
@@ -323,9 +313,13 @@ function App() {
   function registerHandlers() {
     events.addListener('content-changed', renderPreview);
     events.addListener('modules-changed', renderPreview);
-    events.addListener('module-changed', renderPreview);
     events.addListener('global-property-changed', renderPreview);
-    events.addListener('module-property-changed', renderPreview);
+
+    events.addListener('module-changed', function() {
+      if (!isContentEditor) {
+        renderPreview();
+      }
+    });
 
     events.addListener('module-list-changed', moduleListChanged);
 
@@ -547,7 +541,7 @@ function App() {
     updateUndoButtons();
     
     $('.content-json-btn').on('click', function() {
-      jsonView.show(usePrecompileParameters);
+      contentJsonView.show(usePrecompileParameters);
     });
     $('.html-btn').on('click', htmlView.show);
 

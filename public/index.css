@@ -80,10 +80,14 @@ html, body, #app, #editor, .editor-container, .preview {
   border: 1px solid #eee;
   pointer-events: none;
 }
+.module-view .fa {
+  cursor: pointer;
+}
 
 .preview-container {
   position: relative;
   height: 100%;
+  overflow: hidden;
 }
 .preview {
   display: block;
@@ -149,11 +153,11 @@ html, body, #app, #editor, .editor-container, .preview {
   position: relative;
   padding: 0;
 }
-.json-view.module-editor {
+.json-view.module-json-view {
   position: relative;
   z-index: unset;
 }
-#content-json, #rendered-html {
+.panel-body .ace-editor-container {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -278,6 +282,9 @@ html, body, #app, #editor, .editor-container, .preview {
 }
 .errors-log .warning-item:not(:first-child) {
   border-top: 1px solid #fdb;
+}
+.errors-log .error-variable {
+  background-color: yellow;
 }
 
 .instance-map {
