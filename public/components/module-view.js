@@ -122,9 +122,7 @@ function ModuleView(store, initialGroup) {
     }).on('click dragstart', function() {
       $(this).popover('hide');
     });
-    if (!isContentEditor) {
-      $('.module-view .list-group-item').on('click', onItemClick);
-    }
+    $('.module-view .list-group-item').on('click', onItemClick);
     events.emit('module-list-changed');
   }
 
@@ -133,7 +131,9 @@ function ModuleView(store, initialGroup) {
    */
   function onItemClick() {
     const name = $(this).data('name');
-    store.content.setContent([{name}]);
+    if (!isContentEditor) {
+      store.content.setContent({name});
+    }
     events.emit('module-selected', name);
   }
 
