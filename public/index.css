@@ -80,6 +80,9 @@ html, body, #app, #editor, .editor-container, .preview {
   border: 1px solid #eee;
   pointer-events: none;
 }
+.module-view .fa {
+  cursor: pointer;
+}
 
 .preview-container {
   position: relative;
