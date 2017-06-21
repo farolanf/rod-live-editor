@@ -33,10 +33,7 @@ function PropertyView(editor, content) {
   
   events.addListener('module-selected', editModule);
 
-  const acedit = ace.edit('text-editor-modal__text-editor');
-  acedit.setFontSize(14);
-  acedit.getSession().setMode('ace/mode/html');
-  acedit.getSession().setUseWrapMode(true);
+  const textEditor = new TextEditor('text-editor-modal', 'text-editor-modal__text-editor', 'ace/mode/html');
 
   $('.property-view .property-list').hide();
 
@@ -368,17 +365,12 @@ function PropertyView(editor, content) {
     const input = $(this).parent().find('input');
     const prop = input.data('name');
     let value = getProperty(prop);
-    if (typeof value === 'object') {
-      value = value[app.getLanguage()];
-    }
-    value = value || '';
-    $('#text-editor-modal').off('shown.bs.modal').on('shown.bs.modal', function() {
-      acedit.setValue(value);
-    }).off('hide.bs.modal').on('hide.bs.modal', function() {
-      const newValue = acedit.getValue();
-      setProperty(prop, newValue);
-      input.val(newValue);
-    }).modal();
+    textEditor.setOnChangeHandler(function(value) {
+      setProperty(prop, value);
+      input.val(value);
+    });
+    textEditor.setValue(value);
+    textEditor.show();
   }
 
   /**
