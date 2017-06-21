@@ -372,12 +372,13 @@ function PropertyView(editor, content) {
       value = value[app.getLanguage()];
     }
     value = value || '';
-    acedit.setValue(value);
-    $('#text-editor-modal').modal().off('hide.bs.modal').on('hide.bs.modal', function() {
+    $('#text-editor-modal').off('shown.bs.modal').on('shown.bs.modal', function() {
+      acedit.setValue(value);
+    }).off('hide.bs.modal').on('hide.bs.modal', function() {
       const newValue = acedit.getValue();
       setProperty(prop, newValue);
       input.val(newValue);
-    });;
+    }).modal();
   }
 
   /**
