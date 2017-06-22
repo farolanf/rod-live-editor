@@ -5,6 +5,10 @@
         "text": {
             "default": "Place your text here",
             "type": "text"
-        }
+        },
+        "inlineEditing": {
+            "default": "true",
+            "type": "property"
+        },
     }
 }

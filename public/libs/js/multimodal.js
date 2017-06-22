@@ -16,7 +16,6 @@
         // and appended to the DOM.
         window.setTimeout(function () {
             that.modalCount = getModalCount();
-            console.log(that.modalCount);
 
             // we only want one backdrop; hide any extras
             if (that.modalCount > 1)

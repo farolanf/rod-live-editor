@@ -68,7 +68,7 @@ function App() {
     useLanguage,
     getLanguage,
     getLanguages,
-    
+
     // expose the save function to be called by save confirmation modal
     _save,
   });
@@ -654,7 +654,8 @@ function App() {
       e.stopPropagation();
     });
     $('.instance-controls .edit-btn').on('click', function(e) {
-      preview.editInstanceContent();
+      const editing = preview.editInstanceContent();
+      $(this).toggleClass('active', editing);
     });
     $('.instance-controls .copy-btn').on('click', function(e) {
       precompileOff(function() {
@@ -676,6 +677,11 @@ function App() {
    * @param {element} el - The instance element.
    */
   function showInstanceControls(el) {
+    const instanceEl = new InstanceElement(el);
+    const instance = new Instance(instanceEl.id);
+    const inlineEditing = instance.getProperties().inlineEditing.value === 'true';
+    $('.instance-controls .edit-btn').toggleClass('hidden', !inlineEditing)
+      .toggleClass('active', $(el).is('[contenteditable="true"]'));
     const rect = el.getBoundingClientRect();
     const pos = domutils.topClientPos(rect.right, rect.top, el.ownerDocument.defaultView);
     // place on the top right corner

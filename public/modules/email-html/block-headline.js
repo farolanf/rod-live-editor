@@ -38,5 +38,9 @@
               "default": "#555555",
               "type": "color"
           },
+          "inlineEditing": {
+              "default": "true",
+              "type": "property"
+          },
     }
 }

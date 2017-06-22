@@ -15,7 +15,7 @@ function Preview(propertyView) {
   events.addListener('module-property-changed', renderModuleInstances);
 
   return Object.assign(this, {
-    editInstanceContent() {editInstanceContent(selectedElement)},
+    editInstanceContent() {return editInstanceContent(selectedElement)},
     cloneInstance() {cloneInstance(selectedElement)},
     deleteInstance() {deleteInstance(selectedElement)},
     selectedElement() {return selectedElement},
@@ -148,10 +148,6 @@ function Preview(propertyView) {
     .on('blur', function(e) {
       deselectInstance(this);
     })
-    .on('dblclick', function(e) {
-      e.stopPropagation();
-      editInstanceContent(this);
-    })
     // use mouseover and mouseout for hover styling instead of css :hover
     // to avoid styling parent instance elements
     .on('mouseover', function(e) {
@@ -217,7 +213,7 @@ function Preview(propertyView) {
    * @param {element} el - The instance element.
    */
   function deselectInstance(el) {
-    $(el).removeClass('active').attr('contenteditable', false);
+    $(el).removeClass('active');
   }
 
   /**
@@ -231,10 +227,18 @@ function Preview(propertyView) {
    * TODO:
    */
   function editInstanceContent(el) {
-    $(el).attr('contenteditable', true);
-    setTimeout(function() {
-      $(el).focus();
-    });
+    if (el.medium) {
+      const value = $(el).html();
+      events.emit('set-instance-property', 'text', value, true);
+      el.medium.destroy();
+      el.medium = null;
+      selectInstance(el, true);
+      return false;
+    }
+    else {
+      el.medium = new MediumEditor(el);
+      return true;
+    }
   }
 
   /**

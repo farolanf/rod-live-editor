@@ -67,6 +67,10 @@ function Modules() {
       if (mod.properties && !mod.properties.hasOwnProperty('visible')) {
         mod.properties.visible = {type: 'property', default: 'true'};
       }
+      // add inlineEditing property if not exist
+      if (mod.properties && !mod.properties.hasOwnProperty('inlineEditing')) {
+        mod.properties.inlineEditing = {type: 'property', default: 'false'};
+      }
     });
   }
 

@@ -186,6 +186,10 @@ html, body, #app, #editor, .editor-container, .preview {
 .instance-controls .fa:hover {
   background-color: rgba(0, 0, 0, 0.5);
 }
+.instance-controls .edit-btn.active {
+  color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(255, 255, 255, 0.8);
+}
 
 .property-view {
   display: flex;

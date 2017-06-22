@@ -33,6 +33,8 @@ function PropertyView(editor, content) {
   
   events.addListener('module-selected', editModule);
 
+  events.addListener('set-instance-property', setInstanceProperty);
+
   const textEditor = new TextEditor('text-editor-modal', 'text-editor-modal__text-editor', 'ace/mode/html');
 
   $('.property-view .property-list').hide();
