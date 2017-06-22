@@ -371,7 +371,13 @@ html, body, #app, #editor, .editor-container, .preview {
 #text-editor-modal__selected-language {
   font-style: italic;
 }
-
+#text-editor-modal .language-copy-btn {
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  transform: translateX(-100%);
+  margin: 4px 6px;
+}
 
 .inactive {
   color: #ccc !important;

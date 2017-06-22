@@ -29,6 +29,13 @@ class TextEditor extends EventEmitter {
     }).on('hide.bs.collapse', function() {
       $(`#${modalId} .more-options-btn i`).toggleClass('fa-caret-right', true).toggleClass('fa-caret-down', false);
     });
+
+    // language copy
+    events.addListener('copy-language-value', this._copyLanguageValue.bind(this));
+
+    $(`#${modalId} .language-copy-btn`).on('click', function() {
+      uiutils.showConfirmModal('Copy Language Value', 'Overwrite editor content with current language value?', 'Overwrite', 'events.emit("copy-language-value")', 'danger');
+    });
   }
 
   setValue(value) {
@@ -41,6 +48,11 @@ class TextEditor extends EventEmitter {
 
   show() {
     $('#'+this.modalId).modal();
+  }
+
+  _copyLanguageValue() {
+    const value = $(`#${this.modalId}__language-value`).text();
+    this.aceEditor.setValue(value);
   }
 
   _setEditorValue() {
@@ -57,6 +69,7 @@ class TextEditor extends EventEmitter {
   }
 
   _initLanguages() {
+    $(`#${this.modalId} .more-options-btn`).toggleClass('hidden', app.getLanguages().length <= 0);
     if (!this.selectedLang) {
       this.selectedLang = app.getLanguage();
     }
