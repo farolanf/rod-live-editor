@@ -18,8 +18,16 @@ class TextEditor extends EventEmitter {
     const me = this;
     $('#'+modalId).on('shown.bs.modal', function() {
       me._setEditorValue();
+      me._initLanguages();
     }).on('hide.bs.modal', function() {
       me._onHide();
+    });
+
+    // update more options caret
+    $(`#${modalId}__more-options`).on('show.bs.collapse', function() {
+      $(`#${modalId} .more-options-btn i`).toggleClass('fa-caret-right', false).toggleClass('fa-caret-down', true);
+    }).on('hide.bs.collapse', function() {
+      $(`#${modalId} .more-options-btn i`).toggleClass('fa-caret-right', true).toggleClass('fa-caret-down', false);
     });
   }
 
@@ -46,5 +54,29 @@ class TextEditor extends EventEmitter {
 
   _onHide() {
     this.emit('hide', this.aceEditor.getValue());
+  }
+
+  _initLanguages() {
+    if (!this.selectedLang) {
+      this.selectedLang = app.getLanguage();
+    }
+    $(`#${this.modalId}__selected-language`).text(this.selectedLang);
+    const me = this;
+    const ul = $(`#${this.modalId}__language-select-btn + .dropdown-menu`);
+    ul.html('');
+    app.getLanguages().forEach(function(val) {
+      ul.append(`<li class="${val === me.selectedLang ? 'active' : ''}"><a>${val}</a></li>`);
+    });
+    $('li', ul).on('click', function() {
+      me.selectedLang = $('a', this).text();
+      me._onLanguageChanged(me.selectedLang);
+      me._initLanguages();      
+    });
+    me._onLanguageChanged(this.selectedLang);
+  }
+
+  _onLanguageChanged(lang) {
+    const value = this.value[lang] || '';
+    $(`#${this.modalId}__language-value`).text(value);
   }
 }

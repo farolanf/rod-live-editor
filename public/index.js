@@ -67,6 +67,7 @@ function App() {
     togglePrecompileSafe,
     useLanguage,
     getLanguage,
+    getLanguages,
     
     // expose the save function to be called by save confirmation modal
     _save,
