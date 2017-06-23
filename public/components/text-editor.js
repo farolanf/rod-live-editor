@@ -16,9 +16,12 @@ class TextEditor extends EventEmitter {
     this.aceEditor = acedit;
 
     const me = this;
-    $('#'+modalId).on('shown.bs.modal', function() {
-      me._setEditorValue();
+    $('#'+modalId).on('show.bs.modal', function() {
+      me.selectedLang = app.getLanguage();
+      $(`#${me.modalId}__more-options`).collapse('hide');
       me._initLanguages();
+    }).on('shown.bs.modal', function() {
+      me._setEditorValue();
     }).on('hide.bs.modal', function() {
       me._onHide();
     });
@@ -71,9 +74,8 @@ class TextEditor extends EventEmitter {
   _initLanguages() {
     const multiLanguages = typeof this.value === 'object';
     $(`#${this.modalId} .more-options-btn`).toggleClass('hidden', !multiLanguages);
-    if (!this.selectedLang) {
-      this.selectedLang = app.getLanguage();
-    }
+    $(`#${this.modalId}__more-options`).toggleClass('hidden', !multiLanguages);
+
     $(`#${this.modalId}__selected-language`).text(this.selectedLang);
     const me = this;
     const ul = $(`#${this.modalId}__language-select-btn + .dropdown-menu`);
