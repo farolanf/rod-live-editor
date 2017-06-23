@@ -40,7 +40,6 @@
           },
           "inlineEditing": {
               "default": "true",
-              "type": "property"
           },
     }
 }

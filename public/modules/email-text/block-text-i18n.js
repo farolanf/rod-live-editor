@@ -7,6 +7,9 @@
                 en: "Place your text here",
             },
             "type": "text"
-        }
+        },
+        "inlineEditing": {
+            "default": "true",
+        },
     }
 }

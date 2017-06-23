@@ -69,7 +69,7 @@ function Modules() {
       }
       // add inlineEditing property if not exist
       if (mod.properties && !mod.properties.hasOwnProperty('inlineEditing')) {
-        mod.properties.inlineEditing = {type: 'property', default: 'false'};
+        mod.properties.inlineEditing = {default: 'false'};
       }
     });
   }
