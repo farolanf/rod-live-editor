@@ -69,7 +69,8 @@ class TextEditor extends EventEmitter {
   }
 
   _initLanguages() {
-    $(`#${this.modalId} .more-options-btn`).toggleClass('hidden', app.getLanguages().length <= 0);
+    const multiLanguages = typeof this.value === 'object';
+    $(`#${this.modalId} .more-options-btn`).toggleClass('hidden', !multiLanguages);
     if (!this.selectedLang) {
       this.selectedLang = app.getLanguage();
     }
