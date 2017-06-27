@@ -273,7 +273,7 @@ function PropertyView(editor, content) {
 
       const tooltip = warningCls ? 'data-toggle="tooltip" title="This property is missing translation for selected language"' : '';
 
-      let escapedValue = $('<div/>').text(value).html().replace(/"/g, '%22');
+      let escapedValue = $('<div/>').text(value).html().replace(/"/g, '&quot;');
       
       html += `
         <div class="list-group-item ${warningCls}" ${tooltip}>
