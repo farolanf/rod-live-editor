@@ -654,8 +654,7 @@ function App() {
       e.stopPropagation();
     });
     $('.instance-controls .edit-btn').on('click', function(e) {
-      const editing = preview.editInstanceContent();
-      $(this).toggleClass('active', editing);
+      preview.toggleInlineEditing();
     });
     $('.instance-controls .copy-btn').on('click', function(e) {
       precompileOff(function() {
@@ -669,6 +668,12 @@ function App() {
         preview.deleteInstance();
       });
     });
+    events.addListener('enter-inline-editing', function() {
+      $('.instance-controls .edit-btn').addClass('active');
+    });
+    events.addListener('exit-inline-editing', function() {
+      $('.instance-controls .edit-btn').removeClass('active');
+    });
   }
 
   /**
@@ -680,8 +685,7 @@ function App() {
     const instanceEl = new InstanceElement(el);
     const instance = new Instance(instanceEl.id);
     const inlineEditing = instance.getProperties().inlineEditing.value === 'true';
-    $('.instance-controls .edit-btn').toggleClass('hidden', !inlineEditing)
-      .toggleClass('active', $(el).is('[contenteditable="true"]'));
+    $('.instance-controls .edit-btn').toggleClass('hidden', !inlineEditing);
     const rect = el.getBoundingClientRect();
     const pos = domutils.topClientPos(rect.right, rect.top, el.ownerDocument.defaultView);
     // place on the top right corner
