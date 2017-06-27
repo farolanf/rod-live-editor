@@ -272,12 +272,14 @@ function PropertyView(editor, content) {
       const warningCls = hasWarning ? 'property-view__item--has-warning' : '';
 
       const tooltip = warningCls ? 'data-toggle="tooltip" title="This property is missing translation for selected language"' : '';
+
+      let escapedValue = $('<div/>').text(value).html().replace(/"/g, '%22');
       
       html += `
         <div class="list-group-item ${warningCls}" ${tooltip}>
           <span class="name ${textCls}">${key}<span class="language-info">${lang}</span> ${textBtn}</span>
           <div class="property-controls">
-            <input class="form-control" value="${value}" data-name="${key}" data-type="${prop.type}" ${style}>
+            <input class="form-control" value="${escapedValue}" data-name="${key}" data-type="${prop.type}" ${style}>
             <div class="prop-buttons">
               ${langBtnHtml}
               ${delBtnHtml}
