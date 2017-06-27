@@ -239,7 +239,7 @@ function Preview(propertyView) {
   function exitInlineEditing(el) {
     if (medium) {
       keepSelection = true;
-      const value = $(el).html();
+      const value = $(el).text().replace(/^\s+/, ' ').replace(/\s+$/, ' ');
       events.emit('set-instance-property', 'text', value, true);
       medium.destroy();
       medium = null;
