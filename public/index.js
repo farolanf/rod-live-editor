@@ -736,6 +736,7 @@ function App() {
     dragond.removeIframe('.preview');
     Editor.useWrapper = !isContentEditor;
     let html = store.createRenderer(getLanguage()).render(store.content.content());
+    html = injectPreviewScripts(html);
     $('.preview').attr('srcdoc', html).off('load').one('load', function() {
       if (isContentEditor) {
         dragond.addIframe('.preview');
@@ -743,6 +744,28 @@ function App() {
       }
       events.emit('preview-loaded');
     });
+  }
+
+  function injectPreviewScripts(html) {
+    html = html.replace('</head>', `
+        <link href="preview.css" rel="stylesheet">'
+        <link href="libs/medium/css/themes/default.css" rel="stylesheet">
+        <link href="libs/medium/css/medium-editor.min.css" rel="stylesheet">
+      </head>
+    `);
+    html = html.replace('</body>', `
+        <script src="libs/medium/js/medium-editor.min.js"></script>
+        <script>
+          window.parent.previewScripts = {
+            enterInlineEditing(instanceId) {
+              const selector = '[data-id="' + instanceId + '"]';
+              return new MediumEditor(selector);
+            },
+          };
+        </script>
+      </body>
+    `);
+    return html;
   }
 
   /**

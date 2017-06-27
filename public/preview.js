@@ -8,7 +8,6 @@ function Preview(propertyView) {
   let iframeWindow;
   let selectedElement;
   let medium;
-  let keepSelection;
 
   events.addListener('instance-changed', renderInstance);
   events.addListener('log-item-clicked', onLogItemClicked);
@@ -41,14 +40,6 @@ function Preview(propertyView) {
     initElement(iframeWindow.document.body);
     initEvents(iframeWindow);
     reselectElement();
-    injectCss();
-  }
-
-  /**
-   * Inject preview css.
-   */
-  function injectCss() {
-    $$('head').append('<link href="preview.css" rel="stylesheet">');
   }
 
   /**
@@ -149,10 +140,6 @@ function Preview(propertyView) {
       selectInstance(this);
     })
     .on('blur', function(e) {
-      if (!keepSelection) {
-        deselectInstance(this);
-      }
-      keepSelection = false;
     })
     .on('keydown', function(e) {
       if (e.key === 'Escape') {
@@ -239,8 +226,7 @@ function Preview(propertyView) {
    */
   function exitInlineEditing(el) {
     if (medium) {
-      keepSelection = true;
-      const value = $(el).text().replace(/^\s+/, ' ').replace(/\s+$/, ' ');
+      const value = $(el).html();
       events.emit('set-instance-property', 'text', value, true);
       medium.destroy();
       medium = null;
@@ -255,7 +241,7 @@ function Preview(propertyView) {
     const instanceEl = new InstanceElement(el);
     const instance = new Instance(instanceEl.id);
     if (!medium && instance.getProperties()['inlineEditing'].value === 'true') {
-      medium = new MediumEditor(el);
+      medium = previewScripts.enterInlineEditing(instance.id);
       events.emit('enter-inline-editing');
     }
   }
