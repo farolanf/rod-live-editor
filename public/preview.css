@@ -2,6 +2,10 @@ body * {
   pointer-events: none;
 }
 
+a {
+  pointer-events: none;
+}
+
 .medium-editor-toolbar, .medium-editor-toolbar * {
   pointer-events: auto;
 }
