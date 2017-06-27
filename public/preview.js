@@ -18,6 +18,7 @@ function Preview(propertyView) {
 
   return Object.assign(this, {
     toggleInlineEditing() {toggleInlineEditing(selectedElement)},
+    exitInlineEditing() {exitInlineEditing(selectedElement)},
     cloneInstance() {cloneInstance(selectedElement)},
     deleteInstance() {deleteInstance(selectedElement)},
     selectedElement() {return selectedElement},

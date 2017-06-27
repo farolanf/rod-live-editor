@@ -119,6 +119,13 @@ function App() {
     initLanguage();
     initTooltips();
     initAutofocus();
+    initEvents();
+  }
+
+  function initEvents() {
+    $(document).on('click', function() {
+      preview.exitInlineEditing();
+    });
   }
 
   /**
