@@ -759,7 +759,11 @@ function App() {
           window.parent.previewScripts = {
             enterInlineEditing(instanceId) {
               const selector = '[data-id="' + instanceId + '"]';
-              return new MediumEditor(selector);
+              return new MediumEditor(selector, {
+                toolbar: {
+                  buttons: ['bold', 'italic', 'underline', 'anchor'],
+                }
+              });
             },
           };
         </script>
