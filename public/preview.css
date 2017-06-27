@@ -2,6 +2,10 @@ body * {
   pointer-events: none;
 }
 
+.medium-editor-toolbar, .medium-editor-toolbar * {
+  pointer-events: auto;
+}
+
 .instance, tr.instance > * {
   cursor: move;
   pointer-events: auto;
