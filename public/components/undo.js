@@ -27,7 +27,7 @@ function Undo(content) {
       pos++;
       return;
     }
-    stack[pos] = content.getJSON();
+    stack[pos] = content.getJs();
     latest = pos;
     pos++;
     if (pos > max) {
