@@ -186,6 +186,10 @@ html, body, #app, #editor, .editor-container, .preview {
 .instance-controls .fa:hover {
   background-color: rgba(0, 0, 0, 0.5);
 }
+.instance-controls .edit-btn.active {
+  color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(255, 255, 255, 0.8);
+}
 
 .property-view {
   display: flex;
@@ -345,9 +349,38 @@ html, body, #app, #editor, .editor-container, .preview {
   z-index: 2000;
 }
 
+.more-options-btn {
+  color: black !important;
+}
+.more-options-btn:hover, .more-options-btn:focus {
+  text-decoration: none;
+}
 #text-editor-modal__text-editor {
   position: relative;
   height: 300px;
+}
+#text-editor-modal .languages-dropdown {
+  display: inline;
+}
+#text-editor-modal .languages-dropdown button {
+  background: none;
+  outline: none;
+  border: none;
+  padding: 0;
+  font-weight: bold;
+}
+#text-editor-modal .languages-dropdown li a {
+  cursor: pointer;
+}
+#text-editor-modal__selected-language {
+  font-style: italic;
+}
+#text-editor-modal .language-copy-btn {
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  transform: translateX(-100%);
+  margin: 4px 6px;
 }
 
 .inactive {

@@ -348,7 +348,7 @@ function Renderer(modules, globalProperties, language) {
           }
         } else {
           log.error({
-            instanceId: instance.id,
+            instanceId: instance ? instance.id : null,
             msg: conditionTypeErr,
           });
         }

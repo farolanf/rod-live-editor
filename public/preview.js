@@ -7,6 +7,7 @@ function Preview(propertyView) {
 
   let iframeWindow;
   let selectedElement;
+  let medium;
 
   events.addListener('instance-changed', renderInstance);
   events.addListener('log-item-clicked', onLogItemClicked);
@@ -15,7 +16,8 @@ function Preview(propertyView) {
   events.addListener('module-property-changed', renderModuleInstances);
 
   return Object.assign(this, {
-    editInstanceContent() {editInstanceContent(selectedElement)},
+    toggleInlineEditing() {toggleInlineEditing(selectedElement)},
+    exitInlineEditing() {exitInlineEditing(selectedElement)},
     cloneInstance() {cloneInstance(selectedElement)},
     deleteInstance() {deleteInstance(selectedElement)},
     selectedElement() {return selectedElement},
@@ -38,14 +40,6 @@ function Preview(propertyView) {
     initElement(iframeWindow.document.body);
     initEvents(iframeWindow);
     reselectElement();
-    injectCss();
-  }
-
-  /**
-   * Inject preview css.
-   */
-  function injectCss() {
-    $$('head').append('<link href="preview.css" rel="stylesheet">');
   }
 
   /**
@@ -146,11 +140,15 @@ function Preview(propertyView) {
       selectInstance(this);
     })
     .on('blur', function(e) {
-      deselectInstance(this);
+    })
+    .on('keydown', function(e) {
+      if (e.key === 'Escape') {
+        exitInlineEditing(this);
+      }
     })
     .on('dblclick', function(e) {
       e.stopPropagation();
-      editInstanceContent(this);
+      enterInlineEditing(this);
     })
     // use mouseover and mouseout for hover styling instead of css :hover
     // to avoid styling parent instance elements
@@ -217,24 +215,44 @@ function Preview(propertyView) {
    * @param {element} el - The instance element.
    */
   function deselectInstance(el) {
-    $(el).removeClass('active').attr('contenteditable', false);
+    if (el) {
+      $(el).removeClass('active');
+      exitInlineEditing(el);
+    }
   }
 
   /**
    * TODO:
    */
-  function stopContentEditing() {
-    $$('[contenteditable="true"]').attr('contenteditable', false);
+  function exitInlineEditing(el) {
+    if (medium) {
+      const value = $(el).html();
+      events.emit('set-instance-property', 'text', value, true);
+      medium.destroy();
+      medium = null;
+      events.emit('exit-inline-editing');
+    }
   }
 
   /**
    * TODO:
    */
-  function editInstanceContent(el) {
-    $(el).attr('contenteditable', true);
-    setTimeout(function() {
-      $(el).focus();
-    });
+  function enterInlineEditing(el) {
+    const instanceEl = new InstanceElement(el);
+    const instance = new Instance(instanceEl.id);
+    if (!medium && instance.getProperties()['inlineEditing'].value === 'true') {
+      medium = previewScripts.enterInlineEditing(instance.id);
+      events.emit('enter-inline-editing');
+    }
+  }
+
+  function toggleInlineEditing(el) {
+    if (medium) {
+      exitInlineEditing(el);
+    }
+    else {
+      enterInlineEditing(el);
+    }
   }
 
   /**
@@ -283,6 +301,9 @@ function Preview(propertyView) {
    * @param {object} instance - The instance object.
    */
   function renderInstance(instance) {
+    if (medium) {
+      return;
+    }
     const html = instance.render();
     const prev = $$(`[data-id="${instance.id}"]`);
     dragond.removeFoundContainers(prev[0]);

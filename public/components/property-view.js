@@ -33,10 +33,9 @@ function PropertyView(editor, content) {
   
   events.addListener('module-selected', editModule);
 
-  const acedit = ace.edit('text-editor-modal__text-editor');
-  acedit.setFontSize(14);
-  acedit.getSession().setMode('ace/mode/html');
-  acedit.getSession().setUseWrapMode(true);
+  events.addListener('set-instance-property', setInstanceProperty);
+
+  const textEditor = new TextEditor('text-editor-modal', 'text-editor-modal__text-editor', 'ace/mode/html');
 
   $('.property-view .property-list').hide();
 
@@ -273,12 +272,14 @@ function PropertyView(editor, content) {
       const warningCls = hasWarning ? 'property-view__item--has-warning' : '';
 
       const tooltip = warningCls ? 'data-toggle="tooltip" title="This property is missing translation for selected language"' : '';
+
+      let escapedValue = $('<div/>').text(value).html().replace(/"/g, '&quot;');
       
       html += `
         <div class="list-group-item ${warningCls}" ${tooltip}>
           <span class="name ${textCls}">${key}<span class="language-info">${lang}</span> ${textBtn}</span>
           <div class="property-controls">
-            <input class="form-control" value="${value}" data-name="${key}" data-type="${prop.type}" ${style}>
+            <input class="form-control" value="${escapedValue}" data-name="${key}" data-type="${prop.type}" ${style}>
             <div class="prop-buttons">
               ${langBtnHtml}
               ${delBtnHtml}
@@ -368,16 +369,12 @@ function PropertyView(editor, content) {
     const input = $(this).parent().find('input');
     const prop = input.data('name');
     let value = getProperty(prop);
-    if (typeof value === 'object') {
-      value = value[app.getLanguage()];
-    }
-    value = value || '';
-    acedit.setValue(value);
-    $('#text-editor-modal').modal().off('hide.bs.modal').on('hide.bs.modal', function() {
-      const newValue = acedit.getValue();
-      setProperty(prop, newValue);
-      input.val(newValue);
-    });;
+    textEditor.setOnChangeHandler(function(value) {
+      setProperty(prop, value);
+      input.val(value);
+    });
+    textEditor.setValue(value);
+    textEditor.show();
   }
 
   /**
@@ -466,6 +463,7 @@ function PropertyView(editor, content) {
    * 
    * @param {string} prop - The property name.
    * @param {string} value - The new property value.
+   * @param {boolean} use18n - Treat the value as language on i18n enabled property.
    * @private
    */
   function setInstanceProperty(prop, value, usei18n) {

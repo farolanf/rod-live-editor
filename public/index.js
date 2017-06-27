@@ -67,7 +67,8 @@ function App() {
     togglePrecompileSafe,
     useLanguage,
     getLanguage,
-    
+    getLanguages,
+
     // expose the save function to be called by save confirmation modal
     _save,
   });
@@ -118,6 +119,13 @@ function App() {
     initLanguage();
     initTooltips();
     initAutofocus();
+    initEvents();
+  }
+
+  function initEvents() {
+    $(document).on('click', function() {
+      preview.exitInlineEditing();
+    });
   }
 
   /**
@@ -653,7 +661,7 @@ function App() {
       e.stopPropagation();
     });
     $('.instance-controls .edit-btn').on('click', function(e) {
-      preview.editInstanceContent();
+      preview.toggleInlineEditing();
     });
     $('.instance-controls .copy-btn').on('click', function(e) {
       precompileOff(function() {
@@ -667,6 +675,12 @@ function App() {
         preview.deleteInstance();
       });
     });
+    events.addListener('enter-inline-editing', function() {
+      $('.instance-controls .edit-btn').addClass('active');
+    });
+    events.addListener('exit-inline-editing', function() {
+      $('.instance-controls .edit-btn').removeClass('active');
+    });
   }
 
   /**
@@ -675,6 +689,10 @@ function App() {
    * @param {element} el - The instance element.
    */
   function showInstanceControls(el) {
+    const instanceEl = new InstanceElement(el);
+    const instance = new Instance(instanceEl.id);
+    const inlineEditing = instance.getProperties().inlineEditing.value === 'true';
+    $('.instance-controls .edit-btn').toggleClass('hidden', !inlineEditing);
     const rect = el.getBoundingClientRect();
     const pos = domutils.topClientPos(rect.right, rect.top, el.ownerDocument.defaultView);
     // place on the top right corner
@@ -718,6 +736,7 @@ function App() {
     dragond.removeIframe('.preview');
     Editor.useWrapper = !isContentEditor;
     let html = store.createRenderer(getLanguage()).render(store.content.content());
+    html = injectPreviewScripts(html);
     $('.preview').attr('srcdoc', html).off('load').one('load', function() {
       if (isContentEditor) {
         dragond.addIframe('.preview');
@@ -725,6 +744,32 @@ function App() {
       }
       events.emit('preview-loaded');
     });
+  }
+
+  function injectPreviewScripts(html) {
+    html = html.replace('</head>', `
+        <link href="preview.css" rel="stylesheet">'
+        <link href="libs/medium/css/themes/default.css" rel="stylesheet">
+        <link href="libs/medium/css/medium-editor.min.css" rel="stylesheet">
+      </head>
+    `);
+    html = html.replace('</body>', `
+        <script src="libs/medium/js/medium-editor.min.js"></script>
+        <script>
+          window.parent.previewScripts = {
+            enterInlineEditing(instanceId) {
+              const selector = '[data-id="' + instanceId + '"]';
+              return new MediumEditor(selector, {
+                toolbar: {
+                  buttons: ['bold', 'italic', 'underline', 'anchor'],
+                }
+              });
+            },
+          };
+        </script>
+      </body>
+    `);
+    return html;
   }
 
   /**
