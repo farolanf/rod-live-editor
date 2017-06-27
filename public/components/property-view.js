@@ -461,6 +461,7 @@ function PropertyView(editor, content) {
    * 
    * @param {string} prop - The property name.
    * @param {string} value - The new property value.
+   * @param {boolean} use18n - Treat the value as language on i18n enabled property.
    * @private
    */
   function setInstanceProperty(prop, value, usei18n) {
